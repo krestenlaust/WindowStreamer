@@ -8,5 +8,7 @@ namespace Shared
     {
         public const int VideoStreamPort = 10064;
         public const int MetaStreamPort = 10063;
+
+        public const int MetaFrameLength = 30;
     }
 }

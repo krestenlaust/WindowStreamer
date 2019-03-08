@@ -9,40 +9,32 @@ using System.Net.Sockets;
 using Shared;
 using Shared.Protocol;
 using System.Timers;
-using System.IO.Compression;
-using System.IO;
-using System.Reflection;
 using System.Threading.Tasks;
-using System.Drawing.Imaging;
 
-public enum Compression
-{
-    None, Decent, Heavy,
-}
-
-namespace WindowStreamer
+namespace Server
 {
     public partial class WindowCapture : Form
     {
-        public UdpClient VideoStream;
-        public TcpClient MetaStream = new TcpClient(AddressFamily.InterNetwork);
-        public TcpListener MetaStreamListener;
-
+        private UdpClient VideoStream;
+        private TcpClient MetaStream = new TcpClient(AddressFamily.InterNetwork);
+        private TcpListener MetaStreamListener;
         private IPAddress AcceptedAddress = IPAddress.Any;
         private Size VideoResolution;
-
-        public bool Fullscreen = false;
-        
+        private bool Fullscreen = false;
         private System.Timers.Timer framerateTimer;
         private double fps = 10;
-
         private Point CaptureAreaTopLeft;
         private Size CaptureSize;
-
         private Cursor applicationSelectorCursor;
-
-        //True when selecting application
         private bool ApplicationSelector = false;
+        private Task tcpLoop = null;
+
+        private Size LastResolution;
+        private Size FullscreenSize = new Size
+        {
+            Width = 400,
+            Height = 100
+        };
 
         public WindowCapture()
         {
@@ -51,10 +43,6 @@ namespace WindowStreamer
 
         private void WindowCapture_Load(object sender, EventArgs e)
         {
-            //Set preferences
-            //Settings.SetDefault();
-
-
             //Stream cursorStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("applicationDropperCursor");
             //applicationSelectorCursor = new Cursor(cursorStream);
             applicationSelectorCursor = Cursors.Hand;
@@ -77,79 +65,160 @@ namespace WindowStreamer
         {
             if (MetaStream.Connected) //&& Settings.VideoStreaming)
             {
+                #region Work in progrss
                 /*
                 DirectBitmap bmp = new DirectBitmap(CaptureSize.Width, CaptureSize.Height);
                 Graphics g = Graphics.FromImage(bmp.Bitmap);
 
                 g.CopyFromScreen(CaptureAreaTopLeft, CaptureAreaTopLeft, CaptureSize);
                 g.Dispose();*/
-                Bitmap bmp = new Bitmap(CaptureSize.Width, CaptureSize.Height);
-                using (Graphics gfx = Graphics.FromImage(bmp))
-                using (SolidBrush brush = new SolidBrush(Color.FromArgb(0, 0, 0)))
-                {
-                    gfx.FillRectangle(brush, 0, 0, CaptureSize.Width, CaptureSize.Height);
-                }
 
                 //byte[] imagePayload = CompressImage(bmp);
-                LockBitmap lbmp = new LockBitmap(bmp);
-                byte[] imagePayload = lbmp.Pixels;
+                //LockBitmap lbmp = new LockBitmap(bmp);
+                //byte[] imagePayload = lbmp.Pixels;
 
-                await VideoStream.SendAsync(imagePayload, imagePayload.Length);
+                //byte[] imagePayload;
+                //imagePayload = bmp.ToByteArray(ImageFormat.Bmp);
+                #endregion
+                Bitmap bmp = new Bitmap(10, 10);
+                byte[] bytes = bmp.ToByteArray(System.Drawing.Imaging.ImageFormat.Bmp);
+                await VideoStream.SendAsync(bytes, bytes.Length);
+
+                //await VideoStream.SendAsync(imagePayload, imagePayload.Length);
             }
         }
 
-        private byte[] CompressImage(DirectBitmap img)
+        private async Task BeginHandshakeAsync()
         {
-            //byte[] imagebytes = Encoding.UTF8.GetBytes(img.Bits.ToString());
+            IPEndPoint clientIPEndPoint = MetaStream.Client.RemoteEndPoint as IPEndPoint;
+            DialogResult diagres = DialogResult.Ignore;
 
-            return Encoding.UTF8.GetBytes(img.Bits.ToString());
+            string handshakeString;
+
+            await Task.Run(() =>
+            {
+                Log("Inbound connection, awaiting prompt return...");
+                ConnectionPrompt prompt = new ConnectionPrompt();
+                prompt.IPAddress = clientIPEndPoint.Address.ToString();
+
+                diagres = prompt.ShowDialog();
+            });
+            Log("Prompt returned...");
+
+            switch (diagres)
+            {
+                case DialogResult.Abort: //Block
+                    BlockIPAddress(clientIPEndPoint.Address);
+                    Log("Blocked the following IP Address: " + clientIPEndPoint.Address);
+
+                    MetaStream.Close();
+                    return;
+
+                case DialogResult.Ignore: //Ignore
+                    MetaStream.Close();
+                    Log("Ignored connection");
+                    return;
+
+                case DialogResult.Yes: //Accept
+                    handshakeString = MetaHeader.ConnectionReply.ToString() + 
+                        ',' + '1' +
+                        ',' + CaptureSize.Width + '.' + CaptureSize.Height;
+                    break;
+                case DialogResult.No: //Deny
+                    handshakeString = MetaHeader.ConnectionReply.ToString() +
+                        ',' + '0';
+                    break;
+                default:
+                    return;
+            }
+
+            NetworkStream dataStream = MetaStream.GetStream();
+
+            byte[] bytes = Encoding.UTF8.GetBytes(handshakeString);
+            External.PadArray(ref bytes, Constants.MetaFrameLength);
+
+            await dataStream.WriteAsync(bytes, 0, 0);
+            Log("Answered request, awaiting client answer...");
+
+            if (handshakeString.Split(',')[1] == "0")
+            {
+                Log($"Told {clientIPEndPoint.Address} to try again another day :)");
+                MetaStream.Close();
+                return;
+            }
+
+
+            tcpLoop = Task.Run(async () =>
+            {
+                NetworkStream newDataStream = MetaStream.GetStream();
+                while (MetaStream.Connected)
+                {
+                    if (External.NetworkStreamLength(ref newDataStream) > 0)
+                    {
+                        await MetaPacketReceivedAsync();
+                    }
+                }
+                Log("Connection lost... or disconnected");
+                tcpLoop.Dispose();
+            });
+
+            Log("Handshake finished");
+        }
+
+        private async Task MetaPacketReceivedAsync()
+        {
+            NetworkStream dataStream = MetaStream.GetStream();
+            byte[] buffer = new byte[Constants.MetaFrameLength];
+            await dataStream.ReadAsync(buffer, 0, Constants.MetaFrameLength);
+
+            string[] metapacket = Encoding.UTF8.GetString(buffer).Split(',');
+
+            switch ((MetaHeader)int.Parse(metapacket[0]))
+            {
+                case MetaHeader.UDPReady:
+
+                    break;
+            }
         }
 
         /*
-        private async Task ListenForUdp()
-        {
-            while (true)
-            {
-                var remoteEP = new IPEndPoint(IPAddress.Any, Constants.VideoStreamPort);
-                var data = VideoStream.Receive(ref remoteEP);
-                OnFrameTick(null, null);
-                await Task.Delay(10);
-            }
-        }*/
-
-        private void BeginHandshake()
+        private void MetaFrameListener()
         {
             NetworkStream dataStream = MetaStream.GetStream();
-            //TODO: Write the rest of this handshake...
-
-            framerateTimer.Start();
-        }
+            byte messageType = (byte)dataStream.ReadByte();
+            byte[] lengthBuffer = new byte[sizeof(int)];
+            int recv = dataStream.Read(lengthBuffer, 0, lengthBuffer.Length);
+            if (recv == sizeof(int))
+            {
+                int messageLen = BitConverter.ToInt32(lengthBuffer, 0);
+                byte[] messageBuffer = new byte[messageLen];
+                recv = dataStream.Read(messageBuffer, 0, messageBuffer.Length);
+                if (recv == messageLen)
+                {
+                    // messageBuffer contains your whole message ...
+                }
+            }
+        }*/
 
         private async Task StartServerAsync()
         {
             MetaStreamListener = new TcpListener(AcceptedAddress, Constants.MetaStreamPort);
             MetaStreamListener.Start();
+
             try
             {
                 MetaStream = await MetaStreamListener.AcceptTcpClientAsync();
                 if (MetaStream.Connected)
                 {
-                    BeginHandshake();
+                    await BeginHandshakeAsync();
                 }
-
-                //await MetaStream.ConnectAsync(AcceptedAddress, Constants.MetaStreamPort);
-
             }
-            catch (SocketException e)
-            {
-            }
-
-
+            catch (SocketException) {}
         }
 
-        private void MetaReceived(IAsyncResult res)
+        private void BlockIPAddress(IPAddress ip)
         {
-            
+            Console.WriteLine("Blocking ip: " + ip.ToString());
         }
 
         protected override void WndProc(ref Message m)
@@ -159,11 +228,14 @@ namespace WindowStreamer
                 if (m.WParam == new IntPtr(0xF030)) // Maximize event - SC_MAXIMIZE from Winuser.h
                 {
                     Fullscreen = true;
+                    LastResolution = this.Size;
+                    this.Size = FullscreenSize;
                     UpdateResolution();
                 }
                 else if (m.WParam == new IntPtr(0xF120))
                 {
                     Fullscreen = false;
+                    this.Size = LastResolution;
                     UpdateResolution();
                 }
             }
@@ -200,7 +272,7 @@ namespace WindowStreamer
                 UnhookWindowsHookEx(hHook);
                 hHook = IntPtr.Zero;
 
-
+                #region Comment block, ain't mine
                 // Here I do not use the GetActiveWindow(). Let's call the window you clicked "DesWindow" and explain my reason.
                 // I think the hook intercepts the mouse click message before the mouse click message delivered to the DesWindow's 
                 // message queue. The application came to this function before the DesWindow became the active window, so the handle 
@@ -208,6 +280,7 @@ namespace WindowStreamer
                 // the Form's handle, but not the DesWindow's handle. You can do some test too.
 
                 //IntPtr handle = GetActiveWindow();
+                #endregion
             }
             return CallNextHookEx(_hookID, nCode, wParam, lParam);
         }
@@ -264,9 +337,9 @@ namespace WindowStreamer
                 using (Process curProcess = Process.GetCurrentProcess())
                 using (ProcessModule curModule = curProcess.MainModule)
                 {
-                    hHook = SetWindowsHookEx(WH_MOUSE_LL, 
+                    hHook = SetWindowsHookEx(WH_MOUSE_LL,
                         _proc,
-                        GetModuleHandle(curModule.ModuleName), 
+                        GetModuleHandle(curModule.ModuleName),
                         0);
                 }
             }
@@ -293,7 +366,7 @@ namespace WindowStreamer
             if (toolStripTextBoxAcceptableHost.Text == "")
             {
                 AcceptedAddress = IPAddress.Any;
-            }else if(!IPAddress.TryParse(toolStripTextBoxAcceptableHost.Text, out AcceptedAddress))
+            } else if (!IPAddress.TryParse(toolStripTextBoxAcceptableHost.Text, out AcceptedAddress))
             {
                 MessageBox.Show("IP not valid", "Error");
                 return;
@@ -312,7 +385,7 @@ namespace WindowStreamer
 
         private void toolStripButtonApplicationPicker_Click(object sender, EventArgs e)
         {
-            
+
         }
 
         private void toolStripButtonApplicationSelector_Click(object sender, EventArgs e)
@@ -340,169 +413,20 @@ namespace WindowStreamer
 
             if (MetaStream.Connected)
             {
-                Shared.Protocol.MetaHeader header = Shared.Protocol.MetaHeader.ResolutionUpdate;
-                string Payload = ((int)header).ToString() + "," + VideoResolution.ToString();
-                MetaStream.GetStream().BeginWrite(Encoding.UTF8.GetBytes(Payload), 0, Encoding.UTF8.GetByteCount(Payload), new AsyncCallback(CallbackVoid), null);
+                string Payload = ((int)MetaHeader.ResolutionUpdate).ToString() +
+                    "," +
+                    VideoResolution.ToString();
+
+                MetaStream.GetStream().BeginWrite(Encoding.UTF8.GetBytes(Payload),
+                    0,
+                    Encoding.UTF8.GetByteCount(Payload),
+                    new AsyncCallback(CallbackVoid),
+                    null);
             }
-
         }
-    }
-}
 
+        private void Log(object stdout) { toolStripStatusLabelLatest.Text = stdout.ToString(); }
 
-public class LockBitmap
-{
-    Bitmap source = null;
-    IntPtr Iptr = IntPtr.Zero;
-    BitmapData bitmapData = null;
-
-    public byte[] Pixels { get; set; }
-    public int Depth { get; private set; }
-    public int Width { get; private set; }
-    public int Height { get; private set; }
-
-    public LockBitmap(Bitmap source)
-    {
-        this.source = source;
-    }
-
-    /// <summary>
-    /// Lock bitmap data
-    /// </summary>
-    public void LockBits()
-    {
-        try
-        {
-            // Get width and height of bitmap
-            Width = source.Width;
-            Height = source.Height;
-
-            // get total locked pixels count
-            int PixelCount = Width * Height;
-
-            // Create rectangle to lock
-            Rectangle rect = new Rectangle(0, 0, Width, Height);
-
-            // get source bitmap pixel format size
-            Depth = System.Drawing.Bitmap.GetPixelFormatSize(source.PixelFormat);
-
-            // Check if bpp (Bits Per Pixel) is 8, 24, or 32
-            if (Depth != 8 && Depth != 24 && Depth != 32)
-            {
-                throw new ArgumentException("Only 8, 24 and 32 bpp images are supported.");
-            }
-
-            // Lock bitmap and return bitmap data
-            bitmapData = source.LockBits(rect, ImageLockMode.ReadWrite,
-                                         source.PixelFormat);
-
-            // create byte array to copy pixel values
-            int step = Depth / 8;
-            Pixels = new byte[PixelCount * step];
-            Iptr = bitmapData.Scan0;
-
-            // Copy data from pointer to array
-            Marshal.Copy(Iptr, Pixels, 0, Pixels.Length);
-        }
-        catch (Exception ex)
-        {
-            throw ex;
-        }
-    }
-
-    /// <summary>
-    /// Unlock bitmap data
-    /// </summary>
-    public void UnlockBits()
-    {
-        try
-        {
-            // Copy data from byte array to pointer
-            Marshal.Copy(Pixels, 0, Iptr, Pixels.Length);
-
-            // Unlock bitmap data
-            source.UnlockBits(bitmapData);
-        }
-        catch (Exception ex)
-        {
-            throw ex;
-        }
-    }
-
-    /// <summary>
-    /// Get the color of the specified pixel
-    /// </summary>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
-    /// <returns></returns>
-    public Color GetPixel(int x, int y)
-    {
-        Color clr = Color.Empty;
-
-        // Get color components count
-        int cCount = Depth / 8;
-
-        // Get start index of the specified pixel
-        int i = ((y * Width) + x) * cCount;
-
-        if (i > Pixels.Length - cCount)
-            throw new IndexOutOfRangeException();
-
-        if (Depth == 32) // For 32 bpp get Red, Green, Blue and Alpha
-        {
-            byte b = Pixels[i];
-            byte g = Pixels[i + 1];
-            byte r = Pixels[i + 2];
-            byte a = Pixels[i + 3]; // a
-            clr = Color.FromArgb(a, r, g, b);
-        }
-        if (Depth == 24) // For 24 bpp get Red, Green and Blue
-        {
-            byte b = Pixels[i];
-            byte g = Pixels[i + 1];
-            byte r = Pixels[i + 2];
-            clr = Color.FromArgb(r, g, b);
-        }
-        if (Depth == 8)
-        // For 8 bpp get color value (Red, Green and Blue values are the same)
-        {
-            byte c = Pixels[i];
-            clr = Color.FromArgb(c, c, c);
-        }
-        return clr;
-    }
-
-    /// <summary>
-    /// Set the color of the specified pixel
-    /// </summary>
-    /// <param name="x"></param>
-    /// <param name="y"></param>
-    /// <param name="color"></param>
-    public void SetPixel(int x, int y, Color color)
-    {
-        // Get color components count
-        int cCount = Depth / 8;
-
-        // Get start index of the specified pixel
-        int i = ((y * Width) + x) * cCount;
-
-        if (Depth == 32) // For 32 bpp set Red, Green, Blue and Alpha
-        {
-            Pixels[i] = color.B;
-            Pixels[i + 1] = color.G;
-            Pixels[i + 2] = color.R;
-            Pixels[i + 3] = color.A;
-        }
-        if (Depth == 24) // For 24 bpp set Red, Green and Blue
-        {
-            Pixels[i] = color.B;
-            Pixels[i + 1] = color.G;
-            Pixels[i + 2] = color.R;
-        }
-        if (Depth == 8)
-        // For 8 bpp set color value (Red, Green and Blue values are the same)
-        {
-            Pixels[i] = color.B;
-        }
+        private byte[] CompressImage(DirectBitmap img) { return Encoding.UTF8.GetBytes(img.Bits.ToString()); }
     }
 }

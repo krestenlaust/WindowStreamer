@@ -1,4 +1,4 @@
-﻿namespace WindowStreamer
+﻿namespace Server
 {
     partial class WindowCapture
     {
@@ -32,7 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WindowCapture));
             this.statusStripFooter = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabelResolution = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripStatusLabelLastAction = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabelLatest = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusFPSCounter = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripHeader = new System.Windows.Forms.ToolStrip();
             this.toolStripTextBoxAcceptableHost = new System.Windows.Forms.ToolStripTextBox();
@@ -42,9 +42,9 @@
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButtonOptions = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripButtonApplicationSelector = new System.Windows.Forms.ToolStripButton();
             this.captureArea = new System.Windows.Forms.Panel();
             this.toolTipMain = new System.Windows.Forms.ToolTip(this.components);
-            this.toolStripButtonApplicationSelector = new System.Windows.Forms.ToolStripButton();
             this.statusStripFooter.SuspendLayout();
             this.toolStripHeader.SuspendLayout();
             this.SuspendLayout();
@@ -54,11 +54,11 @@
             this.statusStripFooter.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.statusStripFooter.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabelResolution,
-            this.toolStripStatusLabelLastAction,
+            this.toolStripStatusLabelLatest,
             this.toolStripStatusFPSCounter});
-            this.statusStripFooter.Location = new System.Drawing.Point(0, 357);
+            this.statusStripFooter.Location = new System.Drawing.Point(0, 328);
             this.statusStripFooter.Name = "statusStripFooter";
-            this.statusStripFooter.Size = new System.Drawing.Size(707, 25);
+            this.statusStripFooter.Size = new System.Drawing.Size(582, 25);
             this.statusStripFooter.TabIndex = 0;
             this.statusStripFooter.Text = "statusStrip1";
             // 
@@ -68,11 +68,11 @@
             this.toolStripStatusLabelResolution.Size = new System.Drawing.Size(213, 20);
             this.toolStripStatusLabelResolution.Text = "toolStripStatusLabelResolution";
             // 
-            // toolStripStatusLabelLastAction
+            // toolStripStatusLabelLatest
             // 
-            this.toolStripStatusLabelLastAction.Name = "toolStripStatusLabelLastAction";
-            this.toolStripStatusLabelLastAction.Size = new System.Drawing.Size(15, 20);
-            this.toolStripStatusLabelLastAction.Text = "..";
+            this.toolStripStatusLabelLatest.Name = "toolStripStatusLabelLatest";
+            this.toolStripStatusLabelLatest.Size = new System.Drawing.Size(15, 20);
+            this.toolStripStatusLabelLatest.Text = "..";
             // 
             // toolStripStatusFPSCounter
             // 
@@ -97,7 +97,7 @@
             this.toolStripHeader.Location = new System.Drawing.Point(0, 0);
             this.toolStripHeader.Name = "toolStripHeader";
             this.toolStripHeader.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-            this.toolStripHeader.Size = new System.Drawing.Size(707, 27);
+            this.toolStripHeader.Size = new System.Drawing.Size(582, 27);
             this.toolStripHeader.TabIndex = 1;
             this.toolStripHeader.Text = "toolStrip1";
             // 
@@ -150,14 +150,6 @@
             this.toolStripSeparator1.Name = "toolStripSeparator1";
             this.toolStripSeparator1.Size = new System.Drawing.Size(6, 27);
             // 
-            // captureArea
-            // 
-            this.captureArea.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.captureArea.Location = new System.Drawing.Point(0, 27);
-            this.captureArea.Name = "captureArea";
-            this.captureArea.Size = new System.Drawing.Size(707, 330);
-            this.captureArea.TabIndex = 2;
-            // 
             // toolStripButtonApplicationSelector
             // 
             this.toolStripButtonApplicationSelector.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -168,11 +160,19 @@
             this.toolStripButtonApplicationSelector.Text = "toolStripButtonApplicationSelector";
             this.toolStripButtonApplicationSelector.Click += new System.EventHandler(this.toolStripButtonApplicationSelector_Click);
             // 
+            // captureArea
+            // 
+            this.captureArea.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.captureArea.Location = new System.Drawing.Point(0, 27);
+            this.captureArea.Name = "captureArea";
+            this.captureArea.Size = new System.Drawing.Size(582, 301);
+            this.captureArea.TabIndex = 2;
+            // 
             // WindowCapture
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(707, 382);
+            this.ClientSize = new System.Drawing.Size(582, 353);
             this.Controls.Add(this.captureArea);
             this.Controls.Add(this.toolStripHeader);
             this.Controls.Add(this.statusStripFooter);
@@ -193,7 +193,7 @@
 
         private System.Windows.Forms.StatusStrip statusStripFooter;
         private System.Windows.Forms.ToolStrip toolStripHeader;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelLastAction;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelLatest;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusFPSCounter;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelResolution;
         private System.Windows.Forms.Panel captureArea;

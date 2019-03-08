@@ -1,4 +1,4 @@
-﻿namespace WindowStreamer
+﻿namespace Server
 {
     partial class Options
     {

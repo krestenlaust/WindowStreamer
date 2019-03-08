@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace WindowStreamer
+namespace Server
 {
     public partial class Options : Form
     {
