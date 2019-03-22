@@ -45,7 +45,7 @@ namespace Client
             if (MetaStream.Connected)
             {
                 NetworkStream dataStream = MetaStream.GetStream();
-                byte[] bytes = Encoding.UTF8.GetBytes(MetaHeader.UDPStream.ToString());
+                byte[] bytes = Encoding.UTF8.GetBytes(MetaHeader.UDPReady.ToString());
 
                 await dataStream.WriteAsync(bytes, 0, bytes.Length);
             }
@@ -123,6 +123,8 @@ namespace Client
                 case MetaHeader.ResolutionUpdate:
                     VideoResolution.Width = int.Parse(metapacket[1].Split('.')[0]);
                     VideoResolution.Height = int.Parse(metapacket[1].Split('.')[1]);
+                    break;
+                case MetaHeader.UDPReady:
                     break;
             }
         }

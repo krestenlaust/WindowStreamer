@@ -56,13 +56,9 @@ namespace Shared
         }
     }
 
+    /*
     public static class Prompt
     {
-        /*
-        public enum PromptResult
-        {
-            button1, button2,
-        }*/
 
         public static string ShowDialog(string text, string caption)
         {
@@ -86,7 +82,7 @@ namespace Shared
 
             return prompt.ShowDialog() == DialogResult.OK ? textBox.Text : "";
         }
-    }
+    }*/
 
     public class DirectBitmap : IDisposable
     {

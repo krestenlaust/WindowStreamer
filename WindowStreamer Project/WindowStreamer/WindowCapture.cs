@@ -100,7 +100,8 @@ namespace Server
                 Log("Inbound connection, awaiting prompt return...");
                 ConnectionPrompt prompt = new ConnectionPrompt();
                 prompt.IPAddress = clientIPEndPoint.Address.ToString();
-
+                prompt.StartPosition = FormStartPosition.CenterParent;
+                prompt.TopMost = true;
                 diagres = prompt.ShowDialog();
             });
             Log("Prompt returned...");
@@ -176,7 +177,9 @@ namespace Server
             switch ((MetaHeader)int.Parse(metapacket[0]))
             {
                 case MetaHeader.UDPReady:
-
+                    VideoStream = new UdpClient(Constants.VideoStreamPort);
+                    IPEndPoint ip = MetaStream.Client.RemoteEndPoint as IPEndPoint;
+                    VideoStream.Connect(ip.Address, Constants.VideoStreamPort);
                     break;
             }
         }
@@ -202,14 +205,17 @@ namespace Server
 
         private async Task StartServerAsync()
         {
+            Log("Starting server...");
             MetaStreamListener = new TcpListener(AcceptedAddress, Constants.MetaStreamPort);
             MetaStreamListener.Start();
+            Log($"Server started {AcceptedAddress}:{Constants.MetaStreamPort}");
 
             try
             {
                 MetaStream = await MetaStreamListener.AcceptTcpClientAsync();
                 if (MetaStream.Connected)
                 {
+                    Log("Connection recieved...");
                     await BeginHandshakeAsync();
                 }
             }
