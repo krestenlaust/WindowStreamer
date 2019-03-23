@@ -6,13 +6,20 @@
     </client>
 
     <server>
-      <tooltip>
-        <element id="toolStripButtonApplicationPicker">Drag and drop onto program handle to select the application</element>
-      </tooltip>
-      <button>
-        <element id="toolStripButtonConnect" state="disconnected">Start</element>
-        <element id="toolStripButtonConnect" state="connected">Stop</element>
-      </button>
+      <form name="Options">
+        <tooltip>
+          <element id="toolTipSettings">Local over LAN - Allows you to play over lan</element>
+        </tooltip>
+      </form>
+      <form name="WindowCapture">
+        <tooltip>
+          <element id="toolStripButtonApplicationPicker">Drag and drop onto program handle to select the application</element>
+        </tooltip>
+        <button>
+          <element id="toolStripButtonConnect" state="disconnected">Start</element>
+          <element id="toolStripButtonConnect" state="connected">Stop</element>
+        </button>
+      </form>
     </server>
 </english>
 </strings>

@@ -9,6 +9,7 @@ using System.Net.Sockets;
 using System.Net;
 using Shared;
 using Shared.Protocol;
+using System.Runtime.InteropServices;
 
 namespace Client
 {
@@ -35,6 +36,7 @@ namespace Client
 
             MetaStream = new TcpClient();
             VideoStream = new UdpClient();
+
         }
 
         private async Task ListenForUdp(IPAddress ip)
@@ -187,5 +189,19 @@ namespace Client
         {
             toolStripStatusLabelLatest.Text = stdout.ToString();
         }
+
+        //Click through
+        /*[DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
+        public static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint cButtons, uint dwExtraInfo);
+
+        private const int MOUSEEVENTF_LEFTDOWN = 0x02;
+        private const int MOUSEEVENTF_LEFTUP = 0x04;
+
+        public void PerformClick()
+        {
+            uint X = (uint)Cursor.Position.X;
+            uint Y = (uint)Cursor.Position.Y;
+            mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, X, Y, 0, 0);
+        }*/
     }
 }

@@ -10,8 +10,13 @@ namespace Server
     {
         public class Preferences
         {
-            public bool glassMode = false;
-            public bool videoStreaming = true;
+            public bool glassMode { get; set; } = false;
+            public bool videoStreaming { get; set; } = true;
+        }
+
+        public class Statics
+        {
+            public static LogWindow logWindow = null;
         }
 
         public static Preferences prefs;

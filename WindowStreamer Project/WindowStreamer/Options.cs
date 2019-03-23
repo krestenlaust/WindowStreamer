@@ -47,5 +47,15 @@ namespace Server
             Apply();
             Close();
         }
+
+        private void groupBox1_MouseHover(object sender, EventArgs e)
+        {
+            toolTipSettings.SetToolTip(groupBoxSharedWindow, "Play local over LAN");
+        }
+
+        private void checkBoxMouseClick_CheckedChanged(object sender, EventArgs e)
+        {
+            groupBoxMouseButtons.Enabled = checkBoxMouseClick.Checked;
+        }
     }
 }
