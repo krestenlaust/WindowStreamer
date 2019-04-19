@@ -18,6 +18,7 @@ namespace Shared
             ConnectionReply = 0,
             ResolutionUpdate = 1,
             UDPReady = 2,
+            Key = 3,
         }
 
         struct ConnectReply
@@ -90,6 +91,11 @@ namespace Shared
                 return ms.ToArray().Length;
             }
         }
+
+        /// <summary>
+        /// Returns unix timestamp.
+        /// </summary>
+        public static long TimeStamp() => DateTimeOffset.Now.ToUnixTimeMilliseconds();
     }
 
     public static class ImageExtensions

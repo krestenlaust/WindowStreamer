@@ -10,6 +10,8 @@ using Shared;
 using Shared.Protocol;
 using System.Timers;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Server
 {
@@ -21,12 +23,14 @@ namespace Server
         private TcpClient metaStream = new TcpClient(AddressFamily.InterNetwork);
         private TcpListener metaStreamListener;
         private IPAddress acceptedAddress = IPAddress.Any;
+        private List<IPAddress> blockedAddresses = new List<IPAddress>();
         private Size videoResolution;
         private bool fullscreen = false;
+        private bool streamVideo = true;
         //private System.Timers.Timer framerateTimer;
         private double fps = 10;
         private Point captureAreaTopLeft;
-        private Size captureSize;
+        //private Size captureSize;
         private Cursor applicationSelectorCursor;
         private bool applicationSelector = false;
         private Task tcpLoop = null;
@@ -37,6 +41,7 @@ namespace Server
             Height = 100
         };
         private Task streamingCycle = null;
+        private long lastSentFrame;
         
         public WindowCapture()
         {
@@ -56,7 +61,7 @@ namespace Server
             toolStripTextBoxTargetPort.Text = Constants.MetaStreamPort.ToString();
 
             //MetaStream = new TcpClient();
-            videoStream = new UdpClient(Constants.VideoStreamPort);
+            //videoStream = new UdpClient(Constants.VideoStreamPort);
 
 
             //framerateTimer = new System.Timers.Timer();
@@ -65,9 +70,9 @@ namespace Server
         }
 
         //private async void OnFrameTick(object source, ElapsedEventArgs e)
-        private async void NewFrame()
+        private async Task NewFrame()
         {
-            if (metaStream.Connected) //&& Settings.VideoStreaming)
+            if (metaStream.Connected && streamVideo) //&& Settings.VideoStreaming)
             {
                 #region Work in progrss
                 /*
@@ -84,11 +89,32 @@ namespace Server
                 //byte[] imagePayload;
                 //imagePayload = bmp.ToByteArray(ImageFormat.Bmp);
                 #endregion
-                Bitmap bmp = new Bitmap(10, 10);
+                Bitmap bmp = new Bitmap(videoResolution.Width, videoResolution.Height);
                 byte[] bytes = bmp.ToByteArray(System.Drawing.Imaging.ImageFormat.Bmp);
                 await videoStream.SendAsync(bytes, bytes.Length);
+                Log("Sent frame");
 
                 //await VideoStream.SendAsync(imagePayload, imagePayload.Length);
+            }
+        }
+
+        private async Task StreamCycle()
+        {
+            while (metaStream.Connected)
+            {
+                if (fps == 0)
+                {
+                    lastSentFrame = External.TimeStamp();
+                    await NewFrame();
+                }
+                else
+                {
+                    if (External.TimeStamp() - lastSentFrame > 1000 / fps)
+                    {
+                        lastSentFrame = External.TimeStamp();
+                        await NewFrame();
+                    }
+                }
             }
         }
 
@@ -115,23 +141,29 @@ namespace Server
                 case DialogResult.Abort: //Block
                     BlockIPAddress(clientIPEndPoint.Address);
                     Log("Blocked the following IP Address: " + clientIPEndPoint.Address);
-
                     metaStream.Close();
+
+                    StartServerAsync();
                     return;
 
                 case DialogResult.Ignore: //Ignore
                     metaStream.Close();
                     Log("Ignored connection");
+
+                    StartServerAsync();
                     return;
 
                 case DialogResult.Yes: //Accept
-                    handshakeString = MetaHeader.ConnectionReply.ToString() + 
-                        ',' + '1' +
-                        ',' + captureSize.Width + '.' + captureSize.Height;
+                    handshakeString = ((int)MetaHeader.ConnectionReply).ToString() + 
+                        Constants.ParameterSeparator + '1' + 
+                        Constants.ParameterSeparator + videoResolution.Width + Constants.SingleSeparator + videoResolution.Height + 
+                        Constants.ParameterSeparator + Constants.VideoStreamPort;
+
+                    videoStream = new UdpClient(Constants.VideoStreamPort);
                     break;
                 case DialogResult.No: //Deny
-                    handshakeString = MetaHeader.ConnectionReply.ToString() +
-                        ',' + '0';
+                    handshakeString = ((int)MetaHeader.ConnectionReply).ToString() + 
+                        Constants.ParameterSeparator + '0';
                     break;
                 default:
                     return;
@@ -142,13 +174,15 @@ namespace Server
             byte[] bytes = Encoding.UTF8.GetBytes(handshakeString);
             External.PadArray(ref bytes, Constants.MetaFrameLength);
 
-            await dataStream.WriteAsync(bytes, 0, 0);
-            Log("Answered request, awaiting client answer...");
-
+            await dataStream.WriteAsync(bytes, 0, bytes.Length);
+            Log($"Handshake: [{handshakeString}]");
+            
             if (handshakeString.Split(',')[1] == "0")
             {
                 Log($"Told {clientIPEndPoint.Address} to try again another day :)");
                 metaStream.Close();
+
+                StartServerAsync();
                 return;
             }
 
@@ -176,15 +210,19 @@ namespace Server
             byte[] buffer = new byte[Constants.MetaFrameLength];
             await dataStream.ReadAsync(buffer, 0, Constants.MetaFrameLength);
 
-            string[] metapacket = Encoding.UTF8.GetString(buffer).Split(',');
+            string[] metapacket = Encoding.UTF8.GetString(buffer).Replace("\0", "").Split(Constants.ParameterSeparator);
 
             switch ((MetaHeader)int.Parse(metapacket[0]))
             {
+                case MetaHeader.Key:
+                    
+                    break;
+                /*
                 case MetaHeader.UDPReady:
                     videoStream = new UdpClient(Constants.VideoStreamPort);
                     IPEndPoint ip = metaStream.Client.RemoteEndPoint as IPEndPoint;
                     videoStream.Connect(ip.Address, Constants.VideoStreamPort);
-                    break;
+                    break;*/
             }
         }
 
@@ -376,7 +414,8 @@ namespace Server
             if (toolStripTextBoxAcceptableHost.Text == "")
             {
                 acceptedAddress = IPAddress.Any;
-            } else if (!IPAddress.TryParse(toolStripTextBoxAcceptableHost.Text, out acceptedAddress))
+            }
+            else if (!IPAddress.TryParse(toolStripTextBoxAcceptableHost.Text, out acceptedAddress))
             {
                 MessageBox.Show("IP not valid", "Error");
                 return;
@@ -435,7 +474,11 @@ namespace Server
             }
         }
 
-        private void Log(object stdout) { toolStripStatusLabelLatest.Text = stdout.ToString(); }
+        private void Log(object stdout)
+        {
+            toolStripStatusLabelLatest.Text = stdout.ToString();
+            System.Diagnostics.Debug.WriteLine("[Server] " + stdout);
+        }
 
         private byte[] CompressImage(DirectBitmap img) { return Encoding.UTF8.GetBytes(img.Bits.ToString()); }
 
@@ -447,7 +490,6 @@ namespace Server
             }
             LogWindow lw = new LogWindow();
             lw.FormClosed += new FormClosedEventHandler(LogWindowClosed);
-
         }
 
         private void LogWindowClosed(object sender, FormClosedEventArgs e)
@@ -513,6 +555,11 @@ namespace Server
 
             /// return mouse 
             Cursor.Position = cursorPosition;
+        }
+
+        public static void InputKey(IntPtr handle, Keys key)
+        {
+
         }
     }
 }
