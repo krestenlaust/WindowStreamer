@@ -23,7 +23,7 @@ namespace Server
 
         private void ConnectionPrompt_Load(object sender, EventArgs e)
         {
-            labelConnect.Text = IPAddress + " wants to connect";
+            labelConnect.Text =  IPAddress + " wants to connect";
         }
 
         private void buttonDeny_Click(object sender, EventArgs e)

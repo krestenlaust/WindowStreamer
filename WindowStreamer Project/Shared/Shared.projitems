@@ -13,6 +13,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)External.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="$(MSBuildThisFileDirectory)Strings.xml" />
+    <Content Include="$(MSBuildThisFileDirectory)OldStrings.xml" />
   </ItemGroup>
 </Project>

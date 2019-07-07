@@ -1,31 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using System.Text;
 using System.IO;
+using System.Text;
 
 namespace Shared
 {
     //public struct Resolution { public int Width; public int Height; }
-
-    namespace Protocol
-    {
-        public enum MetaHeader
-        {
-            ConnectionReply = 0,
-            ResolutionUpdate = 1,
-            UDPReady = 2,
-            Key = 3,
-        }
-
-        struct ConnectReply
-        {
-            bool Accepted;
-        }
-    }
 
     //Thanks: nmarkou.blogspot.com/2011/12/redirect-console-output-to-textbox.html?showComment=1553282531886#c8782177256700696736
     public class LogStreamWriter : StringWriter
@@ -74,7 +57,49 @@ namespace Shared
         }
     }
 
-    class External
+    namespace Networking
+    {
+        namespace Protocol
+        {
+            public enum MetaHeader
+            {
+                ConnectionReply = 0,
+                ResolutionUpdate = 1,
+                UDPReady = 2,
+                Key = 3,
+            }
+        }
+
+        class GeneralPacket
+        {
+            public Protocol.MetaHeader type;
+            public string data;
+
+            public void ParsePacket(string data)
+            {
+
+            }
+
+            public override string ToString()
+            {
+                return base.ToString();
+            }
+        }
+    }
+
+    public static class ImageExtensions
+    {
+        public static byte[] ToByteArray(this Image image, ImageFormat format)
+        {
+            using (System.IO.MemoryStream ms = new System.IO.MemoryStream())
+            {
+                image.Save(ms, format);
+                return ms.ToArray();
+            }
+        }
+    }
+
+    public static class External
     {
         public static void PadArray(ref byte[] byteArray, int fixedLength)
         {
@@ -96,47 +121,36 @@ namespace Shared
         /// Returns unix timestamp.
         /// </summary>
         public static long TimeStamp() => DateTimeOffset.Now.ToUnixTimeMilliseconds();
-    }
 
-    public static class ImageExtensions
-    {
-        public static byte[] ToByteArray(this Image image, ImageFormat format)
+        public static string LocalizeParameter(string localizedString, object parameter0)
         {
-            using (System.IO.MemoryStream ms = new System.IO.MemoryStream())
-            {
-                image.Save(ms, format);
-                return ms.ToArray();
-            }
+            StringBuilder sb = new StringBuilder(localizedString);
+
+            sb.Replace("%0", parameter0.ToString());
+
+            return sb.ToString();
         }
-    }
-
-    /*
-    public static class Prompt
-    {
-
-        public static string ShowDialog(string text, string caption)
+        public static string LocalizeParameter(string localizedString, object parameter0, object parameter1)
         {
-            Form prompt = new Form()
-            {
-                Width = 500,
-                Height = 150,
-                FormBorderStyle = FormBorderStyle.FixedDialog,
-                Text = caption,
-                StartPosition = FormStartPosition.CenterParent
-            };
+            StringBuilder sb = new StringBuilder(localizedString);
 
-            Label textLabel = new Label() { Left = 50, Top = 20, Text = text};
-            TextBox textBox = new TextBox() { Left = 50, Top = 50, Width = 400 };
-            Button confirmation = new Button() { Text = "Ok", Left = 350, Width = 100, Top = 70, DialogResult = DialogResult.OK };
-            confirmation.Click += (sender, e) => { prompt.Close(); };
-            prompt.Controls.Add(textBox);
-            prompt.Controls.Add(confirmation);
-            prompt.Controls.Add(textLabel);
-            prompt.AcceptButton = confirmation;
+            sb.Replace("%0", parameter0.ToString());
+            sb.Replace("%1", parameter1.ToString());
 
-            return prompt.ShowDialog() == DialogResult.OK ? textBox.Text : "";
+            return sb.ToString();
         }
-    }*/
+        public static string LocalizeParameter(string localizedString, object parameter0, object parameter1, object parameter2)
+        {
+            StringBuilder sb = new StringBuilder(localizedString);
+
+            sb.Replace("%0", parameter0.ToString());
+            sb.Replace("%1", parameter1.ToString());
+            sb.Replace("%2", parameter2.ToString());
+
+            return sb.ToString();
+        }
+
+    }
 
     public class DirectBitmap : IDisposable
     {
@@ -339,4 +353,32 @@ namespace Shared
             }
         }
     }
+
+    /*
+    public static class Prompt
+    {
+
+        public static string ShowDialog(string text, string caption)
+        {
+            Form prompt = new Form()
+            {
+                Width = 500,
+                Height = 150,
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                Text = caption,
+                StartPosition = FormStartPosition.CenterParent
+            };
+
+            Label textLabel = new Label() { Left = 50, Top = 20, Text = text};
+            TextBox textBox = new TextBox() { Left = 50, Top = 50, Width = 400 };
+            Button confirmation = new Button() { Text = "Ok", Left = 350, Width = 100, Top = 70, DialogResult = DialogResult.OK };
+            confirmation.Click += (sender, e) => { prompt.Close(); };
+            prompt.Controls.Add(textBox);
+            prompt.Controls.Add(confirmation);
+            prompt.Controls.Add(textLabel);
+            prompt.AcceptButton = confirmation;
+
+            return prompt.ShowDialog() == DialogResult.OK ? textBox.Text : "";
+        }
+    }*/
 }

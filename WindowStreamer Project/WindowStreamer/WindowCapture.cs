@@ -7,7 +7,7 @@ using System.Windows.Forms;
 using System.Net;
 using System.Net.Sockets;
 using Shared;
-using Shared.Protocol;
+using Shared.Networking.Protocol;
 using System.Timers;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -32,7 +32,7 @@ namespace Server
         private Point captureAreaTopLeft;
         //private Size captureSize;
         private Cursor applicationSelectorCursor;
-        private bool applicationSelector = false;
+        //private bool applicationSelector = false;
         private Task tcpLoop = null;
         private Size lastResolution;
         private Size fullscreenSize = new Size

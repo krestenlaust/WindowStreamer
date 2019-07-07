@@ -36,6 +36,8 @@
             this.statusStripFooter = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabelLatest = new System.Windows.Forms.ToolStripStatusLabel();
             this.displayArea = new System.Windows.Forms.PictureBox();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripButtonOptions = new System.Windows.Forms.ToolStripButton();
             this.toolStripHeader.SuspendLayout();
             this.statusStripFooter.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.displayArea)).BeginInit();
@@ -48,7 +50,9 @@
             this.toolStripHeader.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButtonResizeToFit,
             this.toolStripSeparator1,
-            this.toolStripButtonConnect});
+            this.toolStripButtonConnect,
+            this.toolStripSeparator2,
+            this.toolStripButtonOptions});
             this.toolStripHeader.Location = new System.Drawing.Point(0, 0);
             this.toolStripHeader.Name = "toolStripHeader";
             this.toolStripHeader.Size = new System.Drawing.Size(800, 27);
@@ -106,6 +110,21 @@
             this.displayArea.TabIndex = 2;
             this.displayArea.TabStop = false;
             // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 27);
+            // 
+            // toolStripButtonOptions
+            // 
+            this.toolStripButtonOptions.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripButtonOptions.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonOptions.Image")));
+            this.toolStripButtonOptions.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonOptions.Name = "toolStripButtonOptions";
+            this.toolStripButtonOptions.Size = new System.Drawing.Size(65, 24);
+            this.toolStripButtonOptions.Text = "Options";
+            this.toolStripButtonOptions.Click += new System.EventHandler(this.toolStripButtonOptions_Click);
+            // 
             // WindowDisplay
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -136,6 +155,8 @@
         private System.Windows.Forms.PictureBox displayArea;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripButton toolStripButtonConnect;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripButton toolStripButtonOptions;
     }
 }
 

@@ -47,6 +47,12 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == ': Server - Debug|AnyCPU' ">
+    <OutputPath>bin\: Server - Debug\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == ': Client - Debug|AnyCPU' ">
+    <OutputPath>bin\: Client - Debug\</OutputPath>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Gma.UserActivityMonitor">
       <HintPath>.\Gma.UserActivityMonitor.dll</HintPath>

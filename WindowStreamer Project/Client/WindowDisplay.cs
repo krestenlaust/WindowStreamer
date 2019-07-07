@@ -8,7 +8,7 @@ using System.Windows.Forms;
 using System.Net.Sockets;
 using System.Net;
 using Shared;
-using Shared.Protocol;
+using Shared.Networking.Protocol;
 using System.Runtime.InteropServices;
 
 namespace Client
@@ -243,6 +243,11 @@ namespace Client
         {
             toolStripStatusLabelLatest.Text = stdout.ToString();
             System.Diagnostics.Debug.WriteLine("[Client] "+stdout);
+        }
+
+        private void toolStripButtonOptions_Click(object sender, EventArgs e)
+        {
+            new Options().ShowDialog();
         }
 
         //Click through
