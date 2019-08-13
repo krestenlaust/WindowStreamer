@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
+//using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -12,6 +12,7 @@ using System.Timers;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
+using System.Diagnostics;
 
 namespace Server
 {
@@ -19,7 +20,8 @@ namespace Server
     {
         public IntPtr TargetWindowHandle { get; private set; } = IntPtr.Zero;
 
-        private UdpClient videoStream;
+        //private UdpClient videoStream;
+        private IPEndPoint clientEndpoint;
         private TcpClient metaStream = new TcpClient(AddressFamily.InterNetwork);
         private TcpListener metaStreamListener;
         private IPAddress acceptedAddress = IPAddress.Any;
@@ -27,12 +29,9 @@ namespace Server
         private Size videoResolution;
         private bool fullscreen = false;
         private bool streamVideo = true;
-        //private System.Timers.Timer framerateTimer;
         private double fps = 10;
         private Point captureAreaTopLeft;
-        //private Size captureSize;
         private Cursor applicationSelectorCursor;
-        //private bool applicationSelector = false;
         private Task tcpLoop = null;
         private Size lastResolution;
         private Size fullscreenSize = new Size
@@ -50,8 +49,6 @@ namespace Server
 
         private void WindowCapture_Load(object sender, EventArgs e)
         {
-            //Stream cursorStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("applicationDropperCursor");
-            //applicationSelectorCursor = new Cursor(cursorStream);
             applicationSelectorCursor = Cursors.Hand;
 
             TransparencyKey = Color.Orange;
@@ -59,17 +56,8 @@ namespace Server
             UpdateResolution();
 
             toolStripTextBoxTargetPort.Text = Constants.MetaStreamPort.ToString();
-
-            //MetaStream = new TcpClient();
-            //videoStream = new UdpClient(Constants.VideoStreamPort);
-
-
-            //framerateTimer = new System.Timers.Timer();
-            //framerateTimer.Interval = 1000 / fps;
-            //framerateTimer.Elapsed += new ElapsedEventHandler(OnFrameTick);
         }
-
-        //private async void OnFrameTick(object source, ElapsedEventArgs e)
+        
         private async Task NewFrame()
         {
             if (metaStream.Connected && streamVideo) //&& Settings.VideoStreaming)
@@ -91,7 +79,12 @@ namespace Server
                 #endregion
                 Bitmap bmp = new Bitmap(videoResolution.Width, videoResolution.Height);
                 byte[] bytes = bmp.ToByteArray(System.Drawing.Imaging.ImageFormat.Bmp);
-                await videoStream.SendAsync(bytes, bytes.Length);
+                //await videoStream.SendAsync(bytes, bytes.Length);
+                Log("Sending frame");
+                using (UdpClient sender = new UdpClient(0))
+                {
+                    await sender.SendAsync(bytes, bytes.Length, clientEndpoint.Address.ToString(), Constants.VideoStreamPort);
+                }
                 Log("Sent frame");
 
                 //await VideoStream.SendAsync(imagePayload, imagePayload.Length);
@@ -100,27 +93,31 @@ namespace Server
 
         private async Task StreamCycle()
         {
-            while (metaStream.Connected)
+            if (metaStream.Connected)
             {
                 if (fps == 0)
                 {
                     lastSentFrame = External.TimeStamp();
                     await NewFrame();
                 }
-                else
+            }
+            while (metaStream.Connected)
+            {
+                if (External.TimeStamp() - lastSentFrame > 1000 / fps)
                 {
-                    if (External.TimeStamp() - lastSentFrame > 1000 / fps)
-                    {
-                        lastSentFrame = External.TimeStamp();
-                        await NewFrame();
-                    }
+                    lastSentFrame = External.TimeStamp();
+                    await NewFrame();
+                    Log("Fixed Framerate tick");
                 }
             }
+            Log("Metastream not connected");
         }
 
         private async Task BeginHandshakeAsync()
         {
-            IPEndPoint clientIPEndPoint = metaStream.Client.RemoteEndPoint as IPEndPoint;
+            //IPEndPoint clientIPEndPoint = metaStream.Client.RemoteEndPoint as IPEndPoint;
+            clientEndpoint = metaStream.Client.RemoteEndPoint as IPEndPoint;
+
             DialogResult diagres = DialogResult.Ignore;
 
             string handshakeString;
@@ -129,7 +126,7 @@ namespace Server
             {
                 Log("Inbound connection, awaiting prompt return...");
                 ConnectionPrompt prompt = new ConnectionPrompt();
-                prompt.IPAddress = clientIPEndPoint.Address.ToString();
+                prompt.IPAddress = clientEndpoint.Address.ToString();
                 prompt.StartPosition = FormStartPosition.CenterParent;
                 prompt.TopMost = true;
                 diagres = prompt.ShowDialog();
@@ -139,8 +136,8 @@ namespace Server
             switch (diagres)
             {
                 case DialogResult.Abort: //Block
-                    BlockIPAddress(clientIPEndPoint.Address);
-                    Log("Blocked the following IP Address: " + clientIPEndPoint.Address);
+                    BlockIPAddress(clientEndpoint.Address);
+                    Log("Blocked the following IP Address: " + clientEndpoint.Address);
                     metaStream.Close();
 
                     StartServerAsync();
@@ -159,13 +156,14 @@ namespace Server
                         Constants.ParameterSeparator + videoResolution.Width + Constants.SingleSeparator + videoResolution.Height + 
                         Constants.ParameterSeparator + Constants.VideoStreamPort;
 
-                    videoStream = new UdpClient(Constants.VideoStreamPort);
+                    //videoStream = new UdpClient(Constants.VideoStreamPort); //JIWJDIAJWDJ
                     break;
                 case DialogResult.No: //Deny
                     handshakeString = ((int)MetaHeader.ConnectionReply).ToString() + 
                         Constants.ParameterSeparator + '0';
                     break;
                 default:
+                    Log("DialogResult returned other than allowed values");
                     return;
             }
 
@@ -179,7 +177,7 @@ namespace Server
             
             if (handshakeString.Split(',')[1] == "0")
             {
-                Log($"Told {clientIPEndPoint.Address} to try again another day :)");
+                Log($"Told {clientEndpoint.Address} to try again another day :)");
                 metaStream.Close();
 
                 StartServerAsync();
@@ -197,11 +195,9 @@ namespace Server
                         await MetaPacketReceivedAsync();
                     }
                 }
-                Log("Connection lost... or disconnected");
+                Log("Connection lost... or disconnected(tcp loop)");
                 tcpLoop.Dispose();
             });
-
-            Log("Handshake finished");
         }
 
         private async Task MetaPacketReceivedAsync()
@@ -226,24 +222,7 @@ namespace Server
             }
         }
 
-        /*
-        private void MetaFrameListener()
-        {
-            NetworkStream dataStream = MetaStream.GetStream();
-            byte messageType = (byte)dataStream.ReadByte();
-            byte[] lengthBuffer = new byte[sizeof(int)];
-            int recv = dataStream.Read(lengthBuffer, 0, lengthBuffer.Length);
-            if (recv == sizeof(int))
-            {
-                int messageLen = BitConverter.ToInt32(lengthBuffer, 0);
-                byte[] messageBuffer = new byte[messageLen];
-                recv = dataStream.Read(messageBuffer, 0, messageBuffer.Length);
-                if (recv == messageLen)
-                {
-                    // messageBuffer contains your whole message ...
-                }
-            }
-        }*/
+
 
         private async Task StartServerAsync()
         {
@@ -420,11 +399,8 @@ namespace Server
                 MessageBox.Show("IP not valid", "Error");
                 return;
             }
-
-            Console.WriteLine("Starting server");
-
+            
             StartServerAsync();
-
         }
 
         private void toolStripButtonApplicationPicker_MouseHover(object sender, EventArgs e)
@@ -450,8 +426,7 @@ namespace Server
                 videoResolution.Height = Screen.FromControl(this).Bounds.Height;
                 videoResolution.Width = Screen.FromControl(this).Bounds.Width;
                 captureAreaTopLeft = Screen.FromControl(this).Bounds.Location;
-            }
-            else
+            } else
             {
                 videoResolution.Height = captureArea.Height;
                 videoResolution.Width = captureArea.Width;
@@ -476,11 +451,16 @@ namespace Server
 
         private void Log(object stdout)
         {
-            toolStripStatusLabelLatest.Text = stdout.ToString();
-            System.Diagnostics.Debug.WriteLine("[Server] " + stdout);
+            string time = DateTime.Now.ToString("h:mm:ss:FFF");
+
+            toolStripStatusLabelLatest.Text = "[" + time + "] " + stdout.ToString();
+            Debug.WriteLine("["+time+"][Server] " + stdout);
         }
 
-        private byte[] CompressImage(DirectBitmap img) { return Encoding.UTF8.GetBytes(img.Bits.ToString()); }
+        private byte[] CompressImage(DirectBitmap img)
+        {
+            return Encoding.UTF8.GetBytes(img.Bits.ToString());
+        }
 
         private void StartLogWindow()
         {
@@ -497,9 +477,33 @@ namespace Server
             LogWindow lw = sender as LogWindow;
             Console.SetOut(lw.sw);
         }
+
+        private void toolStripButtonDebug1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        /*
+        private void MetaFrameListener()
+        {
+            NetworkStream dataStream = MetaStream.GetStream();
+            byte messageType = (byte)dataStream.ReadByte();
+            byte[] lengthBuffer = new byte[sizeof(int)];
+            int recv = dataStream.Read(lengthBuffer, 0, lengthBuffer.Length);
+            if (recv == sizeof(int))
+            {
+                int messageLen = BitConverter.ToInt32(lengthBuffer, 0);
+                byte[] messageBuffer = new byte[messageLen];
+                recv = dataStream.Read(messageBuffer, 0, messageBuffer.Length);
+                if (recv == messageLen)
+                {
+                    // messageBuffer contains your whole message ...
+                }
+            }
+        }*/
     }
 
-    public class WindowActions
+    public static class WindowActions
     {
         [DllImport("user32.dll")]
         static extern bool ClientToScreen(IntPtr hWnd, ref Point lpPoint);

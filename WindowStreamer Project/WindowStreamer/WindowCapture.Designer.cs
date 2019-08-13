@@ -45,6 +45,7 @@
             this.toolStripButtonApplicationSelector = new System.Windows.Forms.ToolStripButton();
             this.captureArea = new System.Windows.Forms.Panel();
             this.toolTipMain = new System.Windows.Forms.ToolTip(this.components);
+            this.toolStripButtonDebug1 = new System.Windows.Forms.ToolStripButton();
             this.statusStripFooter.SuspendLayout();
             this.toolStripHeader.SuspendLayout();
             this.SuspendLayout();
@@ -93,7 +94,8 @@
             this.toolStripSeparator2,
             this.toolStripButtonOptions,
             this.toolStripSeparator1,
-            this.toolStripButtonApplicationSelector});
+            this.toolStripButtonApplicationSelector,
+            this.toolStripButtonDebug1});
             this.toolStripHeader.Location = new System.Drawing.Point(0, 0);
             this.toolStripHeader.Name = "toolStripHeader";
             this.toolStripHeader.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
@@ -168,6 +170,16 @@
             this.captureArea.Size = new System.Drawing.Size(582, 301);
             this.captureArea.TabIndex = 2;
             // 
+            // toolStripButtonDebug1
+            // 
+            this.toolStripButtonDebug1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonDebug1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonDebug1.Image")));
+            this.toolStripButtonDebug1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonDebug1.Name = "toolStripButtonDebug1";
+            this.toolStripButtonDebug1.Size = new System.Drawing.Size(24, 24);
+            this.toolStripButtonDebug1.Text = "Debug1";
+            this.toolStripButtonDebug1.Click += new System.EventHandler(this.toolStripButtonDebug1_Click);
+            // 
             // WindowCapture
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -206,6 +218,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolTip toolTipMain;
         private System.Windows.Forms.ToolStripButton toolStripButtonApplicationSelector;
+        private System.Windows.Forms.ToolStripButton toolStripButtonDebug1;
     }
 }
 
