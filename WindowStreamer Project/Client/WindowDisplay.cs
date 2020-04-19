@@ -20,8 +20,9 @@ namespace Client
         private int MetastreamPort;
         private int VideostreamPort;
         private Size VideoResolution;
-        private UdpClient VideoStream;
-        private TcpClient MetaStream;
+        private UdpClient VideoClient;
+        private TcpClient MetaClient;
+        private NetworkStream MetaStream;
         private Task TcpLoop;
         private Size FormToPanelSize;
         
@@ -38,8 +39,8 @@ namespace Client
             //ServerPort = Constants.MetaStreamPort;
             MetastreamPort = Constants.MetaStreamPort;
 
-            MetaStream = new TcpClient();
-            VideoStream = new UdpClient();
+            MetaClient = new TcpClient();
+            VideoClient = new UdpClient();
 
         }
 
@@ -48,7 +49,7 @@ namespace Client
             Log("Method: ListenForUdp");
             try
             {
-                VideoStream = new UdpClient(VideostreamPort);
+                VideoClient = new UdpClient(VideostreamPort);
             }
             catch (Exception e)
             {
@@ -57,18 +58,18 @@ namespace Client
             IPEndPoint VideoStreamEndPoint = new IPEndPoint(ip, VideostreamPort);
             
             // Notify server that we are ready to start recieving image frames.
-            NetworkStream dataStream = MetaStream.GetStream();
+            //NetworkStream dataStream = MetaClient.GetStream();
             byte[] bytes = Encoding.UTF8.GetBytes(((int)MetaHeader.UDPReady).ToString() + Constants.ParameterSeparator +
                 Constants.FramerateCap);
 
             External.PadArray(ref bytes, Constants.MetaFrameLength);
-            await dataStream.WriteAsync(bytes, 0, bytes.Length);
+            await MetaStream.WriteAsync(bytes, 0, bytes.Length);
             
 
-            while (MetaStream.Connected)
+            while (MetaClient.Connected)
             {
                 Log("Awaiting videostream bytes");
-                byte[] recv_bytes = VideoStream.Receive(ref VideoStreamEndPoint);
+                byte[] recv_bytes = VideoClient.Receive(ref VideoStreamEndPoint);
                 UpdateFrame(recv_bytes.Select(x => (int)x).ToArray());
                 //await Task.Delay(Math.Max((int)(1000 / Constants.FramerateCap), 0));
             }
@@ -78,29 +79,29 @@ namespace Client
         {
             Log("Method: RecievedVideoFrame");
             IPEndPoint EndPoint = new IPEndPoint(ServerIP, VideostreamPort);
-            byte[] recieved = VideoStream.EndReceive(res, ref EndPoint);
+            byte[] recieved = VideoClient.EndReceive(res, ref EndPoint);
 
-            VideoStream.BeginReceive(new AsyncCallback(RecievedVideoFrame), null);
+            VideoClient.BeginReceive(new AsyncCallback(RecievedVideoFrame), null);
         }
 
         private async Task InitialMetaFrame()//IAsyncResult res)
         {
             Log("Method: InitialMetaFrame");
             // NOTE: Remove this, check is made in previus method.
-            if (!MetaStream.Connected)
+            if (!MetaClient.Connected)
             {
                 Log("Connection lost... or disconnected");
                 return;
             }
 
-            NetworkStream dataStream = MetaStream.GetStream();
+            //NetworkStream dataStream = MetaClient.GetStream();
             
-            while (!dataStream.DataAvailable) {}
+            while (!MetaStream.DataAvailable) {}
 
             Log("Data available");
 
             byte[] buffer = new byte[Constants.MetaFrameLength];
-            dataStream.Read(buffer, 0, Constants.MetaFrameLength);
+            MetaStream.Read(buffer, 0, Constants.MetaFrameLength);
 
             string handshakeString = Encoding.UTF8.GetString(buffer).Replace("\0", "");
             string[] handshake = handshakeString.Split(Constants.ParameterSeparator);
@@ -115,7 +116,7 @@ namespace Client
             if (handshake[1] == "1")
             {
                 Log("Connection request accepted, awaiting handshake finish...");
-                IPEndPoint ipEndPoint = MetaStream.Client.RemoteEndPoint as IPEndPoint;
+                IPEndPoint ipEndPoint = MetaClient.Client.RemoteEndPoint as IPEndPoint;
 
                 UpdateResolution(new Size(
                     Int32.Parse(handshake[2].Split(Constants.SingleSeparator)[0]),
@@ -126,7 +127,7 @@ namespace Client
 
                 try
                 {
-                    VideoStream.BeginReceive(RecievedVideoFrame, VideoStream);
+                    VideoClient.BeginReceive(RecievedVideoFrame, VideoClient);
 
                 }catch(Exception e)
                 {
@@ -136,9 +137,9 @@ namespace Client
 
                 TcpLoop = Task.Run(async () =>
                 {
-                    while (MetaStream.Connected)
+                    while (MetaClient.Connected)
                     {
-                        if (MetaStream.GetStream().DataAvailable)
+                        if (MetaStream.DataAvailable)
                         {
                             await MetaPacketReceivedAsync();
                         }
@@ -156,9 +157,9 @@ namespace Client
         private async Task MetaPacketReceivedAsync()
         {
             Log("Method: MetaPacketReceivedAsync");
-            NetworkStream dataStream = MetaStream.GetStream();
+            //NetworkStream dataStream = MetaClient.GetStream();
             byte[] buffer = new byte[Constants.MetaFrameLength];
-            await dataStream.ReadAsync(buffer, 0, Constants.MetaFrameLength);
+            await MetaStream.ReadAsync(buffer, 0, Constants.MetaFrameLength);
 
             string[] metapacket = Encoding.UTF8.GetString(buffer).Replace("\0","").Split(Constants.ParameterSeparator);
 
@@ -185,22 +186,17 @@ namespace Client
         {
             Log($"Connecting to {ServerIP}:{MetastreamPort}...");
 
-            if (MetaStream.Connected)
+            if (MetaClient.Connected)
             {
-                MetaStream.Close();
-                MetaStream = new TcpClient();
+                MetaClient.Close();
+                MetaClient = new TcpClient();
             }
 
             Log($"Awaiting response from {ServerIP}");
-            await MetaStream.ConnectAsync(ServerIP, MetastreamPort);
-            if (MetaStream.Connected)
-            {
-                Log("Connected");
-                await InitialMetaFrame();
-            }
-            else {
-                Log("Disconnected");
-            }
+            await MetaClient.ConnectAsync(ServerIP, MetastreamPort);
+            Log("Connected");
+            MetaStream = MetaClient.GetStream();
+            await InitialMetaFrame();
         }
 
         private void UpdateFrame(int[] frame)

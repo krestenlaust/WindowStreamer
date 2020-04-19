@@ -21,9 +21,10 @@ namespace Server
         public IntPtr TargetWindowHandle { get; private set; } = IntPtr.Zero;
 
         //private UdpClient videoStream;
-        private IPEndPoint clientEndpoint;
-        private TcpClient metaStream = new TcpClient(AddressFamily.InterNetwork);
-        private TcpListener metaStreamListener;
+        private IPEndPoint ClientEndpoint;
+        private TcpClient MetaClient = new TcpClient(AddressFamily.InterNetwork);
+        private NetworkStream MetaStream;
+        private TcpListener ClientListener;
         private IPAddress acceptedAddress = IPAddress.Any;
         private List<IPAddress> blockedAddresses = new List<IPAddress>();
         private Size videoResolution;
@@ -60,7 +61,7 @@ namespace Server
         
         private async Task NewFrame()
         {
-            if (metaStream.Connected && streamVideo) //&& Settings.VideoStreaming)
+            if (MetaClient.Connected && streamVideo) //&& Settings.VideoStreaming)
             {
                 #region Work in progrss
                 /*
@@ -77,13 +78,14 @@ namespace Server
                 //byte[] imagePayload;
                 //imagePayload = bmp.ToByteArray(ImageFormat.Bmp);
                 #endregion
+
                 Bitmap bmp = new Bitmap(videoResolution.Width, videoResolution.Height);
                 byte[] bytes = bmp.ToByteArray(System.Drawing.Imaging.ImageFormat.Bmp);
                 //await videoStream.SendAsync(bytes, bytes.Length);
                 Log("Sending frame");
                 using (UdpClient sender = new UdpClient(0))
                 {
-                    await sender.SendAsync(bytes, bytes.Length, clientEndpoint.Address.ToString(), Constants.VideoStreamPort);
+                    await sender.SendAsync(bytes, bytes.Length, ClientEndpoint.Address.ToString(), Constants.VideoStreamPort);
                 }
                 Log("Sent frame");
 
@@ -93,7 +95,7 @@ namespace Server
 
         private async Task StreamCycle()
         {
-            if (metaStream.Connected)
+            if (MetaClient.Connected)
             {
                 if (fps == 0)
                 {
@@ -101,7 +103,7 @@ namespace Server
                     await NewFrame();
                 }
             }
-            while (metaStream.Connected)
+            while (MetaClient.Connected)
             {
                 if (External.TimeStamp() - lastSentFrame > 1000 / fps)
                 {
@@ -116,7 +118,7 @@ namespace Server
         private async Task BeginHandshakeAsync()
         {
             //IPEndPoint clientIPEndPoint = metaStream.Client.RemoteEndPoint as IPEndPoint;
-            clientEndpoint = metaStream.Client.RemoteEndPoint as IPEndPoint;
+            ClientEndpoint = MetaClient.Client.RemoteEndPoint as IPEndPoint;
 
             DialogResult diagres = DialogResult.Ignore;
 
@@ -126,7 +128,7 @@ namespace Server
             {
                 Log("Inbound connection, awaiting prompt return...");
                 ConnectionPrompt prompt = new ConnectionPrompt();
-                prompt.IPAddress = clientEndpoint.Address.ToString();
+                prompt.IPAddress = ClientEndpoint.Address.ToString();
                 prompt.StartPosition = FormStartPosition.CenterParent;
                 prompt.TopMost = true;
                 diagres = prompt.ShowDialog();
@@ -136,15 +138,15 @@ namespace Server
             switch (diagres)
             {
                 case DialogResult.Abort: //Block
-                    BlockIPAddress(clientEndpoint.Address);
-                    Log("Blocked the following IP Address: " + clientEndpoint.Address);
-                    metaStream.Close();
+                    BlockIPAddress(ClientEndpoint.Address);
+                    Log("Blocked the following IP Address: " + ClientEndpoint.Address);
+                    MetaClient.Close();
 
                     StartServerAsync();
                     return;
 
                 case DialogResult.Ignore: //Ignore
-                    metaStream.Close();
+                    MetaClient.Close();
                     Log("Ignored connection");
 
                     StartServerAsync();
@@ -159,38 +161,36 @@ namespace Server
                     //videoStream = new UdpClient(Constants.VideoStreamPort); //JIWJDIAJWDJ
                     break;
                 case DialogResult.No: //Deny
-                    handshakeString = ((int)MetaHeader.ConnectionReply).ToString() + 
-                        Constants.ParameterSeparator + '0';
+                    handshakeString = ((int)MetaHeader.ConnectionReply).ToString() + Constants.ParameterSeparator + '0';
                     break;
                 default:
                     Log("DialogResult returned other than allowed values");
                     return;
             }
 
-            NetworkStream dataStream = metaStream.GetStream();
+            //NetworkStream dataStream = MetaClient.GetStream();
 
             byte[] bytes = Encoding.UTF8.GetBytes(handshakeString);
             External.PadArray(ref bytes, Constants.MetaFrameLength);
 
-            await dataStream.WriteAsync(bytes, 0, bytes.Length);
+            await MetaStream.WriteAsync(bytes, 0, bytes.Length);
             Log($"Handshake: [{handshakeString}]");
             
             if (handshakeString.Split(',')[1] == "0")
             {
-                Log($"Told {clientEndpoint.Address} to try again another day :)");
-                metaStream.Close();
+                Log($"Told {ClientEndpoint.Address} to try again another day :)");
+                MetaClient.Close();
 
                 StartServerAsync();
                 return;
             }
 
-
             tcpLoop = Task.Run(async () =>
             {
-                NetworkStream newDataStream = metaStream.GetStream();
-                while (metaStream.Connected)
+                //NetworkStream newDataStream = MetaClient.GetStream();
+                while (MetaClient.Connected)
                 {
-                    if (External.NetworkStreamLength(ref newDataStream) > 0)
+                    if (External.NetworkStreamLength(ref MetaStream) > 0)
                     {
                         await MetaPacketReceivedAsync();
                     }
@@ -202,7 +202,7 @@ namespace Server
 
         private async Task MetaPacketReceivedAsync()
         {
-            NetworkStream dataStream = metaStream.GetStream();
+            NetworkStream dataStream = MetaClient.GetStream();
             byte[] buffer = new byte[Constants.MetaFrameLength];
             await dataStream.ReadAsync(buffer, 0, Constants.MetaFrameLength);
 
@@ -227,18 +227,16 @@ namespace Server
         private async Task StartServerAsync()
         {
             Log("Starting server...");
-            metaStreamListener = new TcpListener(acceptedAddress, Constants.MetaStreamPort);
-            metaStreamListener.Start();
+            ClientListener = new TcpListener(acceptedAddress, Constants.MetaStreamPort);
+            ClientListener.Start();
             Log($"Server started {acceptedAddress}:{Constants.MetaStreamPort}");
 
             try
             {
-                metaStream = await metaStreamListener.AcceptTcpClientAsync();
-                if (metaStream.Connected)
-                {
-                    Log("Connection recieved...");
-                    await BeginHandshakeAsync();
-                }
+                MetaClient = await ClientListener.AcceptTcpClientAsync();
+                MetaStream = MetaClient.GetStream();
+                Log("Connection recieved...");
+                await BeginHandshakeAsync();
             }
             catch (SocketException) {}
         }
@@ -435,13 +433,13 @@ namespace Server
 
             toolStripStatusLabelResolution.Text = videoResolution.Width.ToString() + "x" + videoResolution.Height.ToString();
 
-            if (metaStream.Connected)
+            if (MetaClient.Connected)
             {
                 string Payload = ((int)MetaHeader.ResolutionUpdate).ToString() +
                     "," +
                     videoResolution.ToString();
 
-                metaStream.GetStream().BeginWrite(Encoding.UTF8.GetBytes(Payload),
+                MetaClient.GetStream().BeginWrite(Encoding.UTF8.GetBytes(Payload),
                     0,
                     Encoding.UTF8.GetByteCount(Payload),
                     new AsyncCallback(CallbackVoid),
