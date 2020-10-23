@@ -130,7 +130,6 @@ namespace Client
                     }
                     Log("Connection lost... or disconnected");
                 });
-                _tcpLoop.Start();
                 Log("Handshake end");
             }
             else if (handshake[1] == "0")
@@ -167,23 +166,32 @@ namespace Client
             }
         }
 
-        private async Task ConnectToServerAsync(IPAddress serverIP, int port)
+        private async Task ConnectToServerAsync()
         {
             if (_metaClient.Connected)
             {
-                Log($"Disconnecting {serverIP}:{port}");
+                Log($"Disconnecting {_serverIP}:{_metastreamPort}");
                 _metaClient.Close();
                 _metaClient = new TcpClient();
             }
 
-            Log($"Connecting to {serverIP}:{port}...");
+            Log($"Connecting to {_serverIP}:{_metastreamPort}...");
 
-            await _metaClient.ConnectAsync(serverIP, port);
+            try
+            {
+                await _metaClient.ConnectAsync(_serverIP, _metastreamPort);
+            }
+            catch (SocketException)
+            {
+                Log("Connection unsuccessful.");
+                return;
+            }
+
             Log("Connected");
 
             _metaStream = _metaClient.GetStream();
 
-            Log($"Awaiting response from {serverIP}");
+            Log($"Awaiting response from {_serverIP}");
             await InitialMetaFrame();
         }
 
@@ -200,15 +208,17 @@ namespace Client
 
         private void toolStripButtonConnect_Click(object sender, EventArgs e)
         {
-            using (var ConnectDialog = new ConnectWindow())
+            using (var connectDialog = new ConnectWindow())
             {
-                if (ConnectDialog.ShowDialog() == DialogResult.OK)
+                if (connectDialog.ShowDialog() == DialogResult.OK)
                 {
-                    Task connectTask = new Task(async () =>
+                    _serverIP = connectDialog.TargetIPAddress;
+                    _metastreamPort = connectDialog.TargetPort;
+
+                    Task.Run(async () =>
                     {
-                        await ConnectToServerAsync(ConnectDialog.TargetIPAddress, ConnectDialog.TargetPort);
+                        await ConnectToServerAsync();
                     });
-                    connectTask.Start();
                 }
             }
         }

@@ -211,12 +211,12 @@ namespace Server
                 Log("Connection lost... or disconnected(tcp loop)");
                 tcpLoop.Dispose();
             });
-            tcpLoop.Start();
         }
 
         private async Task StartServerAsync()
         {
             Log("Starting server...");
+            ClientListener?.Stop();
             ClientListener = new TcpListener(acceptedAddress, Constants.MetaStreamPort);
             ClientListener.Start();
             Log($"Server started {acceptedAddress}:{Constants.MetaStreamPort}");
