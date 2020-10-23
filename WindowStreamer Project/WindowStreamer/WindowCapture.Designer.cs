@@ -130,7 +130,7 @@
             this.toolStripButtonConnect.Name = "toolStripButtonConnect";
             this.toolStripButtonConnect.Size = new System.Drawing.Size(44, 24);
             this.toolStripButtonConnect.Text = "Start";
-            this.toolStripButtonConnect.Click += new System.EventHandler(this.toolStripButtonConnect_Click);
+            this.toolStripButtonConnect.Click += new System.EventHandler(this.toolStripButtonConnect_ClickAsync);
             // 
             // toolStripSeparator2
             // 

@@ -16,15 +16,15 @@ namespace Client
 
     public partial class WindowDisplay : Form
     {
-        private IPAddress ServerIP;
-        private int MetastreamPort;
-        private int VideostreamPort;
-        private Size VideoResolution;
-        private UdpClient VideoClient;
-        private TcpClient MetaClient;
-        private NetworkStream MetaStream;
-        private Task TcpLoop;
-        private Size FormToPanelSize;
+        private IPAddress _serverIP;
+        private int _metastreamPort;
+        private int _videostreamPort;
+        private Size _videoResolution;
+        private UdpClient _videoClient;
+        private TcpClient _metaClient;
+        private NetworkStream _metaStream;
+        private Task _tcpLoop;
+        private Size _formToPanelSize;
         
 
         public WindowDisplay()
@@ -34,13 +34,12 @@ namespace Client
 
         private void WindowDisplay_Load(object sender, EventArgs e)
         {
-            FormToPanelSize = Size.Subtract(this.Size, displayArea.Size);
+            _formToPanelSize = Size.Subtract(this.Size, displayArea.Size);
 
-            //ServerPort = Constants.MetaStreamPort;
-            MetastreamPort = Constants.MetaStreamPort;
+            _metastreamPort = Constants.MetaStreamPort;
 
-            MetaClient = new TcpClient();
-            VideoClient = new UdpClient();
+            _metaClient = new TcpClient();
+            _videoClient = new UdpClient();
 
         }
 
@@ -49,13 +48,13 @@ namespace Client
             Log("Method: ListenForUdp");
             try
             {
-                VideoClient = new UdpClient(VideostreamPort);
+                _videoClient = new UdpClient(_videostreamPort);
             }
             catch (Exception e)
             {
                 Log("Exception: " + e.ToString());
             }
-            IPEndPoint VideoStreamEndPoint = new IPEndPoint(ip, VideostreamPort);
+            IPEndPoint VideoStreamEndPoint = new IPEndPoint(ip, _videostreamPort);
             
             // Notify server that we are ready to start recieving image frames.
             //NetworkStream dataStream = MetaClient.GetStream();
@@ -63,13 +62,13 @@ namespace Client
                 Constants.FramerateCap);
 
             External.PadArray(ref bytes, Constants.MetaFrameLength);
-            await MetaStream.WriteAsync(bytes, 0, bytes.Length);
+            await _metaStream.WriteAsync(bytes, 0, bytes.Length);
             
 
-            while (MetaClient.Connected)
+            while (_metaClient.Connected)
             {
                 Log("Awaiting videostream bytes");
-                byte[] recv_bytes = VideoClient.Receive(ref VideoStreamEndPoint);
+                byte[] recv_bytes = _videoClient.Receive(ref VideoStreamEndPoint);
                 UpdateFrame(recv_bytes.Select(x => (int)x).ToArray());
                 //await Task.Delay(Math.Max((int)(1000 / Constants.FramerateCap), 0));
             }
@@ -77,31 +76,24 @@ namespace Client
 
         private void RecievedVideoFrame(IAsyncResult res)
         {
-            Log("Method: RecievedVideoFrame");
-            IPEndPoint EndPoint = new IPEndPoint(ServerIP, VideostreamPort);
-            byte[] recieved = VideoClient.EndReceive(res, ref EndPoint);
+            IPEndPoint EndPoint = new IPEndPoint(_serverIP, _videostreamPort);
+            byte[] recieved = _videoClient.EndReceive(res, ref EndPoint);
 
-            VideoClient.BeginReceive(new AsyncCallback(RecievedVideoFrame), null);
+            Log("Method: RecievedVideoFrame");
+
+            _videoClient.BeginReceive(new AsyncCallback(RecievedVideoFrame), null);
         }
 
-        private async Task InitialMetaFrame()//IAsyncResult res)
+        private async Task InitialMetaFrame()
         {
             Log("Method: InitialMetaFrame");
-            // NOTE: Remove this, check is made in previus method.
-            if (!MetaClient.Connected)
-            {
-                Log("Connection lost... or disconnected");
-                return;
-            }
-
-            //NetworkStream dataStream = MetaClient.GetStream();
             
-            while (!MetaStream.DataAvailable) {}
+            while (!_metaStream.DataAvailable) {}
 
             Log("Data available");
 
             byte[] buffer = new byte[Constants.MetaFrameLength];
-            MetaStream.Read(buffer, 0, Constants.MetaFrameLength);
+            await _metaStream.ReadAsync(buffer, 0, Constants.MetaFrameLength);
 
             string handshakeString = Encoding.UTF8.GetString(buffer).Replace("\0", "");
             string[] handshake = handshakeString.Split(Constants.ParameterSeparator);
@@ -116,36 +108,29 @@ namespace Client
             if (handshake[1] == "1")
             {
                 Log("Connection request accepted, awaiting handshake finish...");
-                IPEndPoint ipEndPoint = MetaClient.Client.RemoteEndPoint as IPEndPoint;
+                IPEndPoint ipEndPoint = _metaClient.Client.RemoteEndPoint as IPEndPoint;
 
                 UpdateResolution(new Size(
-                    Int32.Parse(handshake[2].Split(Constants.SingleSeparator)[0]),
-                    Int32.Parse(handshake[2].Split(Constants.SingleSeparator)[1])
+                    int.Parse(handshake[2].Split(Constants.SingleSeparator)[0]),
+                    int.Parse(handshake[2].Split(Constants.SingleSeparator)[1])
                     ));
 
-                VideostreamPort = Int32.Parse(handshake[3]);
+                _videostreamPort = int.Parse(handshake[3]);
 
-                try
-                {
-                    VideoClient.BeginReceive(RecievedVideoFrame, VideoClient);
+                _videoClient.BeginReceive(new AsyncCallback(RecievedVideoFrame), null);
 
-                }catch(Exception e)
+                _tcpLoop = Task.Run(async () =>
                 {
-                    Log(e);
-                }
-                //ListenForUdp(ipEndPoint.Address);
-
-                TcpLoop = Task.Run(async () =>
-                {
-                    while (MetaClient.Connected)
+                    while (_metaClient.Connected)
                     {
-                        if (MetaStream.DataAvailable)
+                        if (_metaStream.DataAvailable)
                         {
                             await MetaPacketReceivedAsync();
                         }
                     }
                     Log("Connection lost... or disconnected");
                 });
+                _tcpLoop.Start();
                 Log("Handshake end");
             }
             else if (handshake[1] == "0")
@@ -159,7 +144,7 @@ namespace Client
             Log("Method: MetaPacketReceivedAsync");
             //NetworkStream dataStream = MetaClient.GetStream();
             byte[] buffer = new byte[Constants.MetaFrameLength];
-            await MetaStream.ReadAsync(buffer, 0, Constants.MetaFrameLength);
+            await _metaStream.ReadAsync(buffer, 0, Constants.MetaFrameLength);
 
             string[] metapacket = Encoding.UTF8.GetString(buffer).Replace("\0","").Split(Constants.ParameterSeparator);
 
@@ -170,8 +155,8 @@ namespace Client
                     break;
                 case MetaHeader.ResolutionUpdate:
                     Log("Recieved resolution update");
-                    VideoResolution.Width = int.Parse(metapacket[1].Split(Constants.SingleSeparator)[0]);
-                    VideoResolution.Height = int.Parse(metapacket[1].Split(Constants.SingleSeparator)[1]);
+                    _videoResolution.Width = int.Parse(metapacket[1].Split(Constants.SingleSeparator)[0]);
+                    _videoResolution.Height = int.Parse(metapacket[1].Split(Constants.SingleSeparator)[1]);
                     break;
                 case MetaHeader.UDPReady:
                     Log("Recieved udp ready");
@@ -182,27 +167,30 @@ namespace Client
             }
         }
 
-        private async Task ConnectAsync()
+        private async Task ConnectToServerAsync(IPAddress serverIP, int port)
         {
-            Log($"Connecting to {ServerIP}:{MetastreamPort}...");
-
-            if (MetaClient.Connected)
+            if (_metaClient.Connected)
             {
-                MetaClient.Close();
-                MetaClient = new TcpClient();
+                Log($"Disconnecting {serverIP}:{port}");
+                _metaClient.Close();
+                _metaClient = new TcpClient();
             }
 
-            Log($"Awaiting response from {ServerIP}");
-            await MetaClient.ConnectAsync(ServerIP, MetastreamPort);
+            Log($"Connecting to {serverIP}:{port}...");
+
+            await _metaClient.ConnectAsync(serverIP, port);
             Log("Connected");
-            MetaStream = MetaClient.GetStream();
+
+            _metaStream = _metaClient.GetStream();
+
+            Log($"Awaiting response from {serverIP}");
             await InitialMetaFrame();
         }
 
         private void UpdateFrame(int[] frame)
         {
             Log("Method: UpdateFrame");
-            DirectBitmap bmp = new DirectBitmap(VideoResolution.Width, VideoResolution.Height)
+            DirectBitmap bmp = new DirectBitmap(_videoResolution.Width, _videoResolution.Height)
             {
                 Bits = frame
             };
@@ -216,24 +204,26 @@ namespace Client
             {
                 if (ConnectDialog.ShowDialog() == DialogResult.OK)
                 {
-                    ServerIP = ConnectDialog.TargetIPAddress;
-                    MetastreamPort = ConnectDialog.TargetPort;
-                    ConnectAsync();
+                    Task connectTask = new Task(async () =>
+                    {
+                        await ConnectToServerAsync(ConnectDialog.TargetIPAddress, ConnectDialog.TargetPort);
+                    });
+                    connectTask.Start();
                 }
             }
         }
 
         private void UpdateResolution(Size resolution)
         {
-            VideoResolution.Width = resolution.Width;
-            VideoResolution.Height = resolution.Height;
-            this.Width = VideoResolution.Width;
-            this.Height = VideoResolution.Height;
+            _videoResolution.Width = resolution.Width;
+            _videoResolution.Height = resolution.Height;
+            this.Width = _videoResolution.Width;
+            this.Height = _videoResolution.Height;
         }
 
         private void toolStripButtonResizeToFit_Click(object sender, EventArgs e) => ResizeToFit();
-        private void ResizeToFit() => ResizeDisplayArea(VideoResolution);
-        private void ResizeDisplayArea(Size size) => this.Size = Size.Add(FormToPanelSize, size);
+        private void ResizeToFit() => ResizeDisplayArea(_videoResolution);
+        private void ResizeDisplayArea(Size size) => this.Size = Size.Add(_formToPanelSize, size);
 
         private void Log(object stdout)
         {

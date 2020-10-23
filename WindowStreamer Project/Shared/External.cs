@@ -91,7 +91,7 @@ namespace Shared
     {
         public static byte[] ToByteArray(this Image image, ImageFormat format)
         {
-            using (System.IO.MemoryStream ms = new System.IO.MemoryStream())
+            using (MemoryStream ms = new System.IO.MemoryStream())
             {
                 image.Save(ms, format);
                 return ms.ToArray();
@@ -106,15 +106,6 @@ namespace Shared
             byte[] writeBytes = new byte[fixedLength];
             Array.Copy(byteArray, 0, writeBytes, 0, byteArray.Length);
             byteArray = writeBytes;
-        }
-
-        public static int NetworkStreamLength(ref System.Net.Sockets.NetworkStream ns)
-        {
-            using (System.IO.MemoryStream ms = new System.IO.MemoryStream())
-            {
-                ns.CopyTo(ms);
-                return ms.ToArray().Length;
-            }
         }
 
         /// <summary>
@@ -353,32 +344,4 @@ namespace Shared
             }
         }
     }
-
-    /*
-    public static class Prompt
-    {
-
-        public static string ShowDialog(string text, string caption)
-        {
-            Form prompt = new Form()
-            {
-                Width = 500,
-                Height = 150,
-                FormBorderStyle = FormBorderStyle.FixedDialog,
-                Text = caption,
-                StartPosition = FormStartPosition.CenterParent
-            };
-
-            Label textLabel = new Label() { Left = 50, Top = 20, Text = text};
-            TextBox textBox = new TextBox() { Left = 50, Top = 50, Width = 400 };
-            Button confirmation = new Button() { Text = "Ok", Left = 350, Width = 100, Top = 70, DialogResult = DialogResult.OK };
-            confirmation.Click += (sender, e) => { prompt.Close(); };
-            prompt.Controls.Add(textBox);
-            prompt.Controls.Add(confirmation);
-            prompt.Controls.Add(textLabel);
-            prompt.AcceptButton = confirmation;
-
-            return prompt.ShowDialog() == DialogResult.OK ? textBox.Text : "";
-        }
-    }*/
 }

@@ -117,12 +117,10 @@ namespace Server
 
         private async Task BeginHandshakeAsync()
         {
-            //IPEndPoint clientIPEndPoint = metaStream.Client.RemoteEndPoint as IPEndPoint;
             ClientEndpoint = MetaClient.Client.RemoteEndPoint as IPEndPoint;
 
-            DialogResult diagres = DialogResult.Ignore;
+            DialogResult diaglogResult = DialogResult.Ignore;
 
-            string handshakeString;
 
             await Task.Run(() =>
             {
@@ -131,25 +129,27 @@ namespace Server
                 prompt.IPAddress = ClientEndpoint.Address.ToString();
                 prompt.StartPosition = FormStartPosition.CenterParent;
                 prompt.TopMost = true;
-                diagres = prompt.ShowDialog();
+                diaglogResult = prompt.ShowDialog();
             });
             Log("Prompt returned...");
 
-            switch (diagres)
+            string handshakeString;
+
+            switch (diaglogResult)
             {
                 case DialogResult.Abort: //Block
                     BlockIPAddress(ClientEndpoint.Address);
                     Log("Blocked the following IP Address: " + ClientEndpoint.Address);
                     MetaClient.Close();
 
-                    StartServerAsync();
+                    await StartServerAsync();
                     return;
 
                 case DialogResult.Ignore: //Ignore
                     MetaClient.Close();
                     Log("Ignored connection");
 
-                    StartServerAsync();
+                    await StartServerAsync();
                     return;
 
                 case DialogResult.Yes: //Accept
@@ -168,8 +168,6 @@ namespace Server
                     return;
             }
 
-            //NetworkStream dataStream = MetaClient.GetStream();
-
             byte[] bytes = Encoding.UTF8.GetBytes(handshakeString);
             External.PadArray(ref bytes, Constants.MetaFrameLength);
 
@@ -181,48 +179,40 @@ namespace Server
                 Log($"Told {ClientEndpoint.Address} to try again another day :)");
                 MetaClient.Close();
 
-                StartServerAsync();
+                await StartServerAsync();
                 return;
             }
 
-            tcpLoop = Task.Run(async () =>
+            tcpLoop = Task.Run(() =>
             {
-                //NetworkStream newDataStream = MetaClient.GetStream();
                 while (MetaClient.Connected)
                 {
-                    if (External.NetworkStreamLength(ref MetaStream) > 0)
+                    if (MetaStream.DataAvailable)
                     {
-                        await MetaPacketReceivedAsync();
+                        byte[] buffer = new byte[Constants.MetaFrameLength];
+                        MetaStream.Read(buffer, 0, Constants.MetaFrameLength);
+
+                        string[] metapacket = Encoding.UTF8.GetString(buffer).Replace("\0", "").Split(Constants.ParameterSeparator);
+
+                        switch ((MetaHeader)int.Parse(metapacket[0]))
+                        {
+                            case MetaHeader.Key:
+                                Log($"Recieved key: {metapacket[1]}");
+                                break;
+                                /*
+                                case MetaHeader.UDPReady:
+                                    videoStream = new UdpClient(Constants.VideoStreamPort);
+                                    IPEndPoint ip = metaStream.Client.RemoteEndPoint as IPEndPoint;
+                                    videoStream.Connect(ip.Address, Constants.VideoStreamPort);
+                                    break;*/
+                        }
                     }
                 }
                 Log("Connection lost... or disconnected(tcp loop)");
                 tcpLoop.Dispose();
             });
+            tcpLoop.Start();
         }
-
-        private async Task MetaPacketReceivedAsync()
-        {
-            NetworkStream dataStream = MetaClient.GetStream();
-            byte[] buffer = new byte[Constants.MetaFrameLength];
-            await dataStream.ReadAsync(buffer, 0, Constants.MetaFrameLength);
-
-            string[] metapacket = Encoding.UTF8.GetString(buffer).Replace("\0", "").Split(Constants.ParameterSeparator);
-
-            switch ((MetaHeader)int.Parse(metapacket[0]))
-            {
-                case MetaHeader.Key:
-                    
-                    break;
-                /*
-                case MetaHeader.UDPReady:
-                    videoStream = new UdpClient(Constants.VideoStreamPort);
-                    IPEndPoint ip = metaStream.Client.RemoteEndPoint as IPEndPoint;
-                    videoStream.Connect(ip.Address, Constants.VideoStreamPort);
-                    break;*/
-            }
-        }
-
-
 
         private async Task StartServerAsync()
         {
@@ -231,19 +221,16 @@ namespace Server
             ClientListener.Start();
             Log($"Server started {acceptedAddress}:{Constants.MetaStreamPort}");
 
-            try
-            {
-                MetaClient = await ClientListener.AcceptTcpClientAsync();
-                MetaStream = MetaClient.GetStream();
-                Log("Connection recieved...");
-                await BeginHandshakeAsync();
-            }
-            catch (SocketException) {}
+
+            MetaClient = await ClientListener.AcceptTcpClientAsync();
+            MetaStream = MetaClient.GetStream();
+            Log("Connection recieved...");
+            await BeginHandshakeAsync();
         }
 
         private void BlockIPAddress(IPAddress ip)
         {
-            Console.WriteLine("Blocking ip: " + ip.ToString());
+            Console.WriteLine("Blocking IP: " + ip.ToString());
         }
 
         protected override void WndProc(ref Message m)
@@ -386,7 +373,7 @@ namespace Server
             new Options().ShowDialog();
         }
 
-        private void toolStripButtonConnect_Click(object sender, EventArgs e)
+        private async void toolStripButtonConnect_ClickAsync(object sender, EventArgs e)
         {
             if (toolStripTextBoxAcceptableHost.Text == "")
             {
@@ -398,7 +385,7 @@ namespace Server
                 return;
             }
             
-            StartServerAsync();
+            await StartServerAsync();
         }
 
         private void toolStripButtonApplicationPicker_MouseHover(object sender, EventArgs e)
