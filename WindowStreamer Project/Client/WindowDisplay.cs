@@ -8,7 +8,7 @@ using System.Windows.Forms;
 using System.Net.Sockets;
 using System.Net;
 using Shared;
-using Shared.Networking.Protocol;
+using Shared.Networking;
 
 namespace Client
 {
@@ -38,13 +38,11 @@ namespace Client
             _metastreamPort = Constants.MetaStreamPort;
 
             _metaClient = new TcpClient();
-            _videoClient = new UdpClient();
-
         }
 
-        private async Task ListenForUdp(IPAddress ip)
+        private void ListenForUdp(IPAddress ip)
         {
-            Log("Method: ListenForUdp");
+            Log("Listening for udp");
             try
             {
                 _videoClient = new UdpClient(_videostreamPort);
@@ -54,22 +52,16 @@ namespace Client
                 Log("Exception: " + e.ToString());
             }
             IPEndPoint VideoStreamEndPoint = new IPEndPoint(ip, _videostreamPort);
-            
-            // Notify server that we are ready to start recieving image frames.
-            //NetworkStream dataStream = MetaClient.GetStream();
-            byte[] bytes = Encoding.UTF8.GetBytes(((int)MetaHeader.UDPReady).ToString() + Constants.ParameterSeparator +
-                Constants.FramerateCap);
 
-            External.PadArray(ref bytes, Constants.MetaFrameLength);
-            await _metaStream.WriteAsync(bytes, 0, bytes.Length);
-            
+            // Notify server that we are ready to start recieving image frames.
+            Send.UDPReady(_metaStream, Constants.FramerateCap);            
 
             while (_metaClient.Connected)
             {
                 Log("Awaiting videostream bytes");
+
                 byte[] recv_bytes = _videoClient.Receive(ref VideoStreamEndPoint);
                 UpdateFrame(recv_bytes.Select(x => (int)x).ToArray());
-                //await Task.Delay(Math.Max((int)(1000 / Constants.FramerateCap), 0));
             }
         }
 
@@ -87,7 +79,7 @@ namespace Client
         {
             Log("Method: InitialMetaFrame");
             
-            while (!_metaStream.DataAvailable) {}
+            while (_metaClient.Available < Constants.MetaFrameLength) {}
 
             Log("Data available");
 
@@ -95,28 +87,32 @@ namespace Client
             await _metaStream.ReadAsync(buffer, 0, Constants.MetaFrameLength);
 
             string handshakeString = Encoding.UTF8.GetString(buffer).Replace("\0", "");
-            string[] handshake = handshakeString.Split(Constants.ParameterSeparator);
             Log($"Handshake:[{handshakeString}]");
 
-            if (handshake[0] != ((int)MetaHeader.ConnectionReply).ToString())
+            string[] handshake = handshakeString.Split(Constants.ParameterSeparator);
+
+            if (handshake[0] != ((int)ServerPacketHeader.ConnectionReply).ToString())
             {
                 Log("Expected handshake, got something else.");
                 await InitialMetaFrame();
                 return;
             }
 
-            if (handshake[1] == "1")
+            if (!Parse.ConnectionReply(handshake, out bool accepted, out Size resolution, out int videoPort))
+            {
+                Log("Failed to parse packet");
+                await InitialMetaFrame();
+                return;
+            }
+
+            if (accepted)
             {
                 Log("Connection request accepted, awaiting handshake finish...");
                 IPEndPoint ipEndPoint = _metaClient.Client.RemoteEndPoint as IPEndPoint;
                  
-                 
-                SetResolution(new Size(
-                    int.Parse(handshake[2].Split(Constants.SingleSeparator)[0]),
-                    int.Parse(handshake[2].Split(Constants.SingleSeparator)[1])
-                    ));
+                SetResolution(resolution);
                 
-                _videostreamPort = int.Parse(handshake[3]);
+                _videostreamPort = videoPort;
 
                 _videoClient.BeginReceive(new AsyncCallback(RecievedVideoFrame), null);
 
@@ -124,7 +120,7 @@ namespace Client
                 {
                     while (_metaClient.Connected)
                     {
-                        if (_metaStream.DataAvailable)
+                        if (_metaClient.Available >= Constants.MetaFrameLength)
                         {
                             await MetaPacketReceivedAsync();
                         }
@@ -133,13 +129,9 @@ namespace Client
                 });
                 Log("Handshake end");
             }
-            else if (handshake[1] == "0")
-            {
-                Log("Denied :(");
-            }
             else
             {
-                Log($"Handshake 2. Parameter: {handshake[1]}");
+                Log("Connection request denied :(");
             }
         }
 
@@ -151,21 +143,13 @@ namespace Client
 
             string[] metapacket = Encoding.UTF8.GetString(buffer).Replace("\0","").Split(Constants.ParameterSeparator);
 
-            switch ((MetaHeader)int.Parse(metapacket[0]))
+            switch ((ServerPacketHeader)int.Parse(metapacket[0]))
             {
-                case MetaHeader.ConnectionReply:
-                    Log("Recieved connections reply");
-                    break;
-                case MetaHeader.ResolutionUpdate:
+                case ServerPacketHeader.ResolutionUpdate:
                     Log("Recieved resolution update");
-                    _videoResolution.Width = int.Parse(metapacket[1].Split(Constants.SingleSeparator)[0]);
-                    _videoResolution.Height = int.Parse(metapacket[1].Split(Constants.SingleSeparator)[1]);
-                    break;
-                case MetaHeader.UDPReady:
-                    Log("Recieved udp ready");
-                    //VideoStream = new UdpClient(Constants.VideoStreamPort);
-                    //IPEndPoint ip = MetaStream.Client.RemoteEndPoint as IPEndPoint;
-                    //VideoStream.Connect(ip.Address, serverInfo.VideostreamPort);
+                    Parse.ResolutionChange(metapacket, out Size resolution);
+
+                    _videoResolution = resolution;
                     break;
             }
         }

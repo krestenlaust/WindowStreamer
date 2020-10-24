@@ -1,19 +1,15 @@
 ﻿using System;
-//using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using System.Net;
 using System.Net.Sockets;
-using Shared;
-using Shared.Networking.Protocol;
-using System.Timers;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Linq;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using Shared;
+using Shared.Networking;
 
 namespace Server
 {
@@ -53,7 +49,7 @@ namespace Server
 
             TransparencyKey = Color.Orange;
             captureArea.BackColor = Color.Orange;
-            UpdateResolution();
+            UpdateResolutionVariables();
 
             toolStripTextBoxTargetPort.Text = Constants.MetaStreamPort.ToString();
         }
@@ -114,6 +110,20 @@ namespace Server
             Log("Metastream not connected");
         }
 
+        private async Task StartServerAsync()
+        {
+            _clientListener?.Stop();
+            _clientListener = new TcpListener(_acceptedAddress, Constants.MetaStreamPort);
+            _clientListener.Start();
+            Log($"Server started {_acceptedAddress}:{Constants.MetaStreamPort}");
+
+            _metaClient = await _clientListener.AcceptTcpClientAsync();
+            _metaStream = _metaClient.GetStream();
+            Log("Connection recieved...");
+            await BeginHandshakeAsync();
+        }
+
+
         private async Task BeginHandshakeAsync()
         {
             _clientEndpoint = _metaClient.Client.RemoteEndPoint as IPEndPoint;
@@ -123,87 +133,74 @@ namespace Server
 
             await Task.Run(() =>
             {
-                Log("Inbound connection, awaiting prompt return...");
+                Log("Inbound connection, awaiting action...");
                 ConnectionPrompt prompt = new ConnectionPrompt();
                 prompt.IPAddress = _clientEndpoint.Address.ToString();
                 prompt.StartPosition = FormStartPosition.CenterParent;
                 prompt.TopMost = true;
                 diaglogResult = prompt.ShowDialog();
             });
-            Log("Prompt returned...");
-
-            string handshakeString;
 
             switch (diaglogResult)
             {
                 case DialogResult.Abort: //Block
-                    BlockIPAddress(_clientEndpoint.Address);
                     Log("Blocked the following IP Address: " + _clientEndpoint.Address);
+
+                    BlockIPAddress(_clientEndpoint.Address);
                     _metaClient.Close();
 
                     await StartServerAsync();
                     return;
 
                 case DialogResult.Ignore: //Ignore
-                    _metaClient.Close();
                     Log("Ignored connection");
+
+                    _metaClient.Close();
 
                     await StartServerAsync();
                     return;
 
                 case DialogResult.Yes: //Accept
-                    handshakeString = ((int)MetaHeader.ConnectionReply).ToString() + 
-                        Constants.ParameterSeparator + '1' + 
-                        Constants.ParameterSeparator + _videoResolution.Width + Constants.SingleSeparator + _videoResolution.Height + 
-                        Constants.ParameterSeparator + Constants.VideoStreamPort;
+                    Log("Accepting connection");
+
+                    Shared.Networking.Send.ConnectionReply(_metaStream, true, _videoResolution, Constants.VideoStreamPort);
 
                     //videoStream = new UdpClient(Constants.VideoStreamPort); //JIWJDIAJWDJ
                     break;
                 case DialogResult.No: //Deny
-                    handshakeString = ((int)MetaHeader.ConnectionReply).ToString() + Constants.ParameterSeparator + '0';
-                    break;
-                default:
-                    Log("DialogResult returned other than allowed values");
+                    Shared.Networking.Send.ConnectionReply(_metaStream, false, Size.Empty, 0);
+
+                    Log($"Told {_clientEndpoint.Address} to try again another day :)");
+                    _metaClient.Close();
+
+                    await StartServerAsync();
                     return;
-            }
-
-            byte[] bytes = Encoding.UTF8.GetBytes(handshakeString);
-            External.PadArray(ref bytes, Constants.MetaFrameLength);
-
-            await _metaStream.WriteAsync(bytes, 0, bytes.Length);
-            Log($"Handshake: [{handshakeString}]");
-            
-            if (handshakeString.Split(',')[1] == "0")
-            {
-                Log($"Told {_clientEndpoint.Address} to try again another day :)");
-                _metaClient.Close();
-
-                await StartServerAsync();
-                return;
+                default:
+                    Log("DialogResult returned unknown value");
+                    return;
             }
 
             _tcpLoop = Task.Run(() =>
             {
                 while (_metaClient.Connected)
                 {
-                    if (_metaStream.DataAvailable)
+                    if (_metaClient.Available >= Constants.MetaFrameLength)
                     {
                         byte[] buffer = new byte[Constants.MetaFrameLength];
                         _metaStream.Read(buffer, 0, Constants.MetaFrameLength);
 
                         string[] metapacket = Encoding.UTF8.GetString(buffer).Replace("\0", "").Split(Constants.ParameterSeparator);
 
-                        switch ((MetaHeader)int.Parse(metapacket[0]))
+                        switch ((ClientPacketHeader)int.Parse(metapacket[0]))
                         {
-                            case MetaHeader.Key:
+                            case ClientPacketHeader.Key:
                                 Log($"Recieved key: {metapacket[1]}");
                                 break;
-                                /*
-                                case MetaHeader.UDPReady:
-                                    videoStream = new UdpClient(Constants.VideoStreamPort);
-                                    IPEndPoint ip = metaStream.Client.RemoteEndPoint as IPEndPoint;
-                                    videoStream.Connect(ip.Address, Constants.VideoStreamPort);
-                                    break;*/
+                            case ClientPacketHeader.UDPReady:/*
+                                _videoStream = new UdpClient(Constants.VideoStreamPort);
+                                IPEndPoint ip = metaStream.Client.RemoteEndPoint as IPEndPoint;
+                                videoStream.Connect(ip.Address, Constants.VideoStreamPort);*/
+                                break;
                         }
                     }
                 }
@@ -212,27 +209,12 @@ namespace Server
             });
         }
 
-        private async Task StartServerAsync()
-        {
-            Log("Starting server...");
-            _clientListener?.Stop();
-            _clientListener = new TcpListener(_acceptedAddress, Constants.MetaStreamPort);
-            _clientListener.Start();
-            Log($"Server started {_acceptedAddress}:{Constants.MetaStreamPort}");
-
-
-            _metaClient = await _clientListener.AcceptTcpClientAsync();
-            _metaStream = _metaClient.GetStream();
-            Log("Connection recieved...");
-            await BeginHandshakeAsync();
-        }
-
         private void BlockIPAddress(IPAddress ip)
         {
             Console.WriteLine("Blocking IP: " + ip.ToString());
         }
 
-        private void WindowCapture_Resize(object sender, EventArgs e) => UpdateResolution();
+        private void WindowCapture_Resize(object sender, EventArgs e) => UpdateResolutionVariables();
 
         private void toolStripButtonFocusOnWindow_Click(object sender, EventArgs e)
         {
@@ -274,6 +256,9 @@ namespace Server
             toolStripButtonApplicationSelector.ToolTipText = "Click here";
         }
 
+        /// <summary>
+        /// Notifies client of resolution change.
+        /// </summary>
         private void NotifyResolutionChange()
         {
             if (_metaClient?.Connected == false)
@@ -282,10 +267,10 @@ namespace Server
                 return;
             }
 
-            Networking.ResolutionChange(_metaStream, _videoResolution);
+            Send.ResolutionChange(_metaStream, _videoResolution);
         }
 
-        private void UpdateResolution()
+        private void UpdateResolutionVariables()
         {
             if (_fullscreen)
             {
@@ -300,6 +285,8 @@ namespace Server
             }
 
             toolStripStatusLabelResolution.Text = _videoResolution.Width.ToString() + "x" + _videoResolution.Height.ToString();
+
+            NotifyResolutionChange();
         }
 
         private void Log(object stdout, [CallerLineNumber] int line=0)
@@ -341,13 +328,13 @@ namespace Server
                     _fullscreen = true;
                     _lastResolution = this.Size;
                     this.Size = _fullscreenSize;
-                    NotifyResolutionChange();
+                    UpdateResolutionVariables();
                 }
                 else if (m.WParam == new IntPtr(0xF120))
                 {
                     _fullscreen = false;
                     this.Size = _lastResolution;
-                    NotifyResolutionChange();
+                    UpdateResolutionVariables();
                 }
             }
             base.WndProc(ref m);

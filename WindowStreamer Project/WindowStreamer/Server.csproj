@@ -76,6 +76,9 @@
     <Compile Include="..\Shared\External.cs">
       <Link>External.cs</Link>
     </Compile>
+    <Compile Include="..\Shared\Networking.cs">
+      <Link>Networking.cs</Link>
+    </Compile>
     <Compile Include="ConnectionPrompt.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -89,7 +92,6 @@
       <DependentUpon>LogWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="NativeMethods.cs" />
-    <Compile Include="Networking.cs" />
     <Compile Include="Options.cs">
       <SubType>Form</SubType>
     </Compile>

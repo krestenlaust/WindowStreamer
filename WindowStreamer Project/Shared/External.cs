@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using System.IO;
 using System.Text;
@@ -57,36 +56,6 @@ namespace Shared
         }
     }
 
-    namespace Networking
-    {
-        namespace Protocol
-        {
-            public enum MetaHeader
-            {
-                ConnectionReply = 0,
-                ResolutionUpdate = 1,
-                UDPReady = 2,
-                Key = 3,
-            }
-        }
-
-        class GeneralPacket
-        {
-            public Protocol.MetaHeader type;
-            public string data;
-
-            public void ParsePacket(string data)
-            {
-
-            }
-
-            public override string ToString()
-            {
-                return base.ToString();
-            }
-        }
-    }
-
     public static class ImageExtensions
     {
         public static byte[] ToByteArray(this Image image, ImageFormat format)
@@ -101,7 +70,7 @@ namespace Shared
 
     public static class External
     {
-        public static void PadArray(ref byte[] byteArray, int fixedLength)
+        public static void PadArray(byte[] byteArray, int fixedLength)
         {
             byte[] writeBytes = new byte[fixedLength];
             Array.Copy(byteArray, 0, writeBytes, 0, byteArray.Length);
