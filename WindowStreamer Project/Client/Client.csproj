@@ -64,6 +64,7 @@
     <Compile Include="ConnectWindow.Designer.cs">
       <DependentUpon>ConnectWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="NativeMethods.cs" />
     <Compile Include="Options.cs">
       <SubType>Form</SubType>
     </Compile>

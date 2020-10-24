@@ -143,10 +143,11 @@ namespace Shared
 
     }
 
+    /*
     public class DirectBitmap : IDisposable
     {
         public Bitmap Bitmap { get; private set; }
-        public Int32[] Bits { get; set; } //private set;
+        public int[] Bits { get; set; } //private set;
         public bool Disposed { get; private set; }
         public int Height { get; private set; }
         public int Width { get; private set; }
@@ -190,14 +191,14 @@ namespace Shared
 
     public class LockBitmap
     {
-        Bitmap source = null;
-        IntPtr Iptr = IntPtr.Zero;
-        System.Drawing.Imaging.BitmapData bitmapData = null;
-
         public byte[] Pixels { get; set; }
         public int Depth { get; private set; }
         public int Width { get; private set; }
         public int Height { get; private set; }
+
+        private Bitmap source = null;
+        private IntPtr Iptr = IntPtr.Zero;
+        private BitmapData bitmapData = null;
 
         public LockBitmap(Bitmap source)
         {
@@ -222,7 +223,7 @@ namespace Shared
                 Rectangle rect = new Rectangle(0, 0, Width, Height);
 
                 // get source bitmap pixel format size
-                Depth = System.Drawing.Bitmap.GetPixelFormatSize(source.PixelFormat);
+                Depth = Bitmap.GetPixelFormatSize(source.PixelFormat);
 
                 // Check if bpp (Bits Per Pixel) is 8, 24, or 32
                 if (Depth != 8 && Depth != 24 && Depth != 32)
@@ -343,5 +344,5 @@ namespace Shared
                 Pixels[i] = color.B;
             }
         }
-    }
+    }*/
 }

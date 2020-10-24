@@ -9,7 +9,6 @@ using System.Net.Sockets;
 using System.Net;
 using Shared;
 using Shared.Networking.Protocol;
-using System.Runtime.InteropServices;
 
 namespace Client
 {
@@ -101,6 +100,7 @@ namespace Client
 
             if (handshake[0] != ((int)MetaHeader.ConnectionReply).ToString())
             {
+                Log("Expected handshake, got something else.");
                 await InitialMetaFrame();
                 return;
             }
@@ -109,12 +109,13 @@ namespace Client
             {
                 Log("Connection request accepted, awaiting handshake finish...");
                 IPEndPoint ipEndPoint = _metaClient.Client.RemoteEndPoint as IPEndPoint;
-
-                UpdateResolution(new Size(
+                 
+                 
+                SetResolution(new Size(
                     int.Parse(handshake[2].Split(Constants.SingleSeparator)[0]),
                     int.Parse(handshake[2].Split(Constants.SingleSeparator)[1])
                     ));
-
+                
                 _videostreamPort = int.Parse(handshake[3]);
 
                 _videoClient.BeginReceive(new AsyncCallback(RecievedVideoFrame), null);
@@ -136,12 +137,15 @@ namespace Client
             {
                 Log("Denied :(");
             }
+            else
+            {
+                Log($"Handshake 2. Parameter: {handshake[1]}");
+            }
         }
 
         private async Task MetaPacketReceivedAsync()
         {
             Log("Method: MetaPacketReceivedAsync");
-            //NetworkStream dataStream = MetaClient.GetStream();
             byte[] buffer = new byte[Constants.MetaFrameLength];
             await _metaStream.ReadAsync(buffer, 0, Constants.MetaFrameLength);
 
@@ -198,12 +202,12 @@ namespace Client
         private void UpdateFrame(int[] frame)
         {
             Log("Method: UpdateFrame");
-            DirectBitmap bmp = new DirectBitmap(_videoResolution.Width, _videoResolution.Height)
+            /*DirectBitmap bmp = new DirectBitmap(_videoResolution.Width, _videoResolution.Height)
             {
                 Bits = frame
             };
 
-            displayArea.Image = bmp.Bitmap;
+            displayArea.Image = bmp.Bitmap;*/
         }
 
         private void toolStripButtonConnect_Click(object sender, EventArgs e)
@@ -223,7 +227,7 @@ namespace Client
             }
         }
 
-        private void UpdateResolution(Size resolution)
+        private void SetResolution(Size resolution)
         {
             _videoResolution.Width = resolution.Width;
             _videoResolution.Height = resolution.Height;
@@ -245,19 +249,5 @@ namespace Client
         {
             new Options().ShowDialog();
         }
-
-        //Click through
-        /*[DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
-        public static extern void mouse_event(uint dwFlags, uint dx, uint dy, uint cButtons, uint dwExtraInfo);
-
-        private const int MOUSEEVENTF_LEFTDOWN = 0x02;
-        private const int MOUSEEVENTF_LEFTUP = 0x04;
-
-        public void PerformClick()
-        {
-            uint X = (uint)Cursor.Position.X;
-            uint Y = (uint)Cursor.Position.Y;
-            mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, X, Y, 0, 0);
-        }*/
     }
 }

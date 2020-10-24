@@ -88,6 +88,8 @@
     <Compile Include="LogWindow.Designer.cs">
       <DependentUpon>LogWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="NativeMethods.cs" />
+    <Compile Include="Networking.cs" />
     <Compile Include="Options.cs">
       <SubType>Form</SubType>
     </Compile>
