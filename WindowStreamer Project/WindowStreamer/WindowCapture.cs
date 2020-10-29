@@ -10,6 +10,8 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Shared;
 using Shared.Networking;
+using System.IO;
+using System.Drawing.Imaging;
 
 namespace Server
 {
@@ -19,6 +21,7 @@ namespace Server
 
         //private UdpClient videoStream;
         private IPEndPoint _clientEndpoint;
+        private UdpClient _videoClient;
         private TcpClient _metaClient = new TcpClient(AddressFamily.InterNetwork);
         private NetworkStream _metaStream;
         private TcpListener _clientListener;
@@ -26,7 +29,6 @@ namespace Server
         private Size _videoResolution;
         private bool _fullscreen = false;
         private bool _streamVideo = true;
-        private double _framesPerSecond = 10;
         private Task _tcpLoop = null;
         private Size _lastResolution;
         private Size _fullscreenSize = new Size
@@ -34,7 +36,6 @@ namespace Server
             Width = 400,
             Height = 100
         };
-        private long _lastSentFrame;
         private Point _captureAreaTopLeft;
         private Cursor _applicationSelectorCursor;
 
@@ -53,61 +54,61 @@ namespace Server
 
             toolStripTextBoxTargetPort.Text = Constants.MetaStreamPort.ToString();
         }
-        
-        private async Task NewFrame()
+
+        private Bitmap GetScreenPicture(int x, int y, int width, int height)
         {
-            if (_metaClient.Connected && _streamVideo)
+            // TODO: Debug funktionen for at oversætte skærm koordinaterne til pixels.
+            /*Rectangle screen = Rectangle.Empty;
+            this.Invoke((MethodInvoker)delegate
             {
-                #region Work in progrss
-                /*
-                DirectBitmap bmp = new DirectBitmap(CaptureSize.Width, CaptureSize.Height);
-                Graphics g = Graphics.FromImage(bmp.Bitmap);
+                screen = Screen.FromControl(this).WorkingArea;
+            });
+            
+            position.X = position.X / screen.Width; // screen.Width: 1920
+            position.Y = position.Y / screen.Height; // screen.Height: 1080
+            */
 
-                g.CopyFromScreen(CaptureAreaTopLeft, CaptureAreaTopLeft, CaptureSize);
-                g.Dispose();*/
+            Rectangle rect = new Rectangle(x, y, width, height);
+            Bitmap bmp = new Bitmap(rect.Width, rect.Height, PixelFormat.Format32bppArgb);
+            
+            Graphics g = Graphics.FromImage(bmp);
+            g.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size, CopyPixelOperation.SourceCopy);
 
-                //byte[] imagePayload = CompressImage(bmp);
-                //LockBitmap lbmp = new LockBitmap(bmp);
-                //byte[] imagePayload = lbmp.Pixels;
-
-                //byte[] imagePayload;
-                //imagePayload = bmp.ToByteArray(ImageFormat.Bmp);
-                #endregion
-
-                Bitmap bmp = new Bitmap(_videoResolution.Width, _videoResolution.Height);
-                byte[] bytes = bmp.ToByteArray(System.Drawing.Imaging.ImageFormat.Bmp);
-                //await videoStream.SendAsync(bytes, bytes.Length);
-                Log("Sending frame");
-                using (UdpClient sender = new UdpClient(0))
-                {
-                    await sender.SendAsync(bytes, bytes.Length, _clientEndpoint.Address.ToString(), Constants.VideoStreamPort);
-                }
-                Log("Sent frame");
-
-                //await VideoStream.SendAsync(imagePayload, imagePayload.Length);
-            }
+            return bmp;
         }
 
-        private async Task StreamCycle()
+        private void SendPicture(UdpClient client)
         {
-            if (_metaClient.Connected)
+            if (!client.Client.Connected || !_streamVideo)
+                return;
+
+            Bitmap bmp = GetScreenPicture(captureArea.Location.X + Location.X, captureArea.Location.Y + Location.Y, _videoResolution.Width, _videoResolution.Height);
+            byte[] bytes;
+
+            using (var stream = new MemoryStream())
             {
-                if (_framesPerSecond == 0)
-                {
-                    _lastSentFrame = External.TimeStamp();
-                    await NewFrame();
-                }
+                bmp.Save(stream, ImageFormat.Png);
+                bytes = stream.ToArray();
+                Log(bytes.Length);
             }
-            while (_metaClient.Connected)
+
+            client.Send(bytes, bytes.Length);
+        }
+
+        private void ConnectVideoStream()
+        {
+            _videoClient.Connect(_clientEndpoint.Address, Constants.VideoStreamPort);
+            _videoClient.DontFragment = false;
+        }
+
+        private async void BeginStreamLoop()
+        {
+            while (_streamVideo)
             {
-                if (External.TimeStamp() - _lastSentFrame > 1000 / _framesPerSecond)
-                {
-                    _lastSentFrame = External.TimeStamp();
-                    await NewFrame();
-                    Log("Fixed Framerate tick");
-                }
+                SendPicture(_videoClient);
+
+                await Task.Delay(50);
             }
-            Log("Metastream not connected");
         }
 
         private async Task StartServerAsync()
@@ -120,16 +121,48 @@ namespace Server
             _metaClient = await _clientListener.AcceptTcpClientAsync();
             _metaStream = _metaClient.GetStream();
             Log("Connection recieved...");
-            await BeginHandshakeAsync();
+
+            _tcpLoop = Task.Run(() =>
+            {
+                while (_metaClient.Connected)
+                {
+                    if (_metaClient.Available >= Constants.MetaFrameLength)
+                    {
+                        byte[] buffer = new byte[Constants.MetaFrameLength];
+                        _metaStream.Read(buffer, 0, Constants.MetaFrameLength);
+
+                        string[] metapacket = Encoding.UTF8.GetString(buffer).Replace("\0", "").Split(Constants.ParameterSeparator);
+
+                        switch ((ClientPacketHeader)int.Parse(metapacket[0]))
+                        {
+                            case ClientPacketHeader.Key:
+                                Log($"Recieved key: {metapacket[1]}");
+                                break;
+                            case ClientPacketHeader.UDPReady:
+                                Log("Udp ready!");
+                                ConnectVideoStream();
+                                BeginStreamLoop();
+                                break;
+                            default:
+                                Log($"Recived this: {metapacket[0]}");
+                                break;
+                        }
+                    }
+                }
+                Log("Connection lost... or disconnected(tcp loop)");
+            });
+
+            await HandshakeAsync();
         }
 
-
-        private async Task BeginHandshakeAsync()
+        /// <summary>
+        /// Make handshake and begin listening loop.
+        /// </summary>
+        /// <returns></returns>
+        private async Task HandshakeAsync()
         {
             _clientEndpoint = _metaClient.Client.RemoteEndPoint as IPEndPoint;
-
             DialogResult diaglogResult = DialogResult.Ignore;
-
 
             await Task.Run(() =>
             {
@@ -163,12 +196,15 @@ namespace Server
                 case DialogResult.Yes: //Accept
                     Log("Accepting connection");
 
-                    Shared.Networking.Send.ConnectionReply(_metaStream, true, _videoResolution, Constants.VideoStreamPort);
+                    _videoClient = new UdpClient();
+                    _streamVideo = true;
+                    Send.ConnectionReply(_metaStream, true, _videoResolution, Constants.VideoStreamPort);
+                    
 
                     //videoStream = new UdpClient(Constants.VideoStreamPort); //JIWJDIAJWDJ
                     break;
                 case DialogResult.No: //Deny
-                    Shared.Networking.Send.ConnectionReply(_metaStream, false, Size.Empty, 0);
+                    Send.ConnectionReply(_metaStream, false, Size.Empty, 0);
 
                     Log($"Told {_clientEndpoint.Address} to try again another day :)");
                     _metaClient.Close();
@@ -179,34 +215,6 @@ namespace Server
                     Log("DialogResult returned unknown value");
                     return;
             }
-
-            _tcpLoop = Task.Run(() =>
-            {
-                while (_metaClient.Connected)
-                {
-                    if (_metaClient.Available >= Constants.MetaFrameLength)
-                    {
-                        byte[] buffer = new byte[Constants.MetaFrameLength];
-                        _metaStream.Read(buffer, 0, Constants.MetaFrameLength);
-
-                        string[] metapacket = Encoding.UTF8.GetString(buffer).Replace("\0", "").Split(Constants.ParameterSeparator);
-
-                        switch ((ClientPacketHeader)int.Parse(metapacket[0]))
-                        {
-                            case ClientPacketHeader.Key:
-                                Log($"Recieved key: {metapacket[1]}");
-                                break;
-                            case ClientPacketHeader.UDPReady:/*
-                                _videoStream = new UdpClient(Constants.VideoStreamPort);
-                                IPEndPoint ip = metaStream.Client.RemoteEndPoint as IPEndPoint;
-                                videoStream.Connect(ip.Address, Constants.VideoStreamPort);*/
-                                break;
-                        }
-                    }
-                }
-                Log("Connection lost... or disconnected(tcp loop)");
-                _tcpLoop.Dispose();
-            });
         }
 
         private void BlockIPAddress(IPAddress ip)
@@ -291,9 +299,15 @@ namespace Server
 
         private void Log(object stdout, [CallerLineNumber] int line=0)
         {
-            string time = DateTime.Now.ToString("h:mm:ss:FFF");
+            string time = DateTime.Now.ToString("mm:ss:ffff");
 
-            toolStripStatusLabelLatest.Text = "[" + time + "] " + stdout.ToString();
+            if (this.IsHandleCreated)
+            {
+                this.Invoke((MethodInvoker)delegate
+                {
+                    toolStripStatusLabelLatest.Text = "[" + time + "] " + stdout.ToString();
+                });
+            }
             Debug.WriteLine($"[{time}][{line}][Server] {stdout}");
         }
 

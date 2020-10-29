@@ -74,7 +74,8 @@ namespace Shared
                 packet.Append(framerateCap);
 
                 byte[] bytes = Encoding.UTF8.GetBytes(packet.ToString());
-                External.PadArray(bytes, Constants.MetaFrameLength);
+                External.PadArray(ref bytes, Constants.MetaFrameLength);
+                stream.Write(bytes, 0, bytes.Length);
             }
 
             public static void ResolutionChange(NetworkStream stream, Size resolution)
@@ -88,7 +89,7 @@ namespace Shared
                 packet.Append(resolution.Height);
 
                 byte[] bytes = Encoding.UTF8.GetBytes(packet.ToString());
-                External.PadArray(bytes, Constants.MetaFrameLength);
+                External.PadArray(ref bytes, Constants.MetaFrameLength);
                 stream.Write(bytes, 0, bytes.Length);
             }
 
@@ -113,7 +114,7 @@ namespace Shared
                 }
 
                 byte[] bytes = Encoding.UTF8.GetBytes(packet.ToString());
-                External.PadArray(bytes, Constants.MetaFrameLength);
+                External.PadArray(ref bytes, Constants.MetaFrameLength);
                 stream.Write(bytes, 0, bytes.Length);
             }
         }

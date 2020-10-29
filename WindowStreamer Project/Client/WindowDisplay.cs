@@ -9,6 +9,7 @@ using System.Net.Sockets;
 using System.Net;
 using Shared;
 using Shared.Networking;
+using System.IO;
 
 namespace Client
 {
@@ -24,6 +25,7 @@ namespace Client
         private NetworkStream _metaStream;
         private Task _tcpLoop;
         private Size _formToPanelSize;
+        private MemoryStream _bitmapStream;
         
 
         public WindowDisplay()
@@ -40,46 +42,31 @@ namespace Client
             _metaClient = new TcpClient();
         }
 
-        private void ListenForUdp(IPAddress ip)
+        private void UpdateFrame(byte[] frame)
         {
-            Log("Listening for udp");
-            try
-            {
-                _videoClient = new UdpClient(_videostreamPort);
-            }
-            catch (Exception e)
-            {
-                Log("Exception: " + e.ToString());
-            }
-            IPEndPoint VideoStreamEndPoint = new IPEndPoint(ip, _videostreamPort);
+            Log("Updated frame");
+            _bitmapStream?.Dispose();
+            _bitmapStream = new MemoryStream(frame);
 
-            // Notify server that we are ready to start recieving image frames.
-            Send.UDPReady(_metaStream, Constants.FramerateCap);            
-
-            while (_metaClient.Connected)
-            {
-                Log("Awaiting videostream bytes");
-
-                byte[] recv_bytes = _videoClient.Receive(ref VideoStreamEndPoint);
-                UpdateFrame(recv_bytes.Select(x => (int)x).ToArray());
-            }
+            displayArea.Image = new Bitmap(_bitmapStream);
         }
 
-        private void RecievedVideoFrame(IAsyncResult res)
+        private void RecieveDatagram(IAsyncResult res)
         {
             IPEndPoint EndPoint = new IPEndPoint(_serverIP, _videostreamPort);
+
             byte[] recieved = _videoClient.EndReceive(res, ref EndPoint);
 
-            Log("Method: RecievedVideoFrame");
+            UpdateFrame(recieved);
 
-            _videoClient.BeginReceive(new AsyncCallback(RecievedVideoFrame), null);
+            _videoClient.BeginReceive(new AsyncCallback(RecieveDatagram), null);
         }
 
         private async Task InitialMetaFrame()
         {
-            Log("Method: InitialMetaFrame");
-            
-            while (_metaClient.Available < Constants.MetaFrameLength) {}
+            while (_metaClient.Available < Constants.MetaFrameLength)
+            {
+            }
 
             Log("Data available");
 
@@ -98,60 +85,60 @@ namespace Client
                 return;
             }
 
-            if (!Parse.ConnectionReply(handshake, out bool accepted, out Size resolution, out int videoPort))
+            if (Parse.ConnectionReply(handshake, out bool accepted, out Size resolution, out int videoPort))
+            {
+                _videoResolution = resolution;
+                _videostreamPort = videoPort;
+                ResizeDisplayArea(_videoResolution);
+            }
+            else
             {
                 Log("Failed to parse packet");
                 await InitialMetaFrame();
                 return;
             }
 
-            if (accepted)
-            {
-                Log("Connection request accepted, awaiting handshake finish...");
-                IPEndPoint ipEndPoint = _metaClient.Client.RemoteEndPoint as IPEndPoint;
-                 
-                SetResolution(resolution);
-                
-                _videostreamPort = videoPort;
-
-                _videoClient.BeginReceive(new AsyncCallback(RecievedVideoFrame), null);
-
-                _tcpLoop = Task.Run(async () =>
-                {
-                    while (_metaClient.Connected)
-                    {
-                        if (_metaClient.Available >= Constants.MetaFrameLength)
-                        {
-                            await MetaPacketReceivedAsync();
-                        }
-                    }
-                    Log("Connection lost... or disconnected");
-                });
-                Log("Handshake end");
-            }
-            else
+            if (!accepted)
             {
                 Log("Connection request denied :(");
+                return;
             }
-        }
 
-        private async Task MetaPacketReceivedAsync()
-        {
-            Log("Method: MetaPacketReceivedAsync");
-            byte[] buffer = new byte[Constants.MetaFrameLength];
-            await _metaStream.ReadAsync(buffer, 0, Constants.MetaFrameLength);
+            Log("Connection request accepted, awaiting handshake finish...");
+            IPEndPoint ipEndPoint = _metaClient.Client.RemoteEndPoint as IPEndPoint;
+                 
+            //SetResolution(resolution);
 
-            string[] metapacket = Encoding.UTF8.GetString(buffer).Replace("\0","").Split(Constants.ParameterSeparator);
+            _videoClient = new UdpClient(videoPort);
+            _videoClient.BeginReceive(new AsyncCallback(RecieveDatagram), null);
 
-            switch ((ServerPacketHeader)int.Parse(metapacket[0]))
+            Send.UDPReady(_metaStream, Constants.FramerateCap);
+
+            await Task.Run(async () =>
             {
-                case ServerPacketHeader.ResolutionUpdate:
-                    Log("Recieved resolution update");
-                    Parse.ResolutionChange(metapacket, out Size resolution);
+                while (_metaClient.Connected)
+                {
+                    if (_metaClient.Available >= Constants.MetaFrameLength)
+                    {
+                        byte[] packet = new byte[Constants.MetaFrameLength];
+                        await _metaStream.ReadAsync(packet, 0, Constants.MetaFrameLength);
 
-                    _videoResolution = resolution;
-                    break;
-            }
+                        string[] metapacket = Encoding.UTF8.GetString(packet).Replace("\0", "").Split(Constants.ParameterSeparator);
+
+                        switch ((ServerPacketHeader)int.Parse(metapacket[0]))
+                        {
+                            case ServerPacketHeader.ResolutionUpdate:
+                                Log("Recieved resolution update");
+                                Parse.ResolutionChange(metapacket, out _videoResolution);
+                                break;
+                            default:
+                                Log($"Recieved this: {metapacket[0]}");
+                                break;
+                        }
+                    }
+                }
+                Log("Connection lost... or disconnected");
+            });
         }
 
         private async Task ConnectToServerAsync()
@@ -181,17 +168,6 @@ namespace Client
 
             Log($"Awaiting response from {_serverIP}");
             await InitialMetaFrame();
-        }
-
-        private void UpdateFrame(int[] frame)
-        {
-            Log("Method: UpdateFrame");
-            /*DirectBitmap bmp = new DirectBitmap(_videoResolution.Width, _videoResolution.Height)
-            {
-                Bits = frame
-            };
-
-            displayArea.Image = bmp.Bitmap;*/
         }
 
         private void toolStripButtonConnect_Click(object sender, EventArgs e)

@@ -70,7 +70,7 @@ namespace Shared
 
     public static class External
     {
-        public static void PadArray(byte[] byteArray, int fixedLength)
+        public static void PadArray(ref byte[] byteArray, int fixedLength)
         {
             byte[] writeBytes = new byte[fixedLength];
             Array.Copy(byteArray, 0, writeBytes, 0, byteArray.Length);
