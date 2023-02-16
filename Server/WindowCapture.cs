@@ -64,7 +64,7 @@ namespace Server
             {
                 screen = Screen.FromControl(this).WorkingArea;
             });
-            
+
             position.X = position.X / screen.Width; // screen.Width: 1920
             position.Y = position.Y / screen.Height; // screen.Height: 1080
             */
@@ -81,7 +81,9 @@ namespace Server
         private void SendPicture(UdpClient client)
         {
             if (!client.Client.Connected || !_streamVideo)
+            {
                 return;
+            }
 
             Bitmap bmp = GetScreenPicture(captureArea.Location.X + Location.X, captureArea.Location.Y + Location.Y, _videoResolution.Width, _videoResolution.Height);
             byte[] bytes;

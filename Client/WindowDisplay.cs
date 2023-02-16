@@ -126,6 +126,12 @@ namespace Client
                             case ServerPacketHeader.ResolutionUpdate:
                                 Log("Recieved resolution update");
                                 Parse.ResolutionChange(metapacket, out _videoResolution);
+
+                                if (toolStripButtonResizeToFit.Checked)
+                                {
+                                    ResizeToFit();
+                                }
+
                                 break;
                             default:
                                 Log($"Recieved this: {metapacket[0]}");
@@ -191,7 +197,13 @@ namespace Client
             this.Height = _videoResolution.Height;
         }
 
-        private void toolStripButtonResizeToFit_Click(object sender, EventArgs e) => ResizeToFit();
+        private void toolStripButtonResizeToFit_Click(object sender, EventArgs e)
+        {
+            if (toolStripButtonResizeToFit.Checked)
+            {
+                ResizeToFit();
+            }
+        }
 
         private void ResizeToFit() => ResizeDisplayArea(_videoResolution);
 

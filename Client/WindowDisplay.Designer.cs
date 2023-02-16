@@ -33,11 +33,11 @@
             this.toolStripButtonResizeToFit = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButtonConnect = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripButtonOptions = new System.Windows.Forms.ToolStripButton();
             this.statusStripFooter = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabelLatest = new System.Windows.Forms.ToolStripStatusLabel();
             this.displayArea = new System.Windows.Forms.PictureBox();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripButtonOptions = new System.Windows.Forms.ToolStripButton();
             this.toolStripHeader.SuspendLayout();
             this.statusStripFooter.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.displayArea)).BeginInit();
@@ -55,24 +55,25 @@
             this.toolStripButtonOptions});
             this.toolStripHeader.Location = new System.Drawing.Point(0, 0);
             this.toolStripHeader.Name = "toolStripHeader";
-            this.toolStripHeader.Size = new System.Drawing.Size(800, 27);
+            this.toolStripHeader.Size = new System.Drawing.Size(384, 25);
             this.toolStripHeader.TabIndex = 0;
             this.toolStripHeader.Text = "toolStrip1";
             // 
             // toolStripButtonResizeToFit
             // 
+            this.toolStripButtonResizeToFit.CheckOnClick = true;
             this.toolStripButtonResizeToFit.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.toolStripButtonResizeToFit.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonResizeToFit.Image")));
             this.toolStripButtonResizeToFit.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonResizeToFit.Name = "toolStripButtonResizeToFit";
-            this.toolStripButtonResizeToFit.Size = new System.Drawing.Size(93, 24);
+            this.toolStripButtonResizeToFit.Size = new System.Drawing.Size(73, 22);
             this.toolStripButtonResizeToFit.Text = "Resize to Fit";
             this.toolStripButtonResizeToFit.Click += new System.EventHandler(this.toolStripButtonResizeToFit_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 27);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
             // 
             // toolStripButtonConnect
             // 
@@ -80,40 +81,14 @@
             this.toolStripButtonConnect.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonConnect.Image")));
             this.toolStripButtonConnect.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonConnect.Name = "toolStripButtonConnect";
-            this.toolStripButtonConnect.Size = new System.Drawing.Size(130, 24);
+            this.toolStripButtonConnect.Size = new System.Drawing.Size(105, 22);
             this.toolStripButtonConnect.Text = "Connect to Server";
             this.toolStripButtonConnect.Click += new System.EventHandler(this.toolStripButtonConnect_Click);
-            // 
-            // statusStripFooter
-            // 
-            this.statusStripFooter.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.statusStripFooter.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripStatusLabelLatest});
-            this.statusStripFooter.Location = new System.Drawing.Point(0, 427);
-            this.statusStripFooter.Name = "statusStripFooter";
-            this.statusStripFooter.Size = new System.Drawing.Size(800, 25);
-            this.statusStripFooter.TabIndex = 1;
-            this.statusStripFooter.Text = "statusStrip1";
-            // 
-            // toolStripStatusLabelLatest
-            // 
-            this.toolStripStatusLabelLatest.Name = "toolStripStatusLabelLatest";
-            this.toolStripStatusLabelLatest.Size = new System.Drawing.Size(15, 20);
-            this.toolStripStatusLabelLatest.Text = "..";
-            // 
-            // displayArea
-            // 
-            this.displayArea.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.displayArea.Location = new System.Drawing.Point(0, 27);
-            this.displayArea.Name = "displayArea";
-            this.displayArea.Size = new System.Drawing.Size(800, 400);
-            this.displayArea.TabIndex = 2;
-            this.displayArea.TabStop = false;
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 27);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
             // toolStripButtonOptions
             // 
@@ -121,18 +96,48 @@
             this.toolStripButtonOptions.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonOptions.Image")));
             this.toolStripButtonOptions.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonOptions.Name = "toolStripButtonOptions";
-            this.toolStripButtonOptions.Size = new System.Drawing.Size(65, 24);
+            this.toolStripButtonOptions.Size = new System.Drawing.Size(53, 22);
             this.toolStripButtonOptions.Text = "Options";
             this.toolStripButtonOptions.Click += new System.EventHandler(this.toolStripButtonOptions_Click);
             // 
+            // statusStripFooter
+            // 
+            this.statusStripFooter.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.statusStripFooter.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabelLatest});
+            this.statusStripFooter.Location = new System.Drawing.Point(0, 239);
+            this.statusStripFooter.Name = "statusStripFooter";
+            this.statusStripFooter.Padding = new System.Windows.Forms.Padding(1, 0, 10, 0);
+            this.statusStripFooter.Size = new System.Drawing.Size(384, 22);
+            this.statusStripFooter.TabIndex = 1;
+            this.statusStripFooter.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabelLatest
+            // 
+            this.toolStripStatusLabelLatest.Name = "toolStripStatusLabelLatest";
+            this.toolStripStatusLabelLatest.Size = new System.Drawing.Size(13, 17);
+            this.toolStripStatusLabelLatest.Text = "..";
+            // 
+            // displayArea
+            // 
+            this.displayArea.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.displayArea.Location = new System.Drawing.Point(0, 25);
+            this.displayArea.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.displayArea.Name = "displayArea";
+            this.displayArea.Size = new System.Drawing.Size(384, 214);
+            this.displayArea.TabIndex = 2;
+            this.displayArea.TabStop = false;
+            // 
             // WindowDisplay
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 452);
+            this.ClientSize = new System.Drawing.Size(384, 261);
             this.Controls.Add(this.displayArea);
             this.Controls.Add(this.statusStripFooter);
             this.Controls.Add(this.toolStripHeader);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.MinimumSize = new System.Drawing.Size(400, 300);
             this.Name = "WindowDisplay";
             this.Text = "Window Streamer - Client";
             this.Load += new System.EventHandler(this.WindowDisplay_Load);
