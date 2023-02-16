@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Shared;
-using Shared.Networking;
+using Protocol;
 
 namespace Server
 {
@@ -20,25 +20,25 @@ namespace Server
         public IntPtr TargetWindowHandle { get; private set; } = IntPtr.Zero;
 
         //private UdpClient videoStream;
-        private IPEndPoint _clientEndpoint;
-        private UdpClient _videoClient;
-        private TcpClient _metaClient = new TcpClient(AddressFamily.InterNetwork);
-        private NetworkStream _metaStream;
-        private TcpListener _clientListener;
-        private IPAddress _acceptedAddress = IPAddress.Any;
-        private Size _videoResolution;
-        private bool _fullscreen = false;
-        private bool _streamVideo = true;
-        private Task _tcpLoop = null;
-        private Size _lastResolution;
-        private Size _fullscreenSize = new Size
+        private IPEndPoint clientEndpoint;
+        private UdpClient videoClient;
+        private TcpClient metaClient = new TcpClient(AddressFamily.InterNetwork);
+        private NetworkStream metaStream;
+        private TcpListener clientListener;
+        private IPAddress acceptedAddress = IPAddress.Any;
+        private Size videoResolution;
+        private bool fullscreen = false;
+        private bool streamVideo = true;
+        private Task tcpLoop = null;
+        private Size lastResolution;
+        private Size fullscreenSize = new Size
         {
             Width = 400,
             Height = 100
         };
 
-        private Point _captureAreaTopLeft;
-        private Cursor _applicationSelectorCursor;
+        private Point captureAreaTopLeft;
+        private Cursor applicationSelectorCursor;
 
         public WindowCapture()
         {
@@ -47,13 +47,13 @@ namespace Server
 
         private void WindowCapture_Load(object sender, EventArgs e)
         {
-            _applicationSelectorCursor = Cursors.Hand;
+            applicationSelectorCursor = Cursors.Hand;
 
             TransparencyKey = Color.Orange;
             captureArea.BackColor = Color.Orange;
             UpdateResolutionVariables();
 
-            toolStripTextBoxTargetPort.Text = Constants.MetaStreamPort.ToString();
+            toolStripTextBoxTargetPort.Text = DefaultValues.MetaStreamPort.ToString();
         }
 
         private Bitmap GetScreenPicture(int x, int y, int width, int height)
@@ -81,12 +81,12 @@ namespace Server
 
         private void SendPicture(UdpClient client)
         {
-            if (!client.Client.Connected || !_streamVideo)
+            if (!client.Client.Connected || !streamVideo)
             {
                 return;
             }
 
-            Bitmap bmp = GetScreenPicture(captureArea.Location.X + Location.X, captureArea.Location.Y + Location.Y, _videoResolution.Width, _videoResolution.Height);
+            Bitmap bmp = GetScreenPicture(captureArea.Location.X + Location.X, captureArea.Location.Y + Location.Y, videoResolution.Width, videoResolution.Height);
             byte[] bytes;
 
             using (var stream = new MemoryStream())
@@ -101,15 +101,15 @@ namespace Server
 
         private void ConnectVideoStream()
         {
-            _videoClient.Connect(_clientEndpoint.Address, Constants.VideoStreamPort);
-            _videoClient.DontFragment = false;
+            videoClient.Connect(clientEndpoint.Address, DefaultValues.VideoStreamPort);
+            videoClient.DontFragment = false;
         }
 
         private async void BeginStreamLoop()
         {
-            while (_streamVideo)
+            while (streamVideo)
             {
-                SendPicture(_videoClient);
+                SendPicture(videoClient);
 
                 await Task.Delay(50);
             }
@@ -117,23 +117,23 @@ namespace Server
 
         private async Task StartServerAsync()
         {
-            _clientListener?.Stop();
-            _clientListener = new TcpListener(_acceptedAddress, Constants.MetaStreamPort);
-            _clientListener.Start();
-            Log($"Server started {_acceptedAddress}:{Constants.MetaStreamPort}");
+            clientListener?.Stop();
+            clientListener = new TcpListener(acceptedAddress, DefaultValues.MetaStreamPort);
+            clientListener.Start();
+            Log($"Server started {acceptedAddress}:{DefaultValues.MetaStreamPort}");
 
-            _metaClient = await _clientListener.AcceptTcpClientAsync();
-            _metaStream = _metaClient.GetStream();
+            metaClient = await clientListener.AcceptTcpClientAsync();
+            metaStream = metaClient.GetStream();
             Log("Connection recieved...");
 
-            _tcpLoop = Task.Run(() =>
+            tcpLoop = Task.Run(() =>
             {
-                while (_metaClient.Connected)
+                while (metaClient.Connected)
                 {
-                    if (_metaClient.Available >= Constants.MetaFrameLength)
+                    if (metaClient.Available >= Constants.MetaFrameLength)
                     {
                         byte[] buffer = new byte[Constants.MetaFrameLength];
-                        _metaStream.Read(buffer, 0, Constants.MetaFrameLength);
+                        metaStream.Read(buffer, 0, Constants.MetaFrameLength);
 
                         string[] metapacket = Encoding.UTF8.GetString(buffer).Replace("\0", string.Empty).Split(Constants.ParameterSeparator);
 
@@ -166,14 +166,14 @@ namespace Server
         /// <returns></returns>
         private async Task HandshakeAsync()
         {
-            _clientEndpoint = _metaClient.Client.RemoteEndPoint as IPEndPoint;
+            clientEndpoint = metaClient.Client.RemoteEndPoint as IPEndPoint;
             DialogResult diaglogResult = DialogResult.Ignore;
 
             await Task.Run(() =>
             {
                 Log("Inbound connection, awaiting action...");
                 ConnectionPrompt prompt = new ConnectionPrompt();
-                prompt.IPAddress = _clientEndpoint.Address.ToString();
+                prompt.IPAddress = clientEndpoint.Address.ToString();
                 prompt.StartPosition = FormStartPosition.CenterParent;
                 prompt.TopMost = true;
                 diaglogResult = prompt.ShowDialog();
@@ -182,10 +182,10 @@ namespace Server
             switch (diaglogResult)
             {
                 case DialogResult.Abort: //Block
-                    Log("Blocked the following IP Address: " + _clientEndpoint.Address);
+                    Log("Blocked the following IP Address: " + clientEndpoint.Address);
 
-                    BlockIPAddress(_clientEndpoint.Address);
-                    _metaClient.Close();
+                    BlockIPAddress(clientEndpoint.Address);
+                    metaClient.Close();
 
                     await StartServerAsync();
                     return;
@@ -193,7 +193,7 @@ namespace Server
                 case DialogResult.Ignore: //Ignore
                     Log("Ignored connection");
 
-                    _metaClient.Close();
+                    metaClient.Close();
 
                     await StartServerAsync();
                     return;
@@ -201,17 +201,17 @@ namespace Server
                 case DialogResult.Yes: //Accept
                     Log("Accepting connection");
 
-                    _videoClient = new UdpClient();
-                    _streamVideo = true;
-                    Send.ConnectionReply(_metaStream, true, _videoResolution, Constants.VideoStreamPort);
+                    videoClient = new UdpClient();
+                    streamVideo = true;
+                    Send.ConnectionReply(metaStream, true, videoResolution, DefaultValues.VideoStreamPort);
 
                     //videoStream = new UdpClient(Constants.VideoStreamPort); //JIWJDIAJWDJ
                     break;
                 case DialogResult.No: //Deny
-                    Send.ConnectionReply(_metaStream, false, Size.Empty, 0);
+                    Send.ConnectionReply(metaStream, false, Size.Empty, 0);
 
-                    Log($"Told {_clientEndpoint.Address} to try again another day :)");
-                    _metaClient.Close();
+                    Log($"Told {clientEndpoint.Address} to try again another day :)");
+                    metaClient.Close();
 
                     await StartServerAsync();
                     return;
@@ -241,9 +241,9 @@ namespace Server
         {
             if (toolStripTextBoxAcceptableHost.Text == string.Empty)
             {
-                _acceptedAddress = IPAddress.Any;
+                acceptedAddress = IPAddress.Any;
             }
-            else if (!IPAddress.TryParse(toolStripTextBoxAcceptableHost.Text, out _acceptedAddress))
+            else if (!IPAddress.TryParse(toolStripTextBoxAcceptableHost.Text, out acceptedAddress))
             {
                 MessageBox.Show("IP not valid", "Error");
                 return;
@@ -270,31 +270,31 @@ namespace Server
         /// </summary>
         private void NotifyResolutionChange()
         {
-            if (_metaClient?.Connected == false)
+            if (metaClient?.Connected == false)
             {
                 Log("Not connected...");
                 return;
             }
 
-            Send.ResolutionChange(_metaStream, _videoResolution);
+            Send.ResolutionChange(metaStream, videoResolution);
         }
 
         private void UpdateResolutionVariables()
         {
-            if (_fullscreen)
+            if (fullscreen)
             {
-                _videoResolution.Height = Screen.FromControl(this).Bounds.Height;
-                _videoResolution.Width = Screen.FromControl(this).Bounds.Width;
-                _captureAreaTopLeft = Screen.FromControl(this).Bounds.Location;
+                videoResolution.Height = Screen.FromControl(this).Bounds.Height;
+                videoResolution.Width = Screen.FromControl(this).Bounds.Width;
+                captureAreaTopLeft = Screen.FromControl(this).Bounds.Location;
             }
             else
             {
-                _videoResolution.Height = captureArea.Height;
-                _videoResolution.Width = captureArea.Width;
-                _captureAreaTopLeft = captureArea.Bounds.Location;
+                videoResolution.Height = captureArea.Height;
+                videoResolution.Width = captureArea.Width;
+                captureAreaTopLeft = captureArea.Bounds.Location;
             }
 
-            toolStripStatusLabelResolution.Text = _videoResolution.Width.ToString() + "x" + _videoResolution.Height.ToString();
+            toolStripStatusLabelResolution.Text = videoResolution.Width.ToString() + "x" + videoResolution.Height.ToString();
 
             NotifyResolutionChange();
         }
@@ -341,15 +341,15 @@ namespace Server
             {
                 if (m.WParam == new IntPtr(0xF030)) // Maximize event - SC_MAXIMIZE from Winuser.h
                 {
-                    _fullscreen = true;
-                    _lastResolution = this.Size;
-                    this.Size = _fullscreenSize;
+                    fullscreen = true;
+                    lastResolution = this.Size;
+                    this.Size = fullscreenSize;
                     UpdateResolutionVariables();
                 }
                 else if (m.WParam == new IntPtr(0xF120))
                 {
-                    _fullscreen = false;
-                    this.Size = _lastResolution;
+                    fullscreen = false;
+                    this.Size = lastResolution;
                     UpdateResolutionVariables();
                 }
             }

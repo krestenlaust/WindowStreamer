@@ -13,14 +13,8 @@
     <OutputPath>bin\: Client - Debug\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\Shared\Constants.cs">
-      <Link>Constants.cs</Link>
-    </Compile>
     <Compile Include="..\Shared\External.cs">
       <Link>External.cs</Link>
-    </Compile>
-    <Compile Include="..\Shared\Networking.cs">
-      <Link>Networking.cs</Link>
     </Compile>
     <None Include="..\.editorconfig">
       <Link>.editorconfig</Link>
@@ -39,4 +33,8 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="7.0.0" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Protocol\Protocol.csproj" />
+  </ItemGroup>
+  <Import Project="..\Shared\Shared.projitems" Label="Shared" />
 </Project>

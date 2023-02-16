@@ -9,9 +9,8 @@
     <Import_RootNamespace>Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Constants.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DefaultValues.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)External.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Networking.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)OldStrings.xml" />

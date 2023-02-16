@@ -33,14 +33,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Shared\Constants.cs">
-      <Link>Constants.cs</Link>
-    </Compile>
     <Compile Include="..\Shared\External.cs">
       <Link>External.cs</Link>
-    </Compile>
-    <Compile Include="..\Shared\Networking.cs">
-      <Link>Networking.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -72,4 +66,8 @@
     <Compile Remove="Preferences.cs" />
     <EmbeddedResource Remove="Prompt.resx" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Protocol\Protocol.csproj" />
+  </ItemGroup>
+  <Import Project="..\Shared\Shared.projitems" Label="Shared" />
 </Project>

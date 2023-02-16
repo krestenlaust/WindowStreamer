@@ -7,22 +7,22 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Shared;
-using Shared.Networking;
+using Protocol;
 
 namespace Client
 {
     public partial class WindowDisplay : Form
     {
-        private IPAddress _serverIP;
-        private int _metastreamPort;
-        private int _videostreamPort;
-        private Size _videoResolution;
-        private UdpClient _videoClient;
-        private TcpClient _metaClient;
-        private NetworkStream _metaStream;
-        private Task _tcpLoop;
-        private Size _formToPanelSize;
-        private MemoryStream _bitmapStream;
+        private IPAddress serverIP;
+        private int metastreamPort;
+        private int videostreamPort;
+        private Size videoResolution;
+        private UdpClient videoClient;
+        private TcpClient metaClient;
+        private NetworkStream metaStream;
+        private Task tcpLoop;
+        private Size formToPanelSize;
+        private MemoryStream bitmapStream;
 
         public WindowDisplay()
         {
@@ -31,43 +31,43 @@ namespace Client
 
         private void WindowDisplay_Load(object sender, EventArgs e)
         {
-            _formToPanelSize = Size.Subtract(this.Size, displayArea.Size);
+            formToPanelSize = Size.Subtract(this.Size, displayArea.Size);
 
-            _metastreamPort = Constants.MetaStreamPort;
+            metastreamPort = DefaultValues.MetaStreamPort;
 
-            _metaClient = new TcpClient();
+            metaClient = new TcpClient();
         }
 
         private void UpdateFrame(byte[] frame)
         {
             Log("Updated frame");
-            _bitmapStream?.Dispose();
-            _bitmapStream = new MemoryStream(frame);
+            bitmapStream?.Dispose();
+            bitmapStream = new MemoryStream(frame);
 
-            displayArea.Image = new Bitmap(_bitmapStream);
+            displayArea.Image = new Bitmap(bitmapStream);
         }
 
         private void RecieveDatagram(IAsyncResult res)
         {
-            IPEndPoint endPoint = new IPEndPoint(_serverIP, _videostreamPort);
+            IPEndPoint endPoint = new IPEndPoint(serverIP, videostreamPort);
 
-            byte[] recieved = _videoClient.EndReceive(res, ref endPoint);
+            byte[] recieved = videoClient.EndReceive(res, ref endPoint);
 
             UpdateFrame(recieved);
 
-            _videoClient.BeginReceive(new AsyncCallback(RecieveDatagram), null);
+            videoClient.BeginReceive(new AsyncCallback(RecieveDatagram), null);
         }
 
         private async Task InitialMetaFrame()
         {
-            while (_metaClient.Available < Constants.MetaFrameLength)
+            while (metaClient.Available < Constants.MetaFrameLength)
             {
             }
 
             Log("Data available");
 
             byte[] buffer = new byte[Constants.MetaFrameLength];
-            await _metaStream.ReadAsync(buffer, 0, Constants.MetaFrameLength);
+            await metaStream.ReadAsync(buffer, 0, Constants.MetaFrameLength);
 
             string handshakeString = Encoding.UTF8.GetString(buffer).Replace("\0", string.Empty);
             Log($"Handshake:[{handshakeString}]");
@@ -83,9 +83,9 @@ namespace Client
 
             if (Parse.ConnectionReply(handshake, out bool accepted, out Size resolution, out int videoPort))
             {
-                _videoResolution = resolution;
-                _videostreamPort = videoPort;
-                ResizeDisplayArea(_videoResolution);
+                videoResolution = resolution;
+                videostreamPort = videoPort;
+                ResizeDisplayArea(videoResolution);
             }
             else
             {
@@ -101,23 +101,23 @@ namespace Client
             }
 
             Log("Connection request accepted, awaiting handshake finish...");
-            IPEndPoint ipEndPoint = _metaClient.Client.RemoteEndPoint as IPEndPoint;
+            IPEndPoint ipEndPoint = metaClient.Client.RemoteEndPoint as IPEndPoint;
 
             //SetResolution(resolution);
 
-            _videoClient = new UdpClient(videoPort);
-            _videoClient.BeginReceive(new AsyncCallback(RecieveDatagram), null);
+            videoClient = new UdpClient(videoPort);
+            videoClient.BeginReceive(new AsyncCallback(RecieveDatagram), null);
 
-            Send.UDPReady(_metaStream, Constants.FramerateCap);
+            Send.UDPReady(metaStream, DefaultValues.FramerateCap);
 
             await Task.Run(async () =>
             {
-                while (_metaClient.Connected)
+                while (metaClient.Connected)
                 {
-                    if (_metaClient.Available >= Constants.MetaFrameLength)
+                    if (metaClient.Available >= Constants.MetaFrameLength)
                     {
                         byte[] packet = new byte[Constants.MetaFrameLength];
-                        await _metaStream.ReadAsync(packet, 0, Constants.MetaFrameLength);
+                        await metaStream.ReadAsync(packet, 0, Constants.MetaFrameLength);
 
                         string[] metapacket = Encoding.UTF8.GetString(packet).Replace("\0", string.Empty).Split(Constants.ParameterSeparator);
 
@@ -125,7 +125,7 @@ namespace Client
                         {
                             case ServerPacketHeader.ResolutionUpdate:
                                 Log("Recieved resolution update");
-                                Parse.ResolutionChange(metapacket, out _videoResolution);
+                                Parse.ResolutionChange(metapacket, out videoResolution);
 
                                 if (toolStripButtonResizeToFit.Checked)
                                 {
@@ -146,18 +146,18 @@ namespace Client
 
         private async Task ConnectToServerAsync()
         {
-            if (_metaClient.Connected)
+            if (metaClient.Connected)
             {
-                Log($"Disconnecting {_serverIP}:{_metastreamPort}");
-                _metaClient.Close();
-                _metaClient = new TcpClient();
+                Log($"Disconnecting {serverIP}:{metastreamPort}");
+                metaClient.Close();
+                metaClient = new TcpClient();
             }
 
-            Log($"Connecting to {_serverIP}:{_metastreamPort}...");
+            Log($"Connecting to {serverIP}:{metastreamPort}...");
 
             try
             {
-                await _metaClient.ConnectAsync(_serverIP, _metastreamPort);
+                await metaClient.ConnectAsync(serverIP, metastreamPort);
             }
             catch (SocketException)
             {
@@ -167,9 +167,9 @@ namespace Client
 
             Log("Connected");
 
-            _metaStream = _metaClient.GetStream();
+            metaStream = metaClient.GetStream();
 
-            Log($"Awaiting response from {_serverIP}");
+            Log($"Awaiting response from {serverIP}");
             await InitialMetaFrame();
         }
 
@@ -179,8 +179,8 @@ namespace Client
             {
                 if (connectDialog.ShowDialog() == DialogResult.OK)
                 {
-                    _serverIP = connectDialog.TargetIPAddress;
-                    _metastreamPort = connectDialog.TargetPort;
+                    serverIP = connectDialog.TargetIPAddress;
+                    metastreamPort = connectDialog.TargetPort;
 
                     Task.Run(async () =>
                     {
@@ -192,10 +192,10 @@ namespace Client
 
         private void SetResolution(Size resolution)
         {
-            _videoResolution.Width = resolution.Width;
-            _videoResolution.Height = resolution.Height;
-            this.Width = _videoResolution.Width;
-            this.Height = _videoResolution.Height;
+            videoResolution.Width = resolution.Width;
+            videoResolution.Height = resolution.Height;
+            this.Width = videoResolution.Width;
+            this.Height = videoResolution.Height;
         }
 
         private void toolStripButtonResizeToFit_Click(object sender, EventArgs e)
@@ -206,9 +206,9 @@ namespace Client
             }
         }
 
-        private void ResizeToFit() => ResizeDisplayArea(_videoResolution);
+        private void ResizeToFit() => ResizeDisplayArea(videoResolution);
 
-        private void ResizeDisplayArea(Size size) => this.Size = Size.Add(_formToPanelSize, size);
+        private void ResizeDisplayArea(Size size) => this.Size = Size.Add(formToPanelSize, size);
 
         private void Log(object stdout)
         {

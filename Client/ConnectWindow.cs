@@ -30,7 +30,7 @@ namespace Client
         {
             //this.DialogResult = DialogResult.Abort;
             textBoxTargetIPAddress.Text = "127.0.0.1";
-            textBoxTargetPort.Text = Constants.MetaStreamPort.ToString();
+            textBoxTargetPort.Text = DefaultValues.MetaStreamPort.ToString();
         }
 
         private void buttonConnect_Click(object sender, EventArgs e)
