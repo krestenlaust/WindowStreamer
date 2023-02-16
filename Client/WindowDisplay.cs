@@ -108,7 +108,8 @@ namespace Client
             videoClient = new UdpClient(videoPort);
             videoClient.BeginReceive(new AsyncCallback(RecieveDatagram), null);
 
-            Send.UDPReady(metaStream, DefaultValues.FramerateCap);
+            byte[] udpReady = Send.UDPReady(DefaultValues.FramerateCap);
+            metaStream.Write(udpReady, 0, udpReady.Length);
 
             await Task.Run(async () =>
             {

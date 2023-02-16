@@ -70,7 +70,6 @@ namespace Server
             */
 
             Rectangle rect = new Rectangle(x, y, width, height);
-            //Bitmap bmp = new Bitmap(rect.Width, rect.Height, PixelFormat.Format32bppArgb);
             Bitmap bmp = new Bitmap(rect.Width, rect.Height, PixelFormat.Format24bppRgb);
 
             Graphics g = Graphics.FromImage(bmp);
@@ -181,7 +180,7 @@ namespace Server
 
             switch (diaglogResult)
             {
-                case DialogResult.Abort: //Block
+                case DialogResult.Abort: // Block
                     Log("Blocked the following IP Address: " + clientEndpoint.Address);
 
                     BlockIPAddress(clientEndpoint.Address);
@@ -190,7 +189,7 @@ namespace Server
                     await StartServerAsync();
                     return;
 
-                case DialogResult.Ignore: //Ignore
+                case DialogResult.Ignore: // Ignore
                     Log("Ignored connection");
 
                     metaClient.Close();
@@ -198,17 +197,20 @@ namespace Server
                     await StartServerAsync();
                     return;
 
-                case DialogResult.Yes: //Accept
+                case DialogResult.Yes: // Accept
                     Log("Accepting connection");
 
                     videoClient = new UdpClient();
                     streamVideo = true;
-                    Send.ConnectionReply(metaStream, true, videoResolution, DefaultValues.VideoStreamPort);
 
-                    //videoStream = new UdpClient(Constants.VideoStreamPort); //JIWJDIAJWDJ
+                    var replyAccept = Send.ConnectionReply(true, videoResolution, DefaultValues.VideoStreamPort);
+                    metaStream.Write(replyAccept, 0, replyAccept.Length);
+
+                    // videoStream = new UdpClient(Constants.VideoStreamPort); //JIWJDIAJWDJ
                     break;
-                case DialogResult.No: //Deny
-                    Send.ConnectionReply(metaStream, false, Size.Empty, 0);
+                case DialogResult.No: // Deny
+                    var replyDeny = Send.ConnectionReply(false, Size.Empty, 0);
+                    metaStream.Write(replyDeny);
 
                     Log($"Told {clientEndpoint.Address} to try again another day :)");
                     metaClient.Close();
@@ -276,7 +278,8 @@ namespace Server
                 return;
             }
 
-            Send.ResolutionChange(metaStream, videoResolution);
+            var resChange = Send.ResolutionChange(videoResolution);
+            metaStream.Write(resChange, 0, resChange.Length);
         }
 
         private void UpdateResolutionVariables()
