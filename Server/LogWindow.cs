@@ -30,7 +30,6 @@ namespace Server
 
         private void clearToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
         }
     }
 }

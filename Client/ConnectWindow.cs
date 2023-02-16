@@ -48,7 +48,6 @@ namespace Client
                 {
                     MessageBox.Show("Port not valid", "Error");
                 }
-
             }
             else
             {

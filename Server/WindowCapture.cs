@@ -70,7 +70,8 @@ namespace Server
             */
 
             Rectangle rect = new Rectangle(x, y, width, height);
-            Bitmap bmp = new Bitmap(rect.Width, rect.Height, PixelFormat.Format32bppArgb);
+            //Bitmap bmp = new Bitmap(rect.Width, rect.Height, PixelFormat.Format32bppArgb);
+            Bitmap bmp = new Bitmap(rect.Width, rect.Height, PixelFormat.Format24bppRgb);
 
             Graphics g = Graphics.FromImage(bmp);
             g.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size, CopyPixelOperation.SourceCopy);
@@ -229,7 +230,6 @@ namespace Server
 
         private void toolStripButtonFocusOnWindow_Click(object sender, EventArgs e)
         {
-
         }
 
         private void toolStripButtonOptions_Click(object sender, EventArgs e)
@@ -254,12 +254,10 @@ namespace Server
 
         private void toolStripButtonApplicationPicker_MouseHover(object sender, EventArgs e)
         {
-
         }
 
         private void toolStripButtonApplicationPicker_Click(object sender, EventArgs e)
         {
-
         }
 
         private void toolStripButtonApplicationSelector_Click(object sender, EventArgs e)
@@ -335,7 +333,6 @@ namespace Server
 
         private void toolStripButtonDebug1_Click(object sender, EventArgs e)
         {
-
         }
 
         protected override void WndProc(ref Message m)
@@ -394,7 +391,6 @@ namespace Server
 
         public static void InputKey(IntPtr handle, Keys key)
         {
-
         }
     }
 }
