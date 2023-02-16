@@ -1,17 +1,17 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Windows.Forms;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading.Tasks;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 using Shared;
 using Shared.Networking;
-using System.IO;
-using System.Drawing.Imaging;
 
 namespace Server
 {
@@ -152,6 +152,7 @@ namespace Server
                         }
                     }
                 }
+
                 Log("Connection lost... or disconnected(tcp loop)");
             });
 
@@ -311,13 +312,14 @@ namespace Server
                     toolStripStatusLabelLatest.Text = "[" + time + "] " + stdout.ToString();
                 });
             }
+
             Debug.WriteLine($"[{time}][{line}][Server] {stdout}");
         }
 
         /*
         private void StartLogWindow()
         {
-            if (Other.Statics.logWindow != null)
+            if (Other.Statics.LogWindow != null)
             {
                 
             }
@@ -354,6 +356,7 @@ namespace Server
                     UpdateResolutionVariables();
                 }
             }
+
             base.WndProc(ref m);
         }
     }

@@ -139,6 +139,7 @@ namespace Client
                         }
                     }
                 }
+
                 Log("Connection lost... or disconnected");
             });
         }

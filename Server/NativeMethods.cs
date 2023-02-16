@@ -46,6 +46,7 @@ namespace Server
                 //IntPtr handle = GetActiveWindow();
                 #endregion
             }
+
             return CallNextHookEx(_hookID, nCode, wParam, lParam);
         }
 

@@ -61,7 +61,9 @@
             // 
             // toolStripButtonResizeToFit
             // 
+            this.toolStripButtonResizeToFit.Checked = true;
             this.toolStripButtonResizeToFit.CheckOnClick = true;
+            this.toolStripButtonResizeToFit.CheckState = System.Windows.Forms.CheckState.Checked;
             this.toolStripButtonResizeToFit.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.toolStripButtonResizeToFit.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonResizeToFit.Image")));
             this.toolStripButtonResizeToFit.ImageTransparentColor = System.Drawing.Color.Magenta;
@@ -122,7 +124,7 @@
             // 
             this.displayArea.Dock = System.Windows.Forms.DockStyle.Fill;
             this.displayArea.Location = new System.Drawing.Point(0, 25);
-            this.displayArea.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.displayArea.Margin = new System.Windows.Forms.Padding(2);
             this.displayArea.Name = "displayArea";
             this.displayArea.Size = new System.Drawing.Size(384, 214);
             this.displayArea.TabIndex = 2;
@@ -136,7 +138,7 @@
             this.Controls.Add(this.displayArea);
             this.Controls.Add(this.statusStripFooter);
             this.Controls.Add(this.toolStripHeader);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.MinimumSize = new System.Drawing.Size(400, 300);
             this.Name = "WindowDisplay";
             this.Text = "Window Streamer - Client";

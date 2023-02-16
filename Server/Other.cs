@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Server
+﻿namespace Server
 {
     class Other
     {
@@ -15,11 +9,8 @@ namespace Server
             public bool videoStreaming { get; set; } = true;
         }
 
-        public class Statics
-        {
-            public static LogWindow logWindow = null;
-        }
+        public static LogWindow LogWindow = null;
 
-        public static Preferences prefs;
+        public static Preferences Prefs;
     }
 }

@@ -17,7 +17,7 @@ namespace Server
             InitializeComponent();
         }
 
-        private Other.Preferences NewPreferences = Other.prefs;
+        private Other.Preferences NewPreferences = Other.Prefs;
 
         private void Options_Load(object sender, EventArgs e)
         {
@@ -26,7 +26,7 @@ namespace Server
 
         public void CheckChanges()
         {
-            if (NewPreferences != Other.prefs)
+            if (NewPreferences != Other.Prefs)
             {
                 buttonApply.Enabled = true;
             }
@@ -34,7 +34,7 @@ namespace Server
 
         private void Apply()
         {
-            Other.prefs = NewPreferences;
+            Other.Prefs = NewPreferences;
             buttonApply.Enabled = false;
         }
 
