@@ -20,6 +20,7 @@ namespace Client
         }
 
         public IPAddress TargetIPAddress { get; set; }
+
         public int TargetPort { get; set; }
 
         private IPAddress ip;
@@ -47,7 +48,7 @@ namespace Client
                 {
                     MessageBox.Show("Port not valid", "Error");
                 }
-                
+
             }
             else
             {

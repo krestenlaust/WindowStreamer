@@ -11,6 +11,7 @@ namespace Shared
             ConnectionReply = 0,
             ResolutionUpdate = 1,
         }
+
         public enum ClientPacketHeader
         {
             UDPReady = 2,

@@ -1,19 +1,16 @@
 ﻿using System;
-using System.Data;
 using System.Drawing;
-using System.Linq;
+using System.IO;
+using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Net.Sockets;
-using System.Net;
 using Shared;
 using Shared.Networking;
-using System.IO;
 
 namespace Client
 {
-
     public partial class WindowDisplay : Form
     {
         private IPAddress _serverIP;
@@ -26,7 +23,6 @@ namespace Client
         private Task _tcpLoop;
         private Size _formToPanelSize;
         private MemoryStream _bitmapStream;
-        
 
         public WindowDisplay()
         {
@@ -53,9 +49,9 @@ namespace Client
 
         private void RecieveDatagram(IAsyncResult res)
         {
-            IPEndPoint EndPoint = new IPEndPoint(_serverIP, _videostreamPort);
+            IPEndPoint endPoint = new IPEndPoint(_serverIP, _videostreamPort);
 
-            byte[] recieved = _videoClient.EndReceive(res, ref EndPoint);
+            byte[] recieved = _videoClient.EndReceive(res, ref endPoint);
 
             UpdateFrame(recieved);
 
@@ -73,7 +69,7 @@ namespace Client
             byte[] buffer = new byte[Constants.MetaFrameLength];
             await _metaStream.ReadAsync(buffer, 0, Constants.MetaFrameLength);
 
-            string handshakeString = Encoding.UTF8.GetString(buffer).Replace("\0", "");
+            string handshakeString = Encoding.UTF8.GetString(buffer).Replace("\0", string.Empty);
             Log($"Handshake:[{handshakeString}]");
 
             string[] handshake = handshakeString.Split(Constants.ParameterSeparator);
@@ -106,7 +102,7 @@ namespace Client
 
             Log("Connection request accepted, awaiting handshake finish...");
             IPEndPoint ipEndPoint = _metaClient.Client.RemoteEndPoint as IPEndPoint;
-                 
+
             //SetResolution(resolution);
 
             _videoClient = new UdpClient(videoPort);
@@ -123,7 +119,7 @@ namespace Client
                         byte[] packet = new byte[Constants.MetaFrameLength];
                         await _metaStream.ReadAsync(packet, 0, Constants.MetaFrameLength);
 
-                        string[] metapacket = Encoding.UTF8.GetString(packet).Replace("\0", "").Split(Constants.ParameterSeparator);
+                        string[] metapacket = Encoding.UTF8.GetString(packet).Replace("\0", string.Empty).Split(Constants.ParameterSeparator);
 
                         switch ((ServerPacketHeader)int.Parse(metapacket[0]))
                         {
@@ -196,7 +192,9 @@ namespace Client
         }
 
         private void toolStripButtonResizeToFit_Click(object sender, EventArgs e) => ResizeToFit();
+
         private void ResizeToFit() => ResizeDisplayArea(_videoResolution);
+
         private void ResizeDisplayArea(Size size) => this.Size = Size.Add(_formToPanelSize, size);
 
         private void Log(object stdout)

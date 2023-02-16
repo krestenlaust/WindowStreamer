@@ -30,24 +30,28 @@ namespace Shared
             textboxOutput.AppendText(value.ToString());
             writer.Write(value);
         }
+
         public override void Write(string value)
         {
             base.Write(value);
             textboxOutput.AppendText(value);
             writer.Write(value);
         }
+
         public override void Write(object value)
         {
             base.Write(value);
             textboxOutput.AppendText(value.ToString());
             writer.Write(value);
         }
+
         public override void WriteLine(string value)
         {
             base.WriteLine(value);
             textboxOutput.AppendText(value);
             writer.Write(value);
         }
+
         public override void WriteLine(object value)
         {
             base.WriteLine(value);
@@ -90,6 +94,7 @@ namespace Shared
 
             return sb.ToString();
         }
+
         public static string LocalizeParameter(string localizedString, object parameter0, object parameter1)
         {
             StringBuilder sb = new StringBuilder(localizedString);
@@ -99,6 +104,7 @@ namespace Shared
 
             return sb.ToString();
         }
+
         public static string LocalizeParameter(string localizedString, object parameter0, object parameter1, object parameter2)
         {
             StringBuilder sb = new StringBuilder(localizedString);

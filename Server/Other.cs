@@ -11,6 +11,7 @@ namespace Server
         public class Preferences
         {
             public bool glassMode { get; set; } = false;
+
             public bool videoStreaming { get; set; } = true;
         }
 

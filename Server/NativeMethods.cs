@@ -16,7 +16,6 @@ namespace Server
 
         private delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
 
-
         private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
             if (nCode >= 0 && MouseMessages.WM_LBUTTONDOWN == (MouseMessages)wParam)
@@ -25,7 +24,6 @@ namespace Server
                 POINT cusorPoint;
                 bool ret = GetCursorPos(out cusorPoint);
                 // cusorPoint contains your cusor’s position when you click on the window
-
 
                 // Then use cusorPoint to get the handle of the window you clicked
 
@@ -65,6 +63,7 @@ namespace Server
         {
             public int x; public int y;
         }
+
         [StructLayout(LayoutKind.Sequential)]
         private struct MSLLHOOKSTRUCT
         {
@@ -74,6 +73,7 @@ namespace Server
             public uint time;
             public IntPtr dwExtraInfo;
         }
+
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         private static extern IntPtr SetWindowsHookEx(int idHook,
             LowLevelMouseProc lpfn, IntPtr hMod, uint dwThreadId);
@@ -112,9 +112,9 @@ namespace Server
         }
         #endregion
 
-
         [DllImport("user32.dll")]
         public static extern bool ClientToScreen(IntPtr hWnd, ref Point lpPoint);
+
         [DllImport("user32.dll")]
         public static extern uint SendInput(uint nInputs, [MarshalAs(UnmanagedType.LPArray), In] INPUT[] pInputs, int cbSize);
 
@@ -130,6 +130,7 @@ namespace Server
             [FieldOffset(0)]
             public MOUSEINPUT Mouse;
         }
+
         public struct MOUSEINPUT
         {
             public int X;

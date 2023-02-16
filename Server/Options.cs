@@ -17,7 +17,7 @@ namespace Server
             InitializeComponent();
         }
 
-        private Other.Preferences NewPreferences = Other.prefs;    
+        private Other.Preferences NewPreferences = Other.prefs;
 
         private void Options_Load(object sender, EventArgs e)
         {

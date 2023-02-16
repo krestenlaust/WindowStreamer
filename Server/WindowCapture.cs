@@ -36,6 +36,7 @@ namespace Server
             Width = 400,
             Height = 100
         };
+
         private Point _captureAreaTopLeft;
         private Cursor _applicationSelectorCursor;
 
@@ -70,7 +71,7 @@ namespace Server
 
             Rectangle rect = new Rectangle(x, y, width, height);
             Bitmap bmp = new Bitmap(rect.Width, rect.Height, PixelFormat.Format32bppArgb);
-            
+
             Graphics g = Graphics.FromImage(bmp);
             g.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size, CopyPixelOperation.SourceCopy);
 
@@ -131,7 +132,7 @@ namespace Server
                         byte[] buffer = new byte[Constants.MetaFrameLength];
                         _metaStream.Read(buffer, 0, Constants.MetaFrameLength);
 
-                        string[] metapacket = Encoding.UTF8.GetString(buffer).Replace("\0", "").Split(Constants.ParameterSeparator);
+                        string[] metapacket = Encoding.UTF8.GetString(buffer).Replace("\0", string.Empty).Split(Constants.ParameterSeparator);
 
                         switch ((ClientPacketHeader)int.Parse(metapacket[0]))
                         {
@@ -199,7 +200,6 @@ namespace Server
                     _videoClient = new UdpClient();
                     _streamVideo = true;
                     Send.ConnectionReply(_metaStream, true, _videoResolution, Constants.VideoStreamPort);
-                    
 
                     //videoStream = new UdpClient(Constants.VideoStreamPort); //JIWJDIAJWDJ
                     break;
@@ -236,7 +236,7 @@ namespace Server
 
         private async void toolStripButtonConnect_ClickAsync(object sender, EventArgs e)
         {
-            if (toolStripTextBoxAcceptableHost.Text == "")
+            if (toolStripTextBoxAcceptableHost.Text == string.Empty)
             {
                 _acceptedAddress = IPAddress.Any;
             }
@@ -245,7 +245,7 @@ namespace Server
                 MessageBox.Show("IP not valid", "Error");
                 return;
             }
-            
+
             await StartServerAsync();
         }
 
@@ -285,7 +285,8 @@ namespace Server
                 _videoResolution.Height = Screen.FromControl(this).Bounds.Height;
                 _videoResolution.Width = Screen.FromControl(this).Bounds.Width;
                 _captureAreaTopLeft = Screen.FromControl(this).Bounds.Location;
-            } else
+            }
+            else
             {
                 _videoResolution.Height = captureArea.Height;
                 _videoResolution.Width = captureArea.Width;
@@ -297,7 +298,7 @@ namespace Server
             NotifyResolutionChange();
         }
 
-        private void Log(object stdout, [CallerLineNumber] int line=0)
+        private void Log(object stdout, [CallerLineNumber] int line = 0)
         {
             string time = DateTime.Now.ToString("mm:ss:ffff");
 
