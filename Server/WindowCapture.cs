@@ -171,10 +171,12 @@ namespace Server
             await Task.Run(() =>
             {
                 Log("Inbound connection, awaiting action...");
-                ConnectionPrompt prompt = new ConnectionPrompt();
-                prompt.connectingIP = clientEndpoint.Address.ToString();
-                prompt.StartPosition = FormStartPosition.CenterParent;
-                prompt.TopMost = true;
+                ConnectionPrompt prompt = new ConnectionPrompt(clientEndpoint.Address.ToString())
+                {
+                    StartPosition = FormStartPosition.CenterParent,
+                    TopMost = true,
+                };
+
                 diaglogResult = prompt.ShowDialog();
             });
 
