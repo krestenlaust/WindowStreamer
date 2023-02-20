@@ -1,21 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 using System.Windows.Forms;
 using Shared;
+using System;
 
 namespace Server
 {
     public partial class LogWindow : Form
     {
-        public TextWriter sw;
-
         public LogWindow()
         {
             InitializeComponent();
@@ -23,7 +14,6 @@ namespace Server
 
         private void LogWindow_Load(object sender, EventArgs e)
         {
-            sw = Console.Out;
             LogStreamWriter lsw = new LogStreamWriter(richTextBoxOutput);
             Console.SetOut(lsw);
         }

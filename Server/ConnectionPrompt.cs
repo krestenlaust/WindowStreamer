@@ -1,29 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Server
 {
     public partial class ConnectionPrompt : Form
     {
-        public ConnectionPrompt()
+        private readonly string connectingIP;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ConnectionPrompt"/> class.
+        /// </summary>
+        public ConnectionPrompt(string connectingIP)
         {
             InitializeComponent();
-        }
 
-        public string IPAddress = "???";
+            this.connectingIP = connectingIP;
+        }
 
         private void ConnectionPrompt_Load(object sender, EventArgs e)
         {
-            labelConnect.Text = IPAddress + " wants to connect";
+            labelConnect.Text = connectingIP + " wants to connect";
         }
 
         private void buttonDeny_Click(object sender, EventArgs e)

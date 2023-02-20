@@ -11,8 +11,8 @@ namespace Server
         #region Application Droplet function
         //https://social.msdn.microsoft.com/Forums/en-US/bfc75b57-df16-48c6-92af-ea0a34f540ae/how-to-get-the-handle-of-a-window-that-i-click?forum=csharplanguage
         private static LowLevelMouseProc _proc = HookCallback;
-        private static IntPtr _hookID = IntPtr.Zero;
-        static IntPtr hHook = IntPtr.Zero;
+        private static IntPtr _hookID;
+        private static IntPtr hHook;
 
         private delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
 
@@ -20,7 +20,7 @@ namespace Server
         {
             if (nCode >= 0 && MouseMessages.WM_LBUTTONDOWN == (MouseMessages)wParam)
             {
-                //  The application runs to here when you click on the window whose handle you  want to get                
+                // The application runs to here when you click on the window whose handle you  want to get
                 POINT cusorPoint;
                 bool ret = GetCursorPos(out cusorPoint);
                 // cusorPoint contains your cusor’s position when you click on the window

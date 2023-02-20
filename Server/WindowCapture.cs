@@ -172,7 +172,7 @@ namespace Server
             {
                 Log("Inbound connection, awaiting action...");
                 ConnectionPrompt prompt = new ConnectionPrompt();
-                prompt.IPAddress = clientEndpoint.Address.ToString();
+                prompt.connectingIP = clientEndpoint.Address.ToString();
                 prompt.StartPosition = FormStartPosition.CenterParent;
                 prompt.TopMost = true;
                 diaglogResult = prompt.ShowDialog();
