@@ -67,7 +67,6 @@ namespace Client
 
             log($"Awaiting response from {serverIP}");
 
-            //await InitialMetaFrame();
             await Task.Run(MetastreamLoop);
         }
 
