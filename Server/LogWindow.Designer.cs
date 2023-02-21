@@ -82,7 +82,7 @@
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.richTextBoxOutput);
             this.Name = "LogWindow";
-            this.Text = "Server - Log";
+            this.Text = "Server - log";
             this.Load += new System.EventHandler(this.LogWindow_Load);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
