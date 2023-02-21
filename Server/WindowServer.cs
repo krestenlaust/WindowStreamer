@@ -25,13 +25,13 @@ namespace Server
         //private UdpClient videoStream;
         private NetworkStream metaStream;
         private bool streamVideo = true;
-        private Task metastreamLoop;
         private Size resolution;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WindowServer"/> class.
         /// </summary>
         /// <param name="boundIP">IP address to listen on, usually <c>IPAddress.Any</c>.</param>
+        /// <param name="startingResolution">The resolution of the window.</param>
         /// <param name="obtainImage">Handler for retrieving screenshots.</param>
         /// <param name="handleConnectionRequest">Handler for replying to connection attempts.</param>
         /// <param name="logger">Logging method.</param>
@@ -42,6 +42,24 @@ namespace Server
             this.obtainImage = obtainImage;
             this.handleConnectionRequest = handleConnectionRequest;
             resolution = startingResolution;
+        }
+
+        public enum ConnectionReply
+        {
+            /// <summary>
+            /// Accepts connection, and initiates handshake.
+            /// </summary>
+            Accept,
+
+            /// <summary>
+            /// Closes connection without further notice.
+            /// </summary>
+            Close,
+
+            /// <summary>
+            /// Responds to connection, then closes it.
+            /// </summary>
+            Deny,
         }
 
         public bool Connected { get; private set; }
@@ -57,7 +75,7 @@ namespace Server
             metaStream = metaClient.GetStream();
             log("Connection recieved...");
 
-            metastreamLoop = Task.Run(MetastreamLoop);
+            Task.Run(MetastreamLoop);
 
             await HandshakeAsync();
         }
@@ -131,24 +149,6 @@ namespace Server
             }
 
             log("Connection lost... or disconnected(tcp loop)");
-        }
-
-        public enum ConnectionReply
-        {
-            /// <summary>
-            /// Accepts connection, and initiates handshake.
-            /// </summary>
-            Accept,
-
-            /// <summary>
-            /// Closes connection without further notice.
-            /// </summary>
-            Close,
-
-            /// <summary>
-            /// Responds to connection, then closes it.
-            /// </summary>
-            Deny,
         }
 
         /// <summary>
