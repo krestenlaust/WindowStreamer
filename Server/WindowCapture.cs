@@ -2,48 +2,43 @@
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
 using System.Net;
-using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using Protocol;
 using Shared;
 
 namespace Server
 {
     public partial class WindowCapture : Form
     {
-        public IntPtr TargetWindowHandle { get; private set; } = IntPtr.Zero;
-
-        //private UdpClient videoStream;
-        private IPEndPoint clientEndpoint;
-        private UdpClient videoClient;
-        private TcpClient metaClient = new TcpClient(AddressFamily.InterNetwork);
-        private NetworkStream metaStream;
-        private TcpListener clientListener;
-        private IPAddress acceptedAddress = IPAddress.Any;
-        private Size videoResolution;
         private bool fullscreen = false;
-        private bool streamVideo = true;
-        private Task tcpLoop = null;
+        private Size videoResolution;
+
+        /// <summary>
+        /// Not sure what this field keeps track of.
+        /// </summary>
         private Size lastResolution;
         private Size fullscreenSize = new Size
         {
             Width = 400,
-            Height = 100
+            Height = 100,
         };
 
         private Point captureAreaTopLeft;
         private Cursor applicationSelectorCursor;
 
+        private WindowServer server;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WindowCapture"/> class.
+        /// </summary>
         public WindowCapture()
         {
             InitializeComponent();
         }
+
+        public IntPtr TargetWindowHandle { get; private set; }
 
         private void WindowCapture_Load(object sender, EventArgs e)
         {
@@ -56,177 +51,50 @@ namespace Server
             toolStripTextBoxTargetPort.Text = DefaultValues.MetaStreamPort.ToString();
         }
 
-        private Bitmap GetScreenPicture(int x, int y, int width, int height)
+        private (Bitmap, Size) ObtainImage()
         {
-            // TODO: Debug funktionen for at oversætte skærm koordinaterne til pixels.
-            /*Rectangle screen = Rectangle.Empty;
-            this.Invoke((MethodInvoker)delegate
-            {
-                screen = Screen.FromControl(this).WorkingArea;
-            });
-
-            position.X = position.X / screen.Width; // screen.Width: 1920
-            position.Y = position.Y / screen.Height; // screen.Height: 1080
-            */
-
-            Rectangle rect = new Rectangle(x, y, width, height);
-            Bitmap bmp = new Bitmap(rect.Width, rect.Height, PixelFormat.Format24bppRgb);
-
-            Graphics g = Graphics.FromImage(bmp);
-            g.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size, CopyPixelOperation.SourceCopy);
-
-            return bmp;
+            return (
+                GetScreenPicture(captureArea.Location.X + Location.X, captureArea.Location.Y + Location.Y, videoResolution.Width, videoResolution.Height),
+                captureArea.Size);
         }
 
-        private void SendPicture(UdpClient client)
+        private WindowServer.ConnectionReply HandleConnectionReply(IPAddress ipAddress)
         {
-            if (!client.Client.Connected || !streamVideo)
+            ConnectionPrompt prompt = new ConnectionPrompt(ipAddress.ToString())
             {
-                return;
-            }
+                StartPosition = FormStartPosition.CenterParent,
+                TopMost = true,
+            };
 
-            Bitmap bmp = GetScreenPicture(captureArea.Location.X + Location.X, captureArea.Location.Y + Location.Y, videoResolution.Width, videoResolution.Height);
-            byte[] bytes;
-
-            using (var stream = new MemoryStream())
-            {
-                bmp.Save(stream, ImageFormat.Png);
-                bytes = stream.ToArray();
-                Log(bytes.Length);
-            }
-
-            client.Send(bytes, bytes.Length);
-        }
-
-        private void ConnectVideoStream()
-        {
-            videoClient.Connect(clientEndpoint.Address, DefaultValues.VideoStreamPort);
-            videoClient.DontFragment = false;
-        }
-
-        private async void BeginStreamLoop()
-        {
-            while (streamVideo)
-            {
-                SendPicture(videoClient);
-
-                await Task.Delay(50);
-            }
-        }
-
-        private async Task StartServerAsync()
-        {
-            clientListener?.Stop();
-            clientListener = new TcpListener(acceptedAddress, DefaultValues.MetaStreamPort);
-            clientListener.Start();
-            Log($"Server started {acceptedAddress}:{DefaultValues.MetaStreamPort}");
-
-            metaClient = await clientListener.AcceptTcpClientAsync();
-            metaStream = metaClient.GetStream();
-            Log("Connection recieved...");
-
-            tcpLoop = Task.Run(() =>
-            {
-                while (metaClient.Connected)
-                {
-                    if (metaClient.Available >= Constants.MetaFrameLength)
-                    {
-                        byte[] buffer = new byte[Constants.MetaFrameLength];
-                        metaStream.Read(buffer, 0, Constants.MetaFrameLength);
-
-                        string[] metapacket = Encoding.UTF8.GetString(buffer).Replace("\0", string.Empty).Split(Constants.ParameterSeparator);
-
-                        switch ((ClientPacketHeader)int.Parse(metapacket[0]))
-                        {
-                            case ClientPacketHeader.Key:
-                                Log($"Recieved key: {metapacket[1]}");
-                                break;
-                            case ClientPacketHeader.UDPReady:
-                                Log("Udp ready!");
-                                ConnectVideoStream();
-                                BeginStreamLoop();
-                                break;
-                            default:
-                                Log($"Recived this: {metapacket[0]}");
-                                break;
-                        }
-                    }
-                }
-
-                Log("Connection lost... or disconnected(tcp loop)");
-            });
-
-            await HandshakeAsync();
-        }
-
-        /// <summary>
-        /// Make handshake and begin listening loop.
-        /// </summary>
-        /// <returns></returns>
-        private async Task HandshakeAsync()
-        {
-            clientEndpoint = metaClient.Client.RemoteEndPoint as IPEndPoint;
-            DialogResult diaglogResult = DialogResult.Ignore;
-
-            await Task.Run(() =>
-            {
-                Log("Inbound connection, awaiting action...");
-                ConnectionPrompt prompt = new ConnectionPrompt(clientEndpoint.Address.ToString())
-                {
-                    StartPosition = FormStartPosition.CenterParent,
-                    TopMost = true,
-                };
-
-                diaglogResult = prompt.ShowDialog();
-            });
-
-            switch (diaglogResult)
+            switch (prompt.ShowDialog())
             {
                 case DialogResult.Abort: // Block
-                    Log("Blocked the following IP Address: " + clientEndpoint.Address);
+                    Log("Blocked the following IP Address: " + ipAddress);
 
-                    BlockIPAddress(clientEndpoint.Address);
-                    metaClient.Close();
-
-                    await StartServerAsync();
-                    return;
+                    BlockIPAddress(ipAddress);
+                    return WindowServer.ConnectionReply.Close;
 
                 case DialogResult.Ignore: // Ignore
-                    Log("Ignored connection");
-
-                    metaClient.Close();
-
-                    await StartServerAsync();
-                    return;
+                    Log("Ignoring connection");
+                    return WindowServer.ConnectionReply.Close;
 
                 case DialogResult.Yes: // Accept
                     Log("Accepting connection");
+                    return WindowServer.ConnectionReply.Accept;
 
-                    videoClient = new UdpClient();
-                    streamVideo = true;
-
-                    var replyAccept = Send.ConnectionReply(true, videoResolution, DefaultValues.VideoStreamPort);
-                    metaStream.Write(replyAccept, 0, replyAccept.Length);
-
-                    // videoStream = new UdpClient(Constants.VideoStreamPort); //JIWJDIAJWDJ
-                    break;
                 case DialogResult.No: // Deny
-                    var replyDeny = Send.ConnectionReply(false, Size.Empty, 0);
-                    metaStream.Write(replyDeny);
-
-                    Log($"Told {clientEndpoint.Address} to try again another day :)");
-                    metaClient.Close();
-
-                    await StartServerAsync();
-                    return;
+                    Log($"Told {ipAddress} to try again another day :)");
+                    return WindowServer.ConnectionReply.Deny;
                 default:
-                    Log("DialogResult returned unknown value");
-                    return;
+                    break;
             }
+
+            return 0;
         }
 
         private void BlockIPAddress(IPAddress ip)
         {
+            // TODO: Actually block IP
             Console.WriteLine("Blocking IP: " + ip.ToString());
         }
 
@@ -243,6 +111,7 @@ namespace Server
 
         private async void toolStripButtonConnect_ClickAsync(object sender, EventArgs e)
         {
+            IPAddress acceptedAddress;
             if (toolStripTextBoxAcceptableHost.Text == string.Empty)
             {
                 acceptedAddress = IPAddress.Any;
@@ -253,7 +122,8 @@ namespace Server
                 return;
             }
 
-            await StartServerAsync();
+            server = new WindowServer(acceptedAddress, videoResolution, ObtainImage, HandleConnectionReply, Log);
+            await server.StartServerAsync();
         }
 
         private void toolStripButtonApplicationPicker_MouseHover(object sender, EventArgs e)
@@ -267,21 +137,6 @@ namespace Server
         private void toolStripButtonApplicationSelector_Click(object sender, EventArgs e)
         {
             toolStripButtonApplicationSelector.ToolTipText = "Click here";
-        }
-
-        /// <summary>
-        /// Notifies client of resolution change.
-        /// </summary>
-        private void NotifyResolutionChange()
-        {
-            if (metaClient?.Connected == false)
-            {
-                Log("Not connected...");
-                return;
-            }
-
-            var resChange = Send.ResolutionChange(videoResolution);
-            metaStream.Write(resChange, 0, resChange.Length);
         }
 
         private void UpdateResolutionVariables()
@@ -301,8 +156,10 @@ namespace Server
 
             toolStripStatusLabelResolution.Text = videoResolution.Width.ToString() + "x" + videoResolution.Height.ToString();
 
-            NotifyResolutionChange();
+            server?.UpdateResolution(videoResolution);
         }
+
+        private void Log(object message) => Log(message, 0);
 
         private void Log(object stdout, [CallerLineNumber] int line = 0)
         {
@@ -360,6 +217,28 @@ namespace Server
             }
 
             base.WndProc(ref m);
+        }
+
+        private static Bitmap GetScreenPicture(int x, int y, int width, int height)
+        {
+            // TODO: Debug funktionen for at oversætte skærm koordinaterne til pixels.
+            /*Rectangle screen = Rectangle.Empty;
+            this.Invoke((MethodInvoker)delegate
+            {
+                screen = Screen.FromControl(this).WorkingArea;
+            });
+
+            position.X = position.X / screen.Width; // screen.Width: 1920
+            position.Y = position.Y / screen.Height; // screen.Height: 1080
+            */
+
+            Rectangle rect = new Rectangle(x, y, width, height);
+            Bitmap bmp = new Bitmap(rect.Width, rect.Height, PixelFormat.Format24bppRgb);
+
+            Graphics g = Graphics.FromImage(bmp);
+            g.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size, CopyPixelOperation.SourceCopy);
+
+            return bmp;
         }
     }
 
