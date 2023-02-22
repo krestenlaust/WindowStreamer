@@ -21,7 +21,7 @@ namespace Client
 
         void WindowDisplay_Load(object sender, EventArgs e)
         {
-            formToPanelSize = Size.Subtract(this.Size, displayArea.Size);
+            formToPanelSize = Size.Subtract(Size, displayArea.Size);
         }
 
         void toolStripButtonConnect_Click(object sender, EventArgs e)
@@ -33,14 +33,14 @@ namespace Client
                 if (windowClient is not null)
                 {
                     windowClient.ResolutionChanged -= WindowClient_ResolutionChanged;
-                    windowClient.VideoframeRecieved -= WindowClient_VideoframeRecieved;
+                    windowClient.NewFrame -= WindowClient_VideoframeRecieved;
                     // TODO: Dispose of client
                     windowClient.Dispose();
                 }
 
                 windowClient = new WindowClient(connectDialog.TargetIPAddress, connectDialog.TargetPort, Log);
                 windowClient.ResolutionChanged += WindowClient_ResolutionChanged;
-                windowClient.VideoframeRecieved += WindowClient_VideoframeRecieved;
+                windowClient.NewFrame += WindowClient_VideoframeRecieved;
 
                 Task.Run(windowClient.ConnectToServerAsync);
             }
@@ -61,7 +61,7 @@ namespace Client
 
             if (toolStripButtonResizeToFit.Checked)
             {
-                this.Invoke((MethodInvoker)delegate
+                Invoke((MethodInvoker)delegate
                 {
                     ResizeToFit();
                 });
@@ -78,7 +78,7 @@ namespace Client
 
         void ResizeToFit() => ResizeDisplayArea(videoResolution);
 
-        void ResizeDisplayArea(Size size) => this.Size = Size.Add(formToPanelSize, size);
+        void ResizeDisplayArea(Size size) => Size = Size.Add(formToPanelSize, size);
 
         void Log(object stdout)
         {

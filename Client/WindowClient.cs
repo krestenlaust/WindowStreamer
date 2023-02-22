@@ -16,12 +16,11 @@ namespace Client
         readonly int metastreamPort;
         readonly IPAddress serverIP;
         readonly Action<string> log;
-        
+
         int? videostreamPort;
         UdpClient videoClient;
         TcpClient metaClient;
         NetworkStream metaStream;
-        bool disposedValue;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WindowClient"/> class.
@@ -36,8 +35,14 @@ namespace Client
             log = logger;
         }
 
-        public event Action<byte[]> VideoframeRecieved;
+        /// <summary>
+        /// Event called when a complete frame has been recieved.
+        /// </summary>
+        public event Action<byte[]> NewFrame;
 
+        /// <summary>
+        /// Event called when the resolution is changed.
+        /// </summary>
         public event Action<Size> ResolutionChanged;
 
         public async Task ConnectToServerAsync()
@@ -69,16 +74,23 @@ namespace Client
             await Task.Run(MetastreamLoop);
         }
 
-        private void RecieveDatagram(IAsyncResult res)
+        public void Dispose()
+        {
+            videoClient?.Dispose();
+            metaClient?.Dispose();
+            metaStream?.Dispose();
+        }
+
+        void RecieveDatagram(IAsyncResult res)
         {
             IPEndPoint endPoint = new IPEndPoint(serverIP, videostreamPort!.Value);
             byte[] recieved = videoClient.EndReceive(res, ref endPoint!);
 
-            VideoframeRecieved?.Invoke(recieved);
+            NewFrame?.Invoke(recieved);
             videoClient.BeginReceive(new AsyncCallback(RecieveDatagram), null);
         }
 
-        private async Task MetastreamLoop()
+        async Task MetastreamLoop()
         {
             bool handshakeFinished = false;
 
@@ -95,7 +107,7 @@ namespace Client
                     case ServerPacketHeader.ConnectionReply:
                         log($"Handshake recieved");
 
-                        if (Parse.ConnectionReply(metapacket, out bool accepted, out Size resolution, out int videoPort))
+                        if (Parse.TryParseConnectionReply(metapacket, out bool accepted, out Size resolution, out int videoPort))
                         {
                             videostreamPort = videoPort;
                             ResolutionChanged?.Invoke(resolution);
@@ -127,7 +139,7 @@ namespace Client
                         break;
                     case ServerPacketHeader.ResolutionUpdate when handshakeFinished:
                         log("Recieved resolution update");
-                        Parse.ResolutionChange(metapacket, out Size newResolution);
+                        Parse.TryParseResolutionChange(metapacket, out Size newResolution);
 
                         ResolutionChanged?.Invoke(newResolution);
 
@@ -139,35 +151,6 @@ namespace Client
             }
 
             log("Connection lost... or disconnected");
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    // TODO: dispose managed state (managed objects)
-                }
-
-                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
-                // TODO: set large fields to null
-                disposedValue = true;
-            }
-        }
-
-        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
-        // ~WindowClient()
-        // {
-        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        //     Dispose(disposing: false);
-        // }
-
-        public void Dispose()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
         }
     }
 }

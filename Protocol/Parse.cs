@@ -4,7 +4,7 @@ namespace Protocol
 {
     public static class Parse
     {
-        public static bool ResolutionChange(string[] packet, out Size resolution)
+        public static bool TryParseResolutionChange(string[] packet, out Size resolution)
         {
             try
             {
@@ -19,7 +19,7 @@ namespace Protocol
             }
         }
 
-        public static bool ConnectionReply(string[] packet, out bool accepted, out Size resolution, out int videoPort)
+        public static bool TryParseConnectionReply(string[] packet, out bool accepted, out Size resolution, out int videoPort)
         {
             try
             {

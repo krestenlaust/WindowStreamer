@@ -12,23 +12,25 @@ namespace Server
 {
     public partial class WindowCapture : Form
     {
-        private bool fullscreen = false;
-        private Size videoResolution;
+        readonly Color transparencyKeyColor = Color.Orange;
+
+        bool fullscreen = false;
+        Size videoResolution;
 
         /// <summary>
         /// Not sure what this field keeps track of.
         /// </summary>
-        private Size lastResolution;
-        private Size fullscreenSize = new Size
+        Size lastResolution;
+        Size fullscreenSize = new Size
         {
             Width = 400,
             Height = 100,
         };
 
-        private Point captureAreaTopLeft;
-        private Cursor applicationSelectorCursor;
+        Point captureAreaTopLeft;
+        Cursor applicationSelectorCursor = Cursors.Hand;
 
-        private WindowServer server;
+        WindowServer server;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WindowCapture"/> class.
@@ -47,14 +49,14 @@ namespace Server
                 if (m.WParam == new IntPtr(0xF030)) // Maximize event - SC_MAXIMIZE from Winuser.h
                 {
                     fullscreen = true;
-                    lastResolution = this.Size;
-                    this.Size = fullscreenSize;
+                    lastResolution = Size;
+                    Size = fullscreenSize;
                     UpdateResolutionVariables();
                 }
                 else if (m.WParam == new IntPtr(0xF120))
                 {
                     fullscreen = false;
-                    this.Size = lastResolution;
+                    Size = lastResolution;
                     UpdateResolutionVariables();
                 }
             }
@@ -62,25 +64,24 @@ namespace Server
             base.WndProc(ref m);
         }
 
-        private void WindowCapture_Load(object sender, EventArgs e)
+        void WindowCapture_Load(object sender, EventArgs e)
         {
-            applicationSelectorCursor = Cursors.Hand;
+            TransparencyKey = transparencyKeyColor;
+            captureArea.BackColor = transparencyKeyColor;
 
-            TransparencyKey = Color.Orange;
-            captureArea.BackColor = Color.Orange;
             UpdateResolutionVariables();
 
             toolStripTextBoxTargetPort.Text = DefaultValues.MetaStreamPort.ToString();
         }
 
-        private (Bitmap, Size) ObtainImage()
+        (Bitmap, Size) ObtainImage()
         {
             return (
                 GetScreenPicture(captureArea.Location.X + Location.X, captureArea.Location.Y + Location.Y, videoResolution.Width, videoResolution.Height),
                 captureArea.Size);
         }
 
-        private WindowServer.ConnectionReply HandleConnectionReply(IPAddress ipAddress)
+        WindowServer.ConnectionReply HandleConnectionReply(IPAddress ipAddress)
         {
             ConnectionPrompt prompt = new ConnectionPrompt(ipAddress.ToString())
             {
@@ -114,24 +115,24 @@ namespace Server
             return 0;
         }
 
-        private void BlockIPAddress(IPAddress ip)
+        void BlockIPAddress(IPAddress ip)
         {
             // TODO: Actually block IP
             Console.WriteLine("Blocking IP: " + ip.ToString());
         }
 
-        private void WindowCapture_Resize(object sender, EventArgs e) => UpdateResolutionVariables();
+        void WindowCapture_Resize(object sender, EventArgs e) => UpdateResolutionVariables();
 
-        private void toolStripButtonFocusOnWindow_Click(object sender, EventArgs e)
+        void toolStripButtonFocusOnWindow_Click(object sender, EventArgs e)
         {
         }
 
-        private void toolStripButtonOptions_Click(object sender, EventArgs e)
+        void toolStripButtonOptions_Click(object sender, EventArgs e)
         {
             new Options().ShowDialog();
         }
 
-        private async void toolStripButtonConnect_ClickAsync(object sender, EventArgs e)
+        async void toolStripButtonConnect_ClickAsync(object sender, EventArgs e)
         {
             IPAddress acceptedAddress;
             if (toolStripTextBoxAcceptableHost.Text == string.Empty)
@@ -148,20 +149,21 @@ namespace Server
             await server.StartServerAsync();
         }
 
-        private void toolStripButtonApplicationPicker_MouseHover(object sender, EventArgs e)
+        void toolStripButtonApplicationPicker_MouseHover(object sender, EventArgs e)
         {
         }
 
-        private void toolStripButtonApplicationPicker_Click(object sender, EventArgs e)
+        void toolStripButtonApplicationPicker_Click(object sender, EventArgs e)
         {
+            throw new NotImplementedException();
         }
 
-        private void toolStripButtonApplicationSelector_Click(object sender, EventArgs e)
+        void toolStripButtonApplicationSelector_Click(object sender, EventArgs e)
         {
             toolStripButtonApplicationSelector.ToolTipText = "Click here";
         }
 
-        private void UpdateResolutionVariables()
+        void UpdateResolutionVariables()
         {
             if (fullscreen)
             {
@@ -181,17 +183,17 @@ namespace Server
             server?.UpdateResolution(videoResolution);
         }
 
-        private void Log(object message) => Log(message, 0);
+        void Log(object message) => Log(message, 0);
 
-        private void Log(object stdout, [CallerLineNumber] int line = 0)
+        void Log(object stdout, [CallerLineNumber] int line = 0)
         {
             string time = DateTime.Now.ToString("mm:ss:ffff");
 
-            if (this.IsHandleCreated)
+            if (IsHandleCreated)
             {
-                this.Invoke((MethodInvoker)delegate
+                Invoke((MethodInvoker)delegate
                 {
-                    toolStripStatusLabelLatest.Text = "[" + time + "] " + stdout.ToString();
+                    toolStripStatusLabelLatest.Text = "[" + time + "] " + stdout;
                 });
             }
 
@@ -208,17 +210,18 @@ namespace Server
             lw.FormClosed += new FormClosedEventHandler(LogWindowClosed);
         }*/
 
-        private void LogWindowClosed(object sender, FormClosedEventArgs e)
+        void LogWindowClosed(object sender, FormClosedEventArgs e)
         {
             LogWindow lw = sender as LogWindow;
             Console.SetOut(lw.sw);
         }
 
-        private void toolStripButtonDebug1_Click(object sender, EventArgs e)
+        void toolStripButtonDebug1_Click(object sender, EventArgs e)
         {
+            throw new NotImplementedException();
         }
 
-        private static Bitmap GetScreenPicture(int x, int y, int width, int height)
+        static Bitmap GetScreenPicture(int x, int y, int width, int height)
         {
             // TODO: Debug funktionen for at oversætte skærm koordinaterne til pixels.
             /*Rectangle screen = Rectangle.Empty;

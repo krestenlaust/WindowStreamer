@@ -13,19 +13,19 @@ namespace Server
 {
     public class WindowServer
     {
-        private readonly Action<object> log;
-        private readonly Func<(Bitmap, Size)> obtainImage;
-        private readonly IPAddress boundIP;
-        private readonly Func<IPAddress, ConnectionReply> handleConnectionRequest;
+        readonly Action<object> log;
+        readonly Func<(Bitmap, Size)> obtainImage;
+        readonly IPAddress boundIP;
+        readonly Func<IPAddress, ConnectionReply> handleConnectionRequest;
 
-        private TcpListener clientListener;
-        private IPEndPoint clientEndpoint;
-        private UdpClient videoClient;
-        private TcpClient metaClient = new TcpClient(AddressFamily.InterNetwork);
-        //private UdpClient videoStream;
-        private NetworkStream metaStream;
-        private bool streamVideo = true;
-        private Size resolution;
+        // TODO: Why is internetwork specified here?
+        TcpClient metaClient = new TcpClient(AddressFamily.InterNetwork);
+        NetworkStream metaStream;
+        TcpListener clientListener;
+        IPEndPoint clientEndpoint;
+        UdpClient videoClient;
+        bool streamVideo = true;
+        Size resolution;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WindowServer"/> class.
@@ -62,6 +62,10 @@ namespace Server
             Deny,
         }
 
+        /// <summary>
+        /// True once a connection has been initiated.
+        /// </summary>
+        [Obsolete("Not implemneted yet")]
         public bool Connected { get; private set; }
 
         public async Task StartServerAsync()
@@ -93,7 +97,7 @@ namespace Server
             metaStream.Write(resChange, 0, resChange.Length);
         }
 
-        private void SendPicture(UdpClient client)
+        void SendPicture(UdpClient client)
         {
             if (!client.Client.Connected || !streamVideo)
             {
@@ -113,7 +117,7 @@ namespace Server
             client.Send(bytes, bytes.Length);
         }
 
-        private async void BeginStreamLoop()
+        async void BeginStreamLoop()
         {
             while (streamVideo)
             {
@@ -123,7 +127,7 @@ namespace Server
             }
         }
 
-        private async Task MetastreamLoop()
+        async Task MetastreamLoop()
         {
             while (metaClient.Connected)
             {
@@ -155,7 +159,7 @@ namespace Server
         /// Make handshake and begin listening loop.
         /// </summary>
         /// <returns></returns>
-        private async Task HandshakeAsync()
+        async Task HandshakeAsync()
         {
             clientEndpoint = metaClient.Client.RemoteEndPoint as IPEndPoint;
 
@@ -194,7 +198,7 @@ namespace Server
             }
         }
 
-        private void ConnectVideoStream()
+        void ConnectVideoStream()
         {
             videoClient.Connect(clientEndpoint.Address, DefaultValues.VideoStreamPort);
             videoClient.DontFragment = false;

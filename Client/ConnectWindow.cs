@@ -32,10 +32,10 @@ namespace Client
             {
                 if (int.TryParse(textBoxTargetPort.Text, out port))
                 {
-                    this.TargetIPAddress = ip;
-                    this.TargetPort = port;
-                    this.DialogResult = DialogResult.OK;
-                    this.Close();
+                    TargetIPAddress = ip;
+                    TargetPort = port;
+                    DialogResult = DialogResult.OK;
+                    Close();
                 }
                 else
                 {
@@ -50,8 +50,8 @@ namespace Client
 
         void buttonCancel_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Abort;
-            this.Close();
+            DialogResult = DialogResult.Abort;
+            Close();
         }
     }
 }

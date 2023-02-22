@@ -12,7 +12,7 @@ namespace Protocol
         /// </summary>
         public PacketBuilder()
         {
-            this.sb = new StringBuilder();
+            sb = new StringBuilder();
         }
 
         /// <summary>
@@ -21,7 +21,7 @@ namespace Protocol
         /// <param name="packetSize"></param>
         public PacketBuilder(int packetSize)
         {
-            this.sb = new StringBuilder(packetSize);
+            sb = new StringBuilder(packetSize);
             this.packetSize = packetSize;
         }
 

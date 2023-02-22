@@ -24,26 +24,26 @@ namespace Server
 
         void buttonDeny_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.No;
-            this.Close();
+            DialogResult = DialogResult.No;
+            Close();
         }
 
         void buttonAccept_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Yes;
-            this.Close();
+            DialogResult = DialogResult.Yes;
+            Close();
         }
 
         void buttonIgnore_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Ignore;
-            this.Close();
+            DialogResult = DialogResult.Ignore;
+            Close();
         }
 
         void buttonBlock_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Abort;
-            this.Close();
+            DialogResult = DialogResult.Abort;
+            Close();
         }
     }
 }
