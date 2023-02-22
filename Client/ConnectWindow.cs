@@ -16,17 +16,17 @@ namespace Client
 
         public int TargetPort { get; set; }
 
-        private IPAddress ip;
-        private int port;
+        IPAddress ip;
+        int port;
 
-        private void ConnectWindow_Load(object sender, EventArgs e)
+        void ConnectWindow_Load(object sender, EventArgs e)
         {
             //this.DialogResult = DialogResult.Abort;
             textBoxTargetIPAddress.Text = "127.0.0.1";
             textBoxTargetPort.Text = DefaultValues.MetaStreamPort.ToString();
         }
 
-        private void buttonConnect_Click(object sender, EventArgs e)
+        void buttonConnect_Click(object sender, EventArgs e)
         {
             if (IPAddress.TryParse(textBoxTargetIPAddress.Text, out ip))
             {
@@ -48,7 +48,7 @@ namespace Client
             }
         }
 
-        private void buttonCancel_Click(object sender, EventArgs e)
+        void buttonCancel_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.Abort;
             this.Close();

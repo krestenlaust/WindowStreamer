@@ -14,7 +14,7 @@ namespace Server
             InitializeComponent();
         }
 
-        private void LogWindow_Load(object sender, EventArgs e)
+        void LogWindow_Load(object sender, EventArgs e)
         {
             sw = Console.Out;
 
@@ -22,7 +22,7 @@ namespace Server
             Console.SetOut(lsw);
         }
 
-        private void clearToolStripMenuItem_Click(object sender, EventArgs e)
+        void clearToolStripMenuItem_Click(object sender, EventArgs e)
         {
         }
     }

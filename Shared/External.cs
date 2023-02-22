@@ -3,14 +3,15 @@ using System.Windows.Forms;
 
 namespace Shared
 {
-    //public struct Resolution { public int Width; public int Height; }
+    // public struct Resolution { public int Width; public int Height; }
 
-    //Thanks: nmarkou.blogspot.com/2011/12/redirect-console-output-to-textbox.html?showComment=1553282531886#c8782177256700696736
+    // Thanks: nmarkou.blogspot.com/2011/12/redirect-console-output-to-textbox.html?showComment=1553282531886#c8782177256700696736
     public class LogStreamWriter : StringWriter
     {
-        private RichTextBox textboxOutput;
         protected StreamWriter writer;
         protected MemoryStream mem;
+
+        RichTextBox textboxOutput;
 
         public LogStreamWriter(RichTextBox richTextBox)
         {

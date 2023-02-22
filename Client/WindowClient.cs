@@ -13,15 +13,15 @@ namespace Client
 {
     public class WindowClient : IDisposable
     {
-        private readonly int metastreamPort;
-        private readonly IPAddress serverIP;
-        private readonly Action<string> log;
-        private int? videostreamPort;
-
-        private UdpClient videoClient;
-        private TcpClient metaClient;
-        private NetworkStream metaStream;
-        private bool disposedValue;
+        readonly int metastreamPort;
+        readonly IPAddress serverIP;
+        readonly Action<string> log;
+        
+        int? videostreamPort;
+        UdpClient videoClient;
+        TcpClient metaClient;
+        NetworkStream metaStream;
+        bool disposedValue;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WindowClient"/> class.

@@ -40,6 +40,28 @@ namespace Server
 
         public IntPtr TargetWindowHandle { get; private set; }
 
+        protected override void WndProc(ref Message m)
+        {
+            if (m.Msg == 0x0112) // WM_SYSCOMMAND
+            {
+                if (m.WParam == new IntPtr(0xF030)) // Maximize event - SC_MAXIMIZE from Winuser.h
+                {
+                    fullscreen = true;
+                    lastResolution = this.Size;
+                    this.Size = fullscreenSize;
+                    UpdateResolutionVariables();
+                }
+                else if (m.WParam == new IntPtr(0xF120))
+                {
+                    fullscreen = false;
+                    this.Size = lastResolution;
+                    UpdateResolutionVariables();
+                }
+            }
+
+            base.WndProc(ref m);
+        }
+
         private void WindowCapture_Load(object sender, EventArgs e)
         {
             applicationSelectorCursor = Cursors.Hand;
@@ -181,7 +203,6 @@ namespace Server
         {
             if (Other.Statics.LogWindow != null)
             {
-                
             }
             LogWindow lw = new LogWindow();
             lw.FormClosed += new FormClosedEventHandler(LogWindowClosed);
@@ -195,28 +216,6 @@ namespace Server
 
         private void toolStripButtonDebug1_Click(object sender, EventArgs e)
         {
-        }
-
-        protected override void WndProc(ref Message m)
-        {
-            if (m.Msg == 0x0112) // WM_SYSCOMMAND
-            {
-                if (m.WParam == new IntPtr(0xF030)) // Maximize event - SC_MAXIMIZE from Winuser.h
-                {
-                    fullscreen = true;
-                    lastResolution = this.Size;
-                    this.Size = fullscreenSize;
-                    UpdateResolutionVariables();
-                }
-                else if (m.WParam == new IntPtr(0xF120))
-                {
-                    fullscreen = false;
-                    this.Size = lastResolution;
-                    UpdateResolutionVariables();
-                }
-            }
-
-            base.WndProc(ref m);
         }
 
         private static Bitmap GetScreenPicture(int x, int y, int width, int height)
@@ -239,42 +238,6 @@ namespace Server
             g.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size, CopyPixelOperation.SourceCopy);
 
             return bmp;
-        }
-    }
-
-    public static class WindowActions
-    {
-        public static void ClickOnPoint(IntPtr handle, Point point, int mouseButton = 0)
-        {
-            if (handle == IntPtr.Zero)
-            {
-                Console.WriteLine("Handle not attached");
-                return;
-            }
-
-            Point cursorPosition = Cursor.Position;
-
-            NativeMethods.ClientToScreen(handle, ref point);
-
-            Cursor.Position = new Point(point.X, point.Y);
-
-            NativeMethods.INPUT inputMouseDown = new NativeMethods.INPUT();
-            inputMouseDown.Type = 0; /// input type mouse
-            inputMouseDown.Data.Mouse.Flags = 0x0002; /// left button down
-
-            NativeMethods.INPUT inputMouseUp = new NativeMethods.INPUT();
-            inputMouseUp.Type = 0; /// input type mouse
-            inputMouseUp.Data.Mouse.Flags = 0x0004; /// left button up
-
-            var inputs = new NativeMethods.INPUT[] { inputMouseDown, inputMouseUp };
-            NativeMethods.SendInput((uint)inputs.Length, inputs, Marshal.SizeOf(typeof(NativeMethods.INPUT)));
-
-            /// return mouse 
-            Cursor.Position = cursorPosition;
-        }
-
-        public static void InputKey(IntPtr handle, Keys key)
-        {
         }
     }
 }

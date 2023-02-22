@@ -8,23 +8,23 @@ namespace Client
 {
     public partial class WindowDisplay : Form
     {
-        private Size formToPanelSize;
-        private MemoryStream bitmapStream;
-        private Size videoResolution;
+        Size formToPanelSize;
+        MemoryStream bitmapStream;
+        Size videoResolution;
 
-        private WindowClient windowClient;
+        WindowClient windowClient;
 
         public WindowDisplay()
         {
             InitializeComponent();
         }
 
-        private void WindowDisplay_Load(object sender, EventArgs e)
+        void WindowDisplay_Load(object sender, EventArgs e)
         {
             formToPanelSize = Size.Subtract(this.Size, displayArea.Size);
         }
 
-        private void toolStripButtonConnect_Click(object sender, EventArgs e)
+        void toolStripButtonConnect_Click(object sender, EventArgs e)
         {
             using var connectDialog = new ConnectWindow();
 
@@ -46,7 +46,7 @@ namespace Client
             }
         }
 
-        private void WindowClient_VideoframeRecieved(byte[] frame)
+        void WindowClient_VideoframeRecieved(byte[] frame)
         {
             Log("Updated frame");
             bitmapStream?.Dispose();
@@ -55,7 +55,7 @@ namespace Client
             displayArea.Image = new Bitmap(bitmapStream);
         }
 
-        private void WindowClient_ResolutionChanged(Size obj)
+        void WindowClient_ResolutionChanged(Size obj)
         {
             videoResolution = obj;
 
@@ -68,7 +68,7 @@ namespace Client
             }
         }
 
-        private void toolStripButtonResizeToFit_Click(object sender, EventArgs e)
+        void toolStripButtonResizeToFit_Click(object sender, EventArgs e)
         {
             if (toolStripButtonResizeToFit.Checked)
             {
@@ -76,17 +76,17 @@ namespace Client
             }
         }
 
-        private void ResizeToFit() => ResizeDisplayArea(videoResolution);
+        void ResizeToFit() => ResizeDisplayArea(videoResolution);
 
-        private void ResizeDisplayArea(Size size) => this.Size = Size.Add(formToPanelSize, size);
+        void ResizeDisplayArea(Size size) => this.Size = Size.Add(formToPanelSize, size);
 
-        private void Log(object stdout)
+        void Log(object stdout)
         {
             toolStripStatusLabelLatest.Text = stdout.ToString();
             System.Diagnostics.Debug.WriteLine("[Client] " + stdout);
         }
 
-        private void toolStripButtonOptions_Click(object sender, EventArgs e)
+        void toolStripButtonOptions_Click(object sender, EventArgs e)
         {
             new Options().ShowDialog();
         }
