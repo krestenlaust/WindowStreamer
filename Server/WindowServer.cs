@@ -63,7 +63,7 @@ namespace Server
         }
 
         /// <summary>
-        /// True once a connection has been initiated.
+        /// Gets a value indicating whether a connection has been initiated.
         /// </summary>
         [Obsolete("Not implemneted yet")]
         public bool Connected { get; private set; }

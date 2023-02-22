@@ -19,7 +19,7 @@ namespace Protocol
 
         public static string LocalizeParameter(string localizedString, object parameter0)
         {
-            StringBuilder sb = new StringBuilder(localizedString);
+            var sb = new StringBuilder(localizedString);
 
             sb.Replace("%0", parameter0.ToString());
 
@@ -28,7 +28,7 @@ namespace Protocol
 
         public static string LocalizeParameter(string localizedString, object parameter0, object parameter1)
         {
-            StringBuilder sb = new StringBuilder(localizedString);
+            var sb = new StringBuilder(localizedString);
 
             sb.Replace("%0", parameter0.ToString());
             sb.Replace("%1", parameter1.ToString());
@@ -38,7 +38,7 @@ namespace Protocol
 
         public static string LocalizeParameter(string localizedString, object parameter0, object parameter1, object parameter2)
         {
-            StringBuilder sb = new StringBuilder(localizedString);
+            var sb = new StringBuilder(localizedString);
 
             sb.Replace("%0", parameter0.ToString());
             sb.Replace("%1", parameter1.ToString());

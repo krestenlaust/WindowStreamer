@@ -4,9 +4,9 @@
     {
         public class Preferences
         {
-            public bool glassMode { get; set; } = false;
+            public bool GlassMode { get; set; } = false;
 
-            public bool videoStreaming { get; set; } = true;
+            public bool VideoStreaming { get; set; } = true;
         }
 
         public static LogWindow LogWindow = null;

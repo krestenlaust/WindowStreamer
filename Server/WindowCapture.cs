@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Net;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Shared;
 
@@ -83,7 +82,7 @@ namespace Server
 
         WindowServer.ConnectionReply HandleConnectionReply(IPAddress ipAddress)
         {
-            ConnectionPrompt prompt = new ConnectionPrompt(ipAddress.ToString())
+            var prompt = new ConnectionPrompt(ipAddress.ToString())
             {
                 StartPosition = FormStartPosition.CenterParent,
                 TopMost = true,
@@ -234,8 +233,8 @@ namespace Server
             position.Y = position.Y / screen.Height; // screen.Height: 1080
             */
 
-            Rectangle rect = new Rectangle(x, y, width, height);
-            Bitmap bmp = new Bitmap(rect.Width, rect.Height, PixelFormat.Format24bppRgb);
+            var rect = new Rectangle(x, y, width, height);
+            var bmp = new Bitmap(rect.Width, rect.Height, PixelFormat.Format24bppRgb);
 
             Graphics g = Graphics.FromImage(bmp);
             g.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size, CopyPixelOperation.SourceCopy);

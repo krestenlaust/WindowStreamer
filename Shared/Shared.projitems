@@ -10,7 +10,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)DefaultValues.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)External.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)OldStrings.xml" />

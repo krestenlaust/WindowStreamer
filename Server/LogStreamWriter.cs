@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Windows.Forms;
 
-namespace Shared
+namespace Server
 {
     // public struct Resolution { public int Width; public int Height; }
 

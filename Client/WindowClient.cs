@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 using Protocol;
 using Shared;
 
-#nullable enable
-
 namespace Client
 {
     public class WindowClient : IDisposable
@@ -83,7 +81,7 @@ namespace Client
 
         void RecieveDatagram(IAsyncResult res)
         {
-            IPEndPoint endPoint = new IPEndPoint(serverIP, videostreamPort!.Value);
+            var endPoint = new IPEndPoint(serverIP, videostreamPort!.Value);
             byte[] recieved = videoClient.EndReceive(res, ref endPoint!);
 
             NewFrame?.Invoke(recieved);
