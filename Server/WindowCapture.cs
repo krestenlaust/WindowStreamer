@@ -116,7 +116,7 @@ namespace Server
 
         void BlockIPAddress(IPAddress ip)
         {
-            // TODO: Actually block IP
+            // TODO: (#15) Implement blocking IPs
             Console.WriteLine("Blocking IP: " + ip.ToString());
         }
 
@@ -234,7 +234,7 @@ namespace Server
             */
 
             var rect = new Rectangle(x, y, width, height);
-            var bmp = new Bitmap(rect.Width, rect.Height, PixelFormat.Format24bppRgb);
+            var bmp = new Bitmap(rect.Width, rect.Height, DefaultValues.ImageFormat);
 
             Graphics g = Graphics.FromImage(bmp);
             g.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size, CopyPixelOperation.SourceCopy);

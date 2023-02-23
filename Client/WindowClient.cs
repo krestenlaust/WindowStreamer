@@ -34,7 +34,7 @@ namespace Client
         }
 
         /// <summary>
-        /// Event called when a complete frame has been recieved.
+        /// Event called when a complete frame has been received.
         /// </summary>
         public event Action<byte[]> NewFrame;
 
@@ -79,12 +79,35 @@ namespace Client
             metaStream?.Dispose();
         }
 
+        const int packetCount = 32;
+        int packetIndex;
+        byte[] wholePacket = null;
+        int packetsReceived = 0;
+
         void RecieveDatagram(IAsyncResult res)
         {
             var endPoint = new IPEndPoint(serverIP, videostreamPort!.Value);
-            byte[] recieved = videoClient.EndReceive(res, ref endPoint!);
+            byte[] received = videoClient.EndReceive(res, ref endPoint!);
 
-            NewFrame?.Invoke(recieved);
+            packetsReceived++;
+
+            if (wholePacket is null)
+            {
+                wholePacket = new byte[received.Length * packetCount];
+            }
+
+            Buffer.BlockCopy(received, 0, wholePacket, received.Length * packetIndex, received.Length);
+
+            // Packet is assembled
+            if (packetIndex == packetCount - 1)
+            {
+                NewFrame?.Invoke(wholePacket);
+                wholePacket = null;
+                packetIndex = -1;
+            }
+
+            packetIndex++;
+
             videoClient.BeginReceive(new AsyncCallback(RecieveDatagram), null);
         }
 
@@ -103,7 +126,7 @@ namespace Client
                 switch (packetType)
                 {
                     case ServerPacketHeader.ConnectionReply:
-                        log($"Handshake recieved");
+                        log($"Handshake received");
 
                         if (Parse.TryParseConnectionReply(metapacket, out bool accepted, out Size resolution, out int videoPort))
                         {

@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Protocol;
 using Shared;
@@ -114,7 +116,16 @@ namespace Server
                 log(bytes.Length);
             }
 
-            client.Send(bytes, bytes.Length);
+            int packetCount = 32;
+            for (int i = 0; i < packetCount; i++)
+            {
+                client.Send(new ReadOnlySpan<byte>(
+                        bytes,
+                        (bytes.Length / packetCount) * i,
+                        bytes.Length / packetCount));
+
+                Thread.Sleep(1);
+            }
         }
 
         async void BeginStreamLoop()

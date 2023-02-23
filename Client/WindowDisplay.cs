@@ -82,7 +82,11 @@ namespace Client
 
         void Log(object stdout)
         {
-            toolStripStatusLabelLatest.Text = stdout.ToString();
+            toolStripStatusLabelLatest.GetCurrentParent().Invoke((MethodInvoker)delegate
+            {
+                toolStripStatusLabelLatest.Text = stdout.ToString();
+            });
+
             System.Diagnostics.Debug.WriteLine("[Client] " + stdout);
         }
 
