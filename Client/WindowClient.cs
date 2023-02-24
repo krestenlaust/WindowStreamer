@@ -100,7 +100,14 @@ namespace Client
                 wholePacket = new byte[totalSize];
             }
 
-            Buffer.BlockCopy(received, sizeof(ushort) + sizeof(int), wholePacket, chunkSize * packetIndex, received.Length - (sizeof(ushort) + sizeof(int)));
+            Array src = received;
+            Array dst = wholePacket;
+            int srcOffset = sizeof(ushort) + sizeof(int);
+            int dstOffset = chunkSize * packetIndex;
+            int count = received.Length - (sizeof(ushort) + sizeof(int));
+
+            // #5 Implementing chunking. #16 comment.
+            Buffer.BlockCopy(src, srcOffset, dst, dstOffset, count);
 
             // Packet is assembled
             if (chunksReceived == packetCount - 1)

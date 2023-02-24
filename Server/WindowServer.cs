@@ -138,9 +138,9 @@ namespace Server
                 BitConverter.GetBytes((int)bytes.Length).CopyTo(chunk, sizeof(ushort));
 
                 client.Send(chunk, chunk.Length);
-
-                // Thread.Sleep(1);
             }
+
+            Thread.Sleep(10);
         }
 
         async void BeginStreamLoop()
