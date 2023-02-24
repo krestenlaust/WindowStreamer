@@ -50,7 +50,7 @@ namespace Client
         {
             Log("Updated frame");
             bitmapStream?.Dispose();
-            bitmapStream = new MemoryStream(frame);
+            bitmapStream = new MemoryStream((byte[])frame.Clone());
 
             displayArea.Image = new Bitmap(bitmapStream);
         }

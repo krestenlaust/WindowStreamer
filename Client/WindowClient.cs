@@ -80,33 +80,37 @@ namespace Client
         }
 
         const int packetCount = 32;
-        int packetIndex;
         byte[] wholePacket = null;
+        int chunksReceived = 0;
+        // Used for debugging
         int packetsReceived = 0;
 
         void RecieveDatagram(IAsyncResult res)
         {
             var endPoint = new IPEndPoint(serverIP, videostreamPort!.Value);
             byte[] received = videoClient.EndReceive(res, ref endPoint!);
-
             packetsReceived++;
+
+            ushort packetIndex = BitConverter.ToUInt16(received, 0);
+            int totalSize = BitConverter.ToInt32(received, sizeof(ushort));
+            int chunkSize = ((totalSize - 1) / packetCount) + 1;
 
             if (wholePacket is null)
             {
-                wholePacket = new byte[received.Length * packetCount];
+                wholePacket = new byte[totalSize];
             }
 
-            Buffer.BlockCopy(received, 0, wholePacket, received.Length * packetIndex, received.Length);
+            Buffer.BlockCopy(received, sizeof(ushort) + sizeof(int), wholePacket, chunkSize * packetIndex, received.Length - (sizeof(ushort) + sizeof(int)));
 
             // Packet is assembled
-            if (packetIndex == packetCount - 1)
+            if (chunksReceived == packetCount - 1)
             {
                 NewFrame?.Invoke(wholePacket);
                 wholePacket = null;
-                packetIndex = -1;
+                chunksReceived = -1;
             }
 
-            packetIndex++;
+            chunksReceived++;
 
             videoClient.BeginReceive(new AsyncCallback(RecieveDatagram), null);
         }

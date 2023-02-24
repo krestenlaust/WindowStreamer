@@ -99,6 +99,8 @@ namespace Server
             metaStream.Write(resChange, 0, resChange.Length);
         }
 
+        const int packetCount = 32;
+
         void SendPicture(UdpClient client)
         {
             if (!client.Client.Connected || !streamVideo)
@@ -116,15 +118,28 @@ namespace Server
                 log(bytes.Length);
             }
 
-            int packetCount = 32;
+            int chunkSize = ((bytes.Length - 1) / packetCount) + 1;
+
             for (int i = 0; i < packetCount; i++)
             {
-                client.Send(new ReadOnlySpan<byte>(
-                        bytes,
-                        (bytes.Length / packetCount) * i,
-                        bytes.Length / packetCount));
+                int currentChunkSize = chunkSize;
 
-                Thread.Sleep(1);
+                // Last packet usually has different size.
+                if (i == packetCount - 1)
+                {
+                    currentChunkSize = bytes.Length - (chunkSize * i);
+                }
+
+                // TODO: var nået her til, skulle til at finde ud af en måde at få alle bytes med.
+                var chunk = new byte[sizeof(ushort) + sizeof(int) + currentChunkSize];
+                Buffer.BlockCopy(bytes, chunkSize * i, chunk, sizeof(ushort) + sizeof(int), currentChunkSize);
+
+                BitConverter.GetBytes((ushort)i).CopyTo(chunk, 0);
+                BitConverter.GetBytes((int)bytes.Length).CopyTo(chunk, sizeof(ushort));
+
+                client.Send(chunk, chunk.Length);
+
+                // Thread.Sleep(1);
             }
         }
 
