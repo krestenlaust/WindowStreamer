@@ -73,6 +73,11 @@ namespace Client
             if (toolStripButtonResizeToFit.Checked)
             {
                 ResizeToFit();
+                FormBorderStyle = FormBorderStyle.FixedSingle;
+            }
+            else
+            {
+                FormBorderStyle = FormBorderStyle.Sizable;
             }
         }
 
