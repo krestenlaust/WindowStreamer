@@ -13,10 +13,6 @@
     <OutputPath>bin\: Client - Debug\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\Shared\External.cs">
-      <Link>External.cs</Link>
-    </Compile>
-    <Compile Include="..\Shared\LogStreamWriter.cs" Link="LogStreamWriter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
@@ -31,17 +27,12 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
     <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.4.410601">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Windows.Compatibility" Version="7.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Protocol\Protocol.csproj" />
   </ItemGroup>
   <Import Project="..\Shared\Shared.projitems" Label="Shared" />
-  <ItemGroup>
-    <Compile Remove="C:\Users\kress\source\repos\WindowStreamer\Shared\External.cs" />
-  </ItemGroup>
 </Project>
