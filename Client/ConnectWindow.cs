@@ -53,5 +53,9 @@ namespace Client
             DialogResult = DialogResult.Abort;
             Close();
         }
+
+        private void ConnectWindow_KeyUp(object sender, KeyEventArgs e)
+        {
+        }
     }
 }

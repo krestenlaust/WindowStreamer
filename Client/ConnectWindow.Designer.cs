@@ -99,8 +99,10 @@
             // 
             // ConnectWindow
             // 
+            this.AcceptButton = this.buttonConnect;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(402, 219);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonConnect);

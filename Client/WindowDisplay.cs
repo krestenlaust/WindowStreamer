@@ -74,10 +74,12 @@ namespace Client
             {
                 ResizeToFit();
                 FormBorderStyle = FormBorderStyle.FixedSingle;
+                statusStripFooter.SizingGrip = false;
             }
             else
             {
                 FormBorderStyle = FormBorderStyle.Sizable;
+                statusStripFooter.SizingGrip = true;
             }
         }
 
