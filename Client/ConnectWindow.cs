@@ -21,30 +21,29 @@ namespace Client
 
         void ConnectWindow_Load(object sender, EventArgs e)
         {
-            //this.DialogResult = DialogResult.Abort;
             textBoxTargetIPAddress.Text = "127.0.0.1";
             textBoxTargetPort.Text = DefaultValues.MetaStreamPort.ToString();
         }
 
         void buttonConnect_Click(object sender, EventArgs e)
         {
-            if (IPAddress.TryParse(textBoxTargetIPAddress.Text, out ip))
+            if (!IPAddress.TryParse(textBoxTargetIPAddress.Text, out ip))
             {
-                if (int.TryParse(textBoxTargetPort.Text, out port))
-                {
-                    TargetIPAddress = ip;
-                    TargetPort = port;
-                    DialogResult = DialogResult.OK;
-                    Close();
-                }
-                else
-                {
-                    MessageBox.Show("Port not valid", "Error");
-                }
+                MessageBox.Show("IP address not valid", "Error");
+                return;
+            }
+
+            if (int.TryParse(textBoxTargetPort.Text, out port))
+            {
+                TargetIPAddress = ip;
+                TargetPort = port;
+                DialogResult = DialogResult.OK;
+                Close();
             }
             else
             {
-                MessageBox.Show("IP address not valid", "Error");
+                MessageBox.Show("Port not valid", "Error");
+                return;
             }
         }
 
