@@ -116,7 +116,7 @@ namespace Server
             client.Send(bytes, bytes.Length);
         }
 
-        async void BeginStreamLoop()
+        async Task BeginStreamLoop()
         {
             while (streamVideo)
             {

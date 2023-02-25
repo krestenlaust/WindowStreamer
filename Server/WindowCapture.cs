@@ -15,7 +15,7 @@ namespace Server
     {
         readonly Color transparencyKeyColor = Color.Orange;
 
-        bool fullscreen = false;
+        bool fullscreen;
         Size videoResolution;
 
         /// <summary>
@@ -27,9 +27,6 @@ namespace Server
             Width = 400,
             Height = 100,
         };
-
-        Point captureAreaTopLeft;
-        Cursor applicationSelectorCursor = Cursors.Hand;
 
         WindowServer server;
 
@@ -189,34 +186,6 @@ namespace Server
 
             server?.UpdateResolution(videoResolution);
         }
-
-        /*
-        void Log(object message) => Log(message, 0);
-
-        void Log(object stdout, [CallerLineNumber] int line = 0)
-        {
-            string time = DateTime.Now.ToString("mm:ss:ffff");
-
-            if (IsHandleCreated)
-            {
-                Invoke((MethodInvoker)delegate
-                {
-                    toolStripStatusLabelLatest.Text = "[" + time + "] " + stdout;
-                });
-            }
-
-            Debug.WriteLine($"[{time}][{line}][Server] {stdout}");
-        }*/
-
-        /*
-        private void StartLogWindow()
-        {
-            if (Other.Statics.LogWindow != null)
-            {
-            }
-            LogWindow lw = new LogWindow();
-            lw.FormClosed += new FormClosedEventHandler(LogWindowClosed);
-        }*/
 
         void LogWindowClosed(object sender, FormClosedEventArgs e)
         {

@@ -5,9 +5,9 @@
         /// <summary>
         /// The constant length of a meta-packet.
         /// </summary>
-        public const int MetaFrameLength = 30;
-        public const char ParameterSeparator = ',';
-        public const char SingleSeparator = '.';
+        public static readonly int MetaFrameLength = 30;
+        public static readonly char ParameterSeparator = ',';
+        public static readonly char SingleSeparator = '.';
 
         // Meta connection messages:
         // Handshakes: status code(1 = Accept, 0 = Deny)
