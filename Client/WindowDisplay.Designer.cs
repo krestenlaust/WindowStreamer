@@ -143,6 +143,7 @@
             this.MinimumSize = new System.Drawing.Size(464, 340);
             this.Name = "WindowDisplay";
             this.Text = "Window Streamer - Client";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.WindowDisplay_FormClosed);
             this.Load += new System.EventHandler(this.WindowDisplay_Load);
             this.toolStripHeader.ResumeLayout(false);
             this.toolStripHeader.PerformLayout();

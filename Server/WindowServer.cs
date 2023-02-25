@@ -7,13 +7,13 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using Protocol;
+using Serilog;
 using Shared;
 
 namespace Server
 {
     public class WindowServer
     {
-        readonly Action<object> log;
         readonly Func<(Bitmap, Size)> obtainImage;
         readonly IPAddress boundIP;
         readonly Func<IPAddress, ConnectionReply> handleConnectionRequest;
@@ -35,10 +35,9 @@ namespace Server
         /// <param name="obtainImage">Handler for retrieving screenshots.</param>
         /// <param name="handleConnectionRequest">Handler for replying to connection attempts.</param>
         /// <param name="logger">Logging method.</param>
-        public WindowServer(IPAddress boundIP, Size startingResolution, Func<(Bitmap, Size)> obtainImage, Func<IPAddress, ConnectionReply> handleConnectionRequest, Action<object> logger)
+        public WindowServer(IPAddress boundIP, Size startingResolution, Func<(Bitmap, Size)> obtainImage, Func<IPAddress, ConnectionReply> handleConnectionRequest)
         {
             this.boundIP = boundIP;
-            log = logger;
             this.obtainImage = obtainImage;
             this.handleConnectionRequest = handleConnectionRequest;
             resolution = startingResolution;
@@ -73,11 +72,11 @@ namespace Server
             clientListener?.Stop();
             clientListener = new TcpListener(boundIP, DefaultValues.MetaStreamPort);
             clientListener.Start();
-            log($"Server started {boundIP}:{DefaultValues.MetaStreamPort}");
+            Log.Information($"Server started {boundIP}:{DefaultValues.MetaStreamPort}");
 
             metaClient = await clientListener.AcceptTcpClientAsync();
             metaStream = metaClient.GetStream();
-            log("Connection recieved...");
+            Log.Information("Connection recieved...");
 
             Task.Run(MetastreamLoop);
 
@@ -89,7 +88,7 @@ namespace Server
             // Notifies client of resolution change.
             if (metaClient?.Connected == false)
             {
-                log("Not connected...");
+                Log.Debug("Not connected...");
                 return;
             }
 
@@ -111,7 +110,7 @@ namespace Server
             {
                 bmp.Save(stream, ImageFormat.Png);
                 bytes = stream.ToArray();
-                log(bytes.Length);
+                Log.Information($"Image size: {bytes.Length}");
             }
 
             client.Send(bytes, bytes.Length);
@@ -139,20 +138,20 @@ namespace Server
                 switch ((ClientPacketHeader)int.Parse(metapacket[0]))
                 {
                     case ClientPacketHeader.Key:
-                        log($"Recieved key: {metapacket[1]}");
+                        Log.Debug($"Recieved key: {metapacket[1]}");
                         break;
                     case ClientPacketHeader.UDPReady:
-                        log("Udp ready!");
+                        Log.Debug("Udp ready!");
                         ConnectVideoStream();
                         BeginStreamLoop();
                         break;
                     default:
-                        log($"Recived this: {metapacket[0]}");
+                        Log.Debug($"Recived this: {metapacket[0]}");
                         break;
                 }
             }
 
-            log("Connection lost... or disconnected(tcp loop)");
+            Log.Information("Connection lost... or disconnected");
         }
 
         /// <summary>
@@ -163,7 +162,7 @@ namespace Server
         {
             clientEndpoint = metaClient.Client.RemoteEndPoint as IPEndPoint;
 
-            log("Inbound connection, awaiting action...");
+            Log.Information("Inbound connection, awaiting action...");
             switch (handleConnectionRequest(clientEndpoint.Address))
             {
                 case ConnectionReply.Close:
@@ -174,21 +173,20 @@ namespace Server
                     return;
 
                 case ConnectionReply.Accept:
-                    log("Accepting connection");
+                    Log.Information("Accepting connection");
 
                     videoClient = new UdpClient();
                     streamVideo = true;
 
                     var replyAccept = Send.ConnectionReply(true, resolution, DefaultValues.VideoStreamPort);
                     metaStream.Write(replyAccept, 0, replyAccept.Length);
-
-                    // videoStream = new UdpClient(Constants.VideoStreamPort); //JIWJDIAJWDJ
                     break;
+
                 case ConnectionReply.Deny:
                     var replyDeny = Send.ConnectionReply(false, Size.Empty, 0);
                     metaStream.Write(replyDeny);
 
-                    log($"Told {clientEndpoint.Address} to try again another day :)");
+                    Log.Information($"Told {clientEndpoint.Address} to try again another day :)");
                     metaClient.Close();
 
                     await StartServerAsync();

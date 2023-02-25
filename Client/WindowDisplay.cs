@@ -3,6 +3,8 @@ using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using LabelSink;
+using Serilog;
 
 namespace Client
 {
@@ -17,6 +19,12 @@ namespace Client
         public WindowDisplay()
         {
             InitializeComponent();
+
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.Console()
+                .WriteTo.File("log-client.txt", rollingInterval: RollingInterval.Day)
+                .WriteTo.ToolStripLabel(toolStripStatusLabelLatest)
+                .CreateLogger();
         }
 
         void WindowDisplay_Load(object sender, EventArgs e)
@@ -34,11 +42,12 @@ namespace Client
                 {
                     windowClient.ResolutionChanged -= WindowClient_ResolutionChanged;
                     windowClient.NewFrame -= WindowClient_VideoframeRecieved;
+
                     // TODO: Dispose of client
                     windowClient.Dispose();
                 }
 
-                windowClient = new WindowClient(connectDialog.TargetIPAddress, connectDialog.TargetPort, Log);
+                windowClient = new WindowClient(connectDialog.TargetIPAddress, connectDialog.TargetPort);
                 windowClient.ResolutionChanged += WindowClient_ResolutionChanged;
                 windowClient.NewFrame += WindowClient_VideoframeRecieved;
 
@@ -48,7 +57,7 @@ namespace Client
 
         void WindowClient_VideoframeRecieved(byte[] frame)
         {
-            Log("Updated frame");
+            //Log.Information("Updated frame");
             bitmapStream?.Dispose();
             bitmapStream = new MemoryStream(frame);
 
@@ -70,6 +79,8 @@ namespace Client
 
         void toolStripButtonResizeToFit_Click(object sender, EventArgs e)
         {
+            Log.Debug($"Fit to content: {toolStripButtonResizeToFit.Checked}");
+
             if (toolStripButtonResizeToFit.Checked)
             {
                 ResizeToFit();
@@ -87,15 +98,16 @@ namespace Client
 
         void ResizeDisplayArea(Size size) => Size = Size.Add(formToPanelSize, size);
 
-        void Log(object stdout)
-        {
-            toolStripStatusLabelLatest.Text = stdout.ToString();
-            System.Diagnostics.Debug.WriteLine("[Client] " + stdout);
-        }
-
         void toolStripButtonOptions_Click(object sender, EventArgs e)
         {
+            Log.Debug($"Options opened");
             new Options().ShowDialog();
+        }
+
+        private void WindowDisplay_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Log.Information("Application closing...");
+            Log.CloseAndFlush();
         }
     }
 }

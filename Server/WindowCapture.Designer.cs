@@ -191,6 +191,7 @@
             this.Controls.Add(this.statusStripFooter);
             this.Name = "WindowCapture";
             this.Text = "Window Streamer - Server";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.WindowCapture_FormClosed);
             this.Load += new System.EventHandler(this.WindowCapture_Load);
             this.Resize += new System.EventHandler(this.WindowCapture_Resize);
             this.statusStripFooter.ResumeLayout(false);

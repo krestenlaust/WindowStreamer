@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using Protocol;
+using Serilog;
 using Shared;
 
 namespace Client
@@ -13,7 +14,6 @@ namespace Client
     {
         readonly int metastreamPort;
         readonly IPAddress serverIP;
-        readonly Action<string> log;
 
         int? videostreamPort;
         UdpClient videoClient;
@@ -26,11 +26,10 @@ namespace Client
         /// <param name="serverIP"></param>
         /// <param name="metastreamPort"></param>
         /// <param name="logger"></param>
-        public WindowClient(IPAddress serverIP, int metastreamPort, Action<string> logger)
+        public WindowClient(IPAddress serverIP, int metastreamPort)
         {
             this.serverIP = serverIP;
             this.metastreamPort = metastreamPort;
-            log = logger;
         }
 
         /// <summary>
@@ -47,13 +46,13 @@ namespace Client
         {
             if (metaClient?.Connected == true)
             {
-                log($"Disconnecting {serverIP}:{metastreamPort}");
+                Log.Information($"Disconnecting {serverIP}:{metastreamPort}");
                 metaClient.Close();
             }
 
             metaClient = new TcpClient();
 
-            log($"Connecting to {serverIP}:{metastreamPort}...");
+            Log.Information($"Connecting to {serverIP}:{metastreamPort}...");
 
             try
             {
@@ -61,13 +60,13 @@ namespace Client
             }
             catch (SocketException)
             {
-                log("Connection unsuccessful.");
+                Log.Information("Connection unsuccessful.");
                 return;
             }
 
             metaStream = metaClient.GetStream();
 
-            log($"Awaiting response from {serverIP}");
+            Log.Information($"Awaiting response from {serverIP}");
 
             await Task.Run(MetastreamLoop);
         }
@@ -103,7 +102,7 @@ namespace Client
                 switch (packetType)
                 {
                     case ServerPacketHeader.ConnectionReply:
-                        log($"Handshake recieved");
+                        Log.Debug($"Handshake recieved");
 
                         if (Parse.TryParseConnectionReply(metapacket, out bool accepted, out Size resolution, out int videoPort))
                         {
@@ -112,18 +111,18 @@ namespace Client
                         }
                         else
                         {
-                            log("Failed to parse packet");
+                            Log.Debug("Failed to parse packet");
                             continue;
                         }
 
                         if (!accepted)
                         {
                             // TODO: implement some connection ended logic.
-                            log("Connection request denied :(");
+                            Log.Information("Connection request denied :(");
                             return;
                         }
 
-                        log("Connection request accepted, awaiting handshake finish...");
+                        Log.Information("Connection request accepted, awaiting handshake finish...");
                         IPEndPoint ipEndPoint = (IPEndPoint)metaClient.Client.RemoteEndPoint!;
 
                         videoClient = new UdpClient(videoPort);
@@ -134,21 +133,29 @@ namespace Client
 
                         handshakeFinished = true;
 
+                        Log.Information("Stream established");
+
                         break;
                     case ServerPacketHeader.ResolutionUpdate when handshakeFinished:
-                        log("Recieved resolution update");
-                        Parse.TryParseResolutionChange(metapacket, out Size newResolution);
+                        Log.Debug("Recieved resolution update");
 
-                        ResolutionChanged?.Invoke(newResolution);
+                        if (Parse.TryParseResolutionChange(metapacket, out Size newResolution))
+                        {
+                            ResolutionChanged?.Invoke(newResolution);
+                        }
+                        else
+                        {
+                            Log.Debug("Failed to parse packet");
+                        }
 
                         break;
                     default:
-                        log($"Recieved this: {metapacket[0]}");
+                        Log.Debug($"Recieved this: {metapacket[0]}");
                         break;
                 }
             }
 
-            log("Connection lost... or disconnected");
+            Log.Information("Connection lost... or disconnected");
         }
     }
 }
