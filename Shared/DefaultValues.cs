@@ -8,6 +8,6 @@ namespace Shared
         public const int MetaStreamPort = 10063;
         public const int FramerateCap = 10;
         public static readonly PixelFormat ImageFormat = PixelFormat.Format24bppRgb;
-        public const int BytesPerPixel = 3;
+        public static readonly int BytesPerPixel = 3;
     }
 }

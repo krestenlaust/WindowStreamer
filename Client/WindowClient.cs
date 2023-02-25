@@ -20,6 +20,12 @@ namespace Client
         TcpClient metaClient;
         NetworkStream metaStream;
 
+        static readonly int packetCount = 32;
+        byte[] wholePacket;
+        int chunksReceived;
+        // Used for debugging
+        int packetsReceived;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="WindowClient"/> class.
         /// </summary>
@@ -77,12 +83,6 @@ namespace Client
             metaClient?.Dispose();
             metaStream?.Dispose();
         }
-
-        const int packetCount = 32;
-        byte[] wholePacket = null;
-        int chunksReceived = 0;
-        // Used for debugging
-        int packetsReceived = 0;
 
         void RecieveDatagram(IAsyncResult res)
         {
