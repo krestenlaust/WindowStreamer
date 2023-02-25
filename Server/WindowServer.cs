@@ -108,8 +108,46 @@ namespace Server
             }
 
             (Bitmap bmp, Size resolution) = obtainImage();
-            byte[] bytes;
+            byte[] bytes = new byte[bmp.Height * bmp.Width * 3];
 
+            for (int y = 0; y < bmp.Height; y++)
+            {
+                for (int x = 0; x < bmp.Width; x++)
+                {
+                    Color color = bmp.GetPixel(x, y);
+                    bytes[(x + (y * bmp.Width)) * 3] = color.R;
+                    bytes[((x + (y * bmp.Width)) * 3) + 1] = color.G;
+                    bytes[((x + (y * bmp.Width)) * 3) + 2] = color.B;
+                }
+            }
+
+            int totalSizePixels = bmp.Height * bmp.Width;
+            int chunkSizePixels = ((totalSizePixels - 1) / packetCount) + 1;
+
+            for (int i = 0; i < packetCount; i++)
+            {
+                int currentChunkSize = chunkSizePixels * 3;
+                int chunkOffset = chunkSizePixels * 3 * i;
+
+                // Last packet usually has different size.
+                if (i == packetCount - 1)
+                {
+                    currentChunkSize = bytes.Length - chunkOffset;
+                }
+
+                int parameterOffset = sizeof(ushort) + sizeof(int) + sizeof(ushort) + sizeof(ushort);
+                var chunk = new byte[parameterOffset + currentChunkSize];
+                Buffer.BlockCopy(bytes, chunkOffset, chunk, parameterOffset, currentChunkSize);
+
+                BitConverter.GetBytes((ushort)i).CopyTo(chunk, 0);
+                BitConverter.GetBytes((int)bytes.Length).CopyTo(chunk, sizeof(ushort));
+                BitConverter.GetBytes((ushort)bmp.Width).CopyTo(chunk, sizeof(ushort) + sizeof(int));
+                BitConverter.GetBytes((ushort)bmp.Height).CopyTo(chunk, sizeof(ushort) + sizeof(int) + sizeof(ushort));
+
+                client.Send(chunk, chunk.Length);
+            }
+
+            /*
             using (var stream = new MemoryStream())
             {
                 bmp.Save(stream, ImageFormat.Png);
@@ -137,7 +175,7 @@ namespace Server
                 BitConverter.GetBytes((int)bytes.Length).CopyTo(chunk, sizeof(ushort));
 
                 client.Send(chunk, chunk.Length);
-            }
+            }*/
 
             Thread.Sleep(10);
         }

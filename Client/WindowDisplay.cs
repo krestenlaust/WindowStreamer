@@ -55,6 +55,12 @@ namespace Client
             }
         }
 
+        void WindowClient_VideoframeRecieved(Bitmap bitmap)
+        {
+            displayArea.Image = bitmap;
+        }
+
+        /*
         void WindowClient_VideoframeRecieved(byte[] frame)
         {
             //Log.Information("Updated frame");
@@ -62,7 +68,7 @@ namespace Client
             bitmapStream = new MemoryStream((byte[])frame.Clone());
 
             displayArea.Image = new Bitmap(bitmapStream);
-        }
+        }*/
 
         void WindowClient_ResolutionChanged(Size obj)
         {

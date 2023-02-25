@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Protocol;
@@ -19,10 +20,11 @@ namespace Client
         UdpClient videoClient;
         TcpClient metaClient;
         NetworkStream metaStream;
+        Bitmap bitmap;
 
         static readonly int packetCount = 32;
-        byte[] wholePacket;
-        int chunksReceived;
+        //byte[] wholePacket;
+        //int chunksReceived;
         // Used for debugging
         int packetsReceived;
 
@@ -41,7 +43,8 @@ namespace Client
         /// <summary>
         /// Event called when a complete frame has been received.
         /// </summary>
-        public event Action<byte[]> NewFrame;
+        public event Action<Bitmap> NewFrame;
+        //public event Action<byte[]> NewFrame;
 
         /// <summary>
         /// Event called when the resolution is changed.
@@ -93,6 +96,45 @@ namespace Client
             ushort packetIndex = BitConverter.ToUInt16(received, 0);
             int totalSize = BitConverter.ToInt32(received, sizeof(ushort));
             int chunkSize = ((totalSize - 1) / packetCount) + 1;
+            ushort width = BitConverter.ToUInt16(received, sizeof(ushort) + sizeof(int));
+            ushort height = BitConverter.ToUInt16(received, sizeof(ushort) + sizeof(int) + sizeof(ushort));
+
+            int chunkOffset = chunkSize * packetIndex;
+            int imageOffset = sizeof(ushort) + sizeof(int) + sizeof(ushort) + sizeof(ushort);
+
+            Span<byte> imageData = new Span<byte>(
+                received,
+                imageOffset,
+                received.Length - imageOffset);
+
+            if (bitmap is null || bitmap.Width != width || bitmap.Height != height)
+            {
+                bitmap = new Bitmap(width, height);
+            }
+
+            for (int i = 0; i < imageData.Length; i += 3)
+            {
+                Color color = Color.FromArgb(imageData[i], imageData[i + 1], imageData[i + 2]);
+
+                (int y, int x) = Math.DivRem(i + chunkOffset, width);
+
+                bitmap.SetPixel(x, y, color);
+            }
+
+            NewFrame?.Invoke((Bitmap)bitmap.Clone());
+
+            videoClient.BeginReceive(new AsyncCallback(RecieveDatagram), null);
+        }
+
+        /*void RecieveDatagram(IAsyncResult res)
+        {
+            var endPoint = new IPEndPoint(serverIP, videostreamPort!.Value);
+            byte[] received = videoClient.EndReceive(res, ref endPoint!);
+            packetsReceived++;
+
+            ushort packetIndex = BitConverter.ToUInt16(received, 0);
+            int totalSize = BitConverter.ToInt32(received, sizeof(ushort));
+            int chunkSize = ((totalSize - 1) / packetCount) + 1;
 
             if (wholePacket is null)
             {
@@ -119,7 +161,7 @@ namespace Client
             chunksReceived++;
 
             videoClient.BeginReceive(new AsyncCallback(RecieveDatagram), null);
-        }
+        }*/
 
         async Task MetastreamLoop()
         {
