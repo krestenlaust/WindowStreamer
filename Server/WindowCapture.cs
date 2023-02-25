@@ -5,6 +5,8 @@ using System.Drawing.Imaging;
 using System.Net;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
+using LabelSink;
+using Serilog;
 using Shared;
 
 namespace Server
@@ -37,6 +39,12 @@ namespace Server
         public WindowCapture()
         {
             InitializeComponent();
+
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.Console()
+                .WriteTo.File("log-server.txt", rollingInterval: RollingInterval.Day)
+                .WriteTo.ToolStripLabel(toolStripStatusLabelLatest)
+                .CreateLogger();
         }
 
         public IntPtr TargetWindowHandle { get; private set; }
@@ -91,21 +99,21 @@ namespace Server
             switch (prompt.ShowDialog())
             {
                 case DialogResult.Abort: // Block
-                    Log("Blocked the following IP Address: " + ipAddress);
+                    Log.Information("Blocked the following IP Address: " + ipAddress);
 
                     BlockIPAddress(ipAddress);
                     return WindowServer.ConnectionReply.Close;
 
                 case DialogResult.Ignore: // Ignore
-                    Log("Ignoring connection");
+                    Log.Information("Ignoring connection");
                     return WindowServer.ConnectionReply.Close;
 
                 case DialogResult.Yes: // Accept
-                    Log("Accepting connection");
+                    Log.Information("Accepting connection");
                     return WindowServer.ConnectionReply.Accept;
 
                 case DialogResult.No: // Deny
-                    Log($"Told {ipAddress} to try again another day :)");
+                    Log.Information($"Told {ipAddress} to try again another day :)");
                     return WindowServer.ConnectionReply.Deny;
                 default:
                     break;
@@ -144,7 +152,7 @@ namespace Server
                 return;
             }
 
-            server = new WindowServer(acceptedAddress, videoResolution, ObtainImage, HandleConnectionReply, Log);
+            server = new WindowServer(acceptedAddress, videoResolution, ObtainImage, HandleConnectionReply);
             await server.StartServerAsync();
         }
 
@@ -182,6 +190,7 @@ namespace Server
             server?.UpdateResolution(videoResolution);
         }
 
+        /*
         void Log(object message) => Log(message, 0);
 
         void Log(object stdout, [CallerLineNumber] int line = 0)
@@ -197,7 +206,7 @@ namespace Server
             }
 
             Debug.WriteLine($"[{time}][{line}][Server] {stdout}");
-        }
+        }*/
 
         /*
         private void StartLogWindow()
@@ -240,6 +249,12 @@ namespace Server
             g.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size, CopyPixelOperation.SourceCopy);
 
             return bmp;
+        }
+
+        private void WindowCapture_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Log.Information("Application closing...");
+            Log.CloseAndFlush();
         }
     }
 }

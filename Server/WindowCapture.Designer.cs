@@ -43,9 +43,9 @@
             this.toolStripButtonOptions = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripButtonApplicationSelector = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonDebug1 = new System.Windows.Forms.ToolStripButton();
             this.captureArea = new System.Windows.Forms.Panel();
             this.toolTipMain = new System.Windows.Forms.ToolTip(this.components);
-            this.toolStripButtonDebug1 = new System.Windows.Forms.ToolStripButton();
             this.statusStripFooter.SuspendLayout();
             this.toolStripHeader.SuspendLayout();
             this.SuspendLayout();
@@ -57,28 +57,29 @@
             this.toolStripStatusLabelResolution,
             this.toolStripStatusLabelLatest,
             this.toolStripStatusFPSCounter});
-            this.statusStripFooter.Location = new System.Drawing.Point(0, 328);
+            this.statusStripFooter.Location = new System.Drawing.Point(0, 309);
             this.statusStripFooter.Name = "statusStripFooter";
-            this.statusStripFooter.Size = new System.Drawing.Size(582, 25);
+            this.statusStripFooter.Padding = new System.Windows.Forms.Padding(1, 0, 12, 0);
+            this.statusStripFooter.Size = new System.Drawing.Size(509, 22);
             this.statusStripFooter.TabIndex = 0;
             this.statusStripFooter.Text = "statusStrip1";
             // 
             // toolStripStatusLabelResolution
             // 
             this.toolStripStatusLabelResolution.Name = "toolStripStatusLabelResolution";
-            this.toolStripStatusLabelResolution.Size = new System.Drawing.Size(213, 20);
+            this.toolStripStatusLabelResolution.Size = new System.Drawing.Size(168, 17);
             this.toolStripStatusLabelResolution.Text = "toolStripStatusLabelResolution";
             // 
             // toolStripStatusLabelLatest
             // 
             this.toolStripStatusLabelLatest.Name = "toolStripStatusLabelLatest";
-            this.toolStripStatusLabelLatest.Size = new System.Drawing.Size(15, 20);
-            this.toolStripStatusLabelLatest.Text = "..";
+            this.toolStripStatusLabelLatest.Size = new System.Drawing.Size(16, 17);
+            this.toolStripStatusLabelLatest.Text = "...";
             // 
             // toolStripStatusFPSCounter
             // 
             this.toolStripStatusFPSCounter.Name = "toolStripStatusFPSCounter";
-            this.toolStripStatusFPSCounter.Size = new System.Drawing.Size(35, 20);
+            this.toolStripStatusFPSCounter.Size = new System.Drawing.Size(29, 17);
             this.toolStripStatusFPSCounter.Text = "FPS:";
             this.toolStripStatusFPSCounter.Visible = false;
             // 
@@ -99,20 +100,20 @@
             this.toolStripHeader.Location = new System.Drawing.Point(0, 0);
             this.toolStripHeader.Name = "toolStripHeader";
             this.toolStripHeader.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-            this.toolStripHeader.Size = new System.Drawing.Size(582, 27);
+            this.toolStripHeader.Size = new System.Drawing.Size(509, 27);
             this.toolStripHeader.TabIndex = 1;
             this.toolStripHeader.Text = "toolStrip1";
             // 
             // toolStripTextBoxAcceptableHost
             // 
             this.toolStripTextBoxAcceptableHost.Name = "toolStripTextBoxAcceptableHost";
-            this.toolStripTextBoxAcceptableHost.Size = new System.Drawing.Size(120, 27);
+            this.toolStripTextBoxAcceptableHost.Size = new System.Drawing.Size(106, 27);
             this.toolStripTextBoxAcceptableHost.ToolTipText = "IP to accept connection from, leave blank for any";
             // 
             // toolStripLabel1
             // 
             this.toolStripLabel1.Name = "toolStripLabel1";
-            this.toolStripLabel1.Size = new System.Drawing.Size(12, 24);
+            this.toolStripLabel1.Size = new System.Drawing.Size(10, 24);
             this.toolStripLabel1.Text = ":";
             // 
             // toolStripTextBoxTargetPort
@@ -120,7 +121,7 @@
             this.toolStripTextBoxTargetPort.MaxLength = 5;
             this.toolStripTextBoxTargetPort.Name = "toolStripTextBoxTargetPort";
             this.toolStripTextBoxTargetPort.ReadOnly = true;
-            this.toolStripTextBoxTargetPort.Size = new System.Drawing.Size(60, 27);
+            this.toolStripTextBoxTargetPort.Size = new System.Drawing.Size(53, 27);
             // 
             // toolStripButtonConnect
             // 
@@ -128,8 +129,8 @@
             this.toolStripButtonConnect.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonConnect.Image")));
             this.toolStripButtonConnect.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonConnect.Name = "toolStripButtonConnect";
-            this.toolStripButtonConnect.Size = new System.Drawing.Size(44, 24);
-            this.toolStripButtonConnect.Text = "Start";
+            this.toolStripButtonConnect.Size = new System.Drawing.Size(35, 24);
+            this.toolStripButtonConnect.Text = "&Start";
             this.toolStripButtonConnect.Click += new System.EventHandler(this.toolStripButtonConnect_ClickAsync);
             // 
             // toolStripSeparator2
@@ -143,8 +144,8 @@
             this.toolStripButtonOptions.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonOptions.Image")));
             this.toolStripButtonOptions.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonOptions.Name = "toolStripButtonOptions";
-            this.toolStripButtonOptions.Size = new System.Drawing.Size(65, 24);
-            this.toolStripButtonOptions.Text = "Options";
+            this.toolStripButtonOptions.Size = new System.Drawing.Size(53, 24);
+            this.toolStripButtonOptions.Text = "&Options";
             this.toolStripButtonOptions.Click += new System.EventHandler(this.toolStripButtonOptions_Click);
             // 
             // toolStripSeparator1
@@ -162,14 +163,6 @@
             this.toolStripButtonApplicationSelector.Text = "toolStripButtonApplicationSelector";
             this.toolStripButtonApplicationSelector.Click += new System.EventHandler(this.toolStripButtonApplicationSelector_Click);
             // 
-            // captureArea
-            // 
-            this.captureArea.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.captureArea.Location = new System.Drawing.Point(0, 27);
-            this.captureArea.Name = "captureArea";
-            this.captureArea.Size = new System.Drawing.Size(582, 301);
-            this.captureArea.TabIndex = 2;
-            // 
             // toolStripButtonDebug1
             // 
             this.toolStripButtonDebug1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -180,16 +173,25 @@
             this.toolStripButtonDebug1.Text = "Debug1";
             this.toolStripButtonDebug1.Click += new System.EventHandler(this.toolStripButtonDebug1_Click);
             // 
+            // captureArea
+            // 
+            this.captureArea.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.captureArea.Location = new System.Drawing.Point(0, 27);
+            this.captureArea.Name = "captureArea";
+            this.captureArea.Size = new System.Drawing.Size(509, 282);
+            this.captureArea.TabIndex = 2;
+            // 
             // WindowCapture
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(582, 353);
+            this.ClientSize = new System.Drawing.Size(509, 331);
             this.Controls.Add(this.captureArea);
             this.Controls.Add(this.toolStripHeader);
             this.Controls.Add(this.statusStripFooter);
             this.Name = "WindowCapture";
             this.Text = "Window Streamer - Server";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.WindowCapture_FormClosed);
             this.Load += new System.EventHandler(this.WindowCapture_Load);
             this.Resize += new System.EventHandler(this.WindowCapture_Resize);
             this.statusStripFooter.ResumeLayout(false);
