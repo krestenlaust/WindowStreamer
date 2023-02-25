@@ -66,6 +66,7 @@
     <EmbeddedResource Remove="Prompt.resx" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\LabelSink\LabelSink.csproj" />
     <ProjectReference Include="..\Protocol\Protocol.csproj" />
   </ItemGroup>
   <Import Project="..\Shared\Shared.projitems" Label="Shared" />
