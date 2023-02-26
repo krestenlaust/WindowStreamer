@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Net;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using LabelSink;
 using Serilog;
@@ -68,14 +69,57 @@ namespace Server
             base.WndProc(ref m);
         }
 
-        void WindowCapture_Load(object sender, EventArgs e)
+        async void WindowCapture_LoadAsync(object sender, EventArgs e)
         {
             TransparencyKey = transparencyKeyColor;
             captureArea.BackColor = transparencyKeyColor;
-
             UpdateResolutionVariables();
-
             toolStripTextBoxTargetPort.Text = DefaultValues.MetaStreamPort.ToString();
+
+            // Handle command-line arguments
+            await HandleCommandlineArgumentsAsync(Environment.GetCommandLineArgs());
+        }
+
+        async Task HandleCommandlineArgumentsAsync(string[] args)
+        {
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (!args[i].StartsWith("-"))
+                {
+                    continue;
+                }
+
+                switch (args[i])
+                {
+                    case "--listen":
+                    case "-l":
+                        if (args.Length == i + 1)
+                        {
+                            // No parameter given.
+                            continue;
+                        }
+
+                        string parameter = args[i + 1];
+
+                        var splittedParameter = parameter.Split(':');
+
+                        if (!IPAddress.TryParse(splittedParameter[0], out IPAddress address))
+                        {
+                            // Invalid parameter
+                            continue;
+                        }
+
+                        if (splittedParameter.Length == 1 || !int.TryParse(splittedParameter[1], out int targetPort))
+                        {
+                            targetPort = DefaultValues.MetaStreamPort;
+                        }
+
+                        await StartServerAsync(address, targetPort);
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
 
         (Bitmap, Size) ObtainImage()
@@ -149,7 +193,22 @@ namespace Server
                 return;
             }
 
-            server = new WindowServer(acceptedAddress, videoResolution, ObtainImage, HandleConnectionReply);
+            if (!int.TryParse(toolStripTextBoxTargetPort.Text, out int targetPort))
+            {
+                targetPort = DefaultValues.MetaStreamPort;
+            }
+
+            await StartServerAsync(acceptedAddress, targetPort);
+        }
+
+        async Task StartServerAsync(IPAddress bindAddress, int port = 0)
+        {
+            if (port == 0)
+            {
+                port = DefaultValues.MetaStreamPort;
+            }
+
+            server = new WindowServer(bindAddress, port, videoResolution, ObtainImage, HandleConnectionReply);
             await server.StartServerAsync();
         }
 
