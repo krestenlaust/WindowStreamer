@@ -85,7 +85,7 @@
             this.toolStripButtonConnect.Name = "toolStripButtonConnect";
             this.toolStripButtonConnect.Size = new System.Drawing.Size(105, 22);
             this.toolStripButtonConnect.Text = "&Connect to Server";
-            this.toolStripButtonConnect.Click += new System.EventHandler(this.toolStripButtonConnect_Click);
+            this.toolStripButtonConnect.Click += new System.EventHandler(this.toolStripButtonConnect_ClickAsync);
             // 
             // toolStripSeparator2
             // 

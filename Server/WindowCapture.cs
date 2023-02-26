@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Net;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using LabelSink;
 using Serilog;
@@ -15,7 +16,7 @@ namespace Server
     {
         readonly Color transparencyKeyColor = Color.Orange;
 
-        bool fullscreen = false;
+        bool fullscreen;
         Size videoResolution;
 
         /// <summary>
@@ -27,9 +28,6 @@ namespace Server
             Width = 400,
             Height = 100,
         };
-
-        Point captureAreaTopLeft;
-        Cursor applicationSelectorCursor = Cursors.Hand;
 
         WindowServer server;
 
@@ -71,14 +69,57 @@ namespace Server
             base.WndProc(ref m);
         }
 
-        void WindowCapture_Load(object sender, EventArgs e)
+        async void WindowCapture_LoadAsync(object sender, EventArgs e)
         {
             TransparencyKey = transparencyKeyColor;
             captureArea.BackColor = transparencyKeyColor;
-
             UpdateResolutionVariables();
-
             toolStripTextBoxTargetPort.Text = DefaultValues.MetaStreamPort.ToString();
+
+            // Handle command-line arguments
+            await HandleCommandlineArgumentsAsync(Environment.GetCommandLineArgs());
+        }
+
+        async Task HandleCommandlineArgumentsAsync(string[] args)
+        {
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (!args[i].StartsWith("-"))
+                {
+                    continue;
+                }
+
+                switch (args[i])
+                {
+                    case "--listen":
+                    case "-l":
+                        if (args.Length == i + 1)
+                        {
+                            // No parameter given.
+                            continue;
+                        }
+
+                        string parameter = args[i + 1];
+
+                        var splittedParameter = parameter.Split(':');
+
+                        if (!IPAddress.TryParse(splittedParameter[0], out IPAddress address))
+                        {
+                            // Invalid parameter
+                            continue;
+                        }
+
+                        if (splittedParameter.Length == 1 || !int.TryParse(splittedParameter[1], out int targetPort))
+                        {
+                            targetPort = DefaultValues.MetaStreamPort;
+                        }
+
+                        await StartServerAsync(address, targetPort);
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
 
         (Bitmap, Size) ObtainImage()
@@ -152,7 +193,22 @@ namespace Server
                 return;
             }
 
-            server = new WindowServer(acceptedAddress, videoResolution, ObtainImage, HandleConnectionReply);
+            if (!int.TryParse(toolStripTextBoxTargetPort.Text, out int targetPort))
+            {
+                targetPort = DefaultValues.MetaStreamPort;
+            }
+
+            await StartServerAsync(acceptedAddress, targetPort);
+        }
+
+        async Task StartServerAsync(IPAddress bindAddress, int port = 0)
+        {
+            if (port == 0)
+            {
+                port = DefaultValues.MetaStreamPort;
+            }
+
+            server = new WindowServer(bindAddress, port, videoResolution, ObtainImage, HandleConnectionReply);
             await server.StartServerAsync();
         }
 
@@ -176,47 +232,19 @@ namespace Server
             {
                 videoResolution.Height = Screen.FromControl(this).Bounds.Height;
                 videoResolution.Width = Screen.FromControl(this).Bounds.Width;
-                captureAreaTopLeft = Screen.FromControl(this).Bounds.Location;
+                //captureAreaTopLeft = Screen.FromControl(this).Bounds.Location;
             }
             else
             {
                 videoResolution.Height = captureArea.Height;
                 videoResolution.Width = captureArea.Width;
-                captureAreaTopLeft = captureArea.Bounds.Location;
+                //captureAreaTopLeft = captureArea.Bounds.Location;
             }
 
             toolStripStatusLabelResolution.Text = videoResolution.Width.ToString() + "x" + videoResolution.Height.ToString();
 
             server?.UpdateResolution(videoResolution);
         }
-
-        /*
-        void Log(object message) => Log(message, 0);
-
-        void Log(object stdout, [CallerLineNumber] int line = 0)
-        {
-            string time = DateTime.Now.ToString("mm:ss:ffff");
-
-            if (IsHandleCreated)
-            {
-                Invoke((MethodInvoker)delegate
-                {
-                    toolStripStatusLabelLatest.Text = "[" + time + "] " + stdout;
-                });
-            }
-
-            Debug.WriteLine($"[{time}][{line}][Server] {stdout}");
-        }*/
-
-        /*
-        private void StartLogWindow()
-        {
-            if (Other.Statics.LogWindow != null)
-            {
-            }
-            LogWindow lw = new LogWindow();
-            lw.FormClosed += new FormClosedEventHandler(LogWindowClosed);
-        }*/
 
         void LogWindowClosed(object sender, FormClosedEventArgs e)
         {

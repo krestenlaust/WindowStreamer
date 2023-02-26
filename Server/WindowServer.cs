@@ -19,6 +19,7 @@ namespace Server
         readonly Func<(Bitmap, Size)> obtainImage;
         readonly IPAddress boundIP;
         readonly Func<IPAddress, ConnectionReply> handleConnectionRequest;
+        readonly int metaPort;
 
         // TODO: Why is internetwork specified here?
         TcpClient metaClient = new TcpClient(AddressFamily.InterNetwork);
@@ -37,12 +38,13 @@ namespace Server
         /// <param name="obtainImage">Handler for retrieving screenshots.</param>
         /// <param name="handleConnectionRequest">Handler for replying to connection attempts.</param>
         /// <param name="logger">Logging method.</param>
-        public WindowServer(IPAddress boundIP, Size startingResolution, Func<(Bitmap, Size)> obtainImage, Func<IPAddress, ConnectionReply> handleConnectionRequest)
+        public WindowServer(IPAddress boundIP, int port, Size startingResolution, Func<(Bitmap, Size)> obtainImage, Func<IPAddress, ConnectionReply> handleConnectionRequest)
         {
             this.boundIP = boundIP;
             this.obtainImage = obtainImage;
             this.handleConnectionRequest = handleConnectionRequest;
             resolution = startingResolution;
+            metaPort = port;
         }
 
         public enum ConnectionReply
@@ -72,9 +74,9 @@ namespace Server
         public async Task StartServerAsync()
         {
             clientListener?.Stop();
-            clientListener = new TcpListener(boundIP, DefaultValues.MetaStreamPort);
+            clientListener = new TcpListener(boundIP, metaPort);
             clientListener.Start();
-            Log.Information($"Server started {boundIP}:{DefaultValues.MetaStreamPort}");
+            Log.Information($"Server started {boundIP}:{metaPort}");
 
             metaClient = await clientListener.AcceptTcpClientAsync();
             metaStream = metaClient.GetStream();
@@ -180,7 +182,7 @@ namespace Server
             Thread.Sleep(10);
         }
 
-        async void BeginStreamLoop()
+        async Task BeginStreamLoop()
         {
             while (streamVideo)
             {
