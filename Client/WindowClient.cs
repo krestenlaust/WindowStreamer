@@ -93,19 +93,19 @@ namespace Client
             byte[] received = videoClient.EndReceive(res, ref endPoint!);
             packetsReceived++;
 
-            ushort packetIndex = BitConverter.ToUInt16(received, 0);
-            int totalSize = BitConverter.ToInt32(received, sizeof(ushort));
-            int chunkSize = ((totalSize - 1) / packetCount) + 1;
+            ushort chunkIndex = BitConverter.ToUInt16(received, 0);
+            int totalSizeBytes = BitConverter.ToInt32(received, sizeof(ushort));
+            int chunkSizeBytes = ((totalSizeBytes - 1) / packetCount) + 1;
             ushort width = BitConverter.ToUInt16(received, sizeof(ushort) + sizeof(int));
             ushort height = BitConverter.ToUInt16(received, sizeof(ushort) + sizeof(int) + sizeof(ushort));
 
-            int chunkOffset = chunkSize * packetIndex;
-            int imageOffset = sizeof(ushort) + sizeof(int) + sizeof(ushort) + sizeof(ushort);
+            int chunkOffsetBytes = chunkSizeBytes * chunkIndex;
+            int imageDataOffset = sizeof(ushort) + sizeof(int) + sizeof(ushort) + sizeof(ushort);
 
             Span<byte> imageData = new Span<byte>(
                 received,
-                imageOffset,
-                received.Length - imageOffset);
+                imageDataOffset,
+                received.Length - imageDataOffset);
 
             if (bitmap is null || bitmap.Width != width || bitmap.Height != height)
             {
@@ -116,7 +116,8 @@ namespace Client
             {
                 Color color = Color.FromArgb(imageData[i], imageData[i + 1], imageData[i + 2]);
 
-                (int y, int x) = Math.DivRem(i + chunkOffset, width);
+                // The server-side should be correct, it's somewhere around here the problem lies.
+                (int y, int x) = Math.DivRem((i / 3) + chunkOffsetBytes, width);
 
                 bitmap.SetPixel(x, y, color);
             }
@@ -132,19 +133,19 @@ namespace Client
             byte[] received = videoClient.EndReceive(res, ref endPoint!);
             packetsReceived++;
 
-            ushort packetIndex = BitConverter.ToUInt16(received, 0);
-            int totalSize = BitConverter.ToInt32(received, sizeof(ushort));
-            int chunkSize = ((totalSize - 1) / packetCount) + 1;
+            ushort chunkIndex = BitConverter.ToUInt16(received, 0);
+            int totalSizeBytes = BitConverter.ToInt32(received, sizeof(ushort));
+            int chunkSizeBytes = ((totalSizeBytes - 1) / packetCount) + 1;
 
             if (wholePacket is null)
             {
-                wholePacket = new byte[totalSize];
+                wholePacket = new byte[totalSizeBytes];
             }
 
             Array src = received;
             Array dst = wholePacket;
             int srcOffset = sizeof(ushort) + sizeof(int);
-            int dstOffset = chunkSize * packetIndex;
+            int dstOffset = chunkSizeBytes * chunkIndex;
             int count = received.Length - (sizeof(ushort) + sizeof(int));
 
             // #5 Implementing chunking. #16 comment.

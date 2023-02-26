@@ -57,6 +57,7 @@ namespace Client
 
         void WindowClient_VideoframeRecieved(Bitmap bitmap)
         {
+            Log.Information($"{bitmap.Width}x{bitmap.Height}");
             displayArea.Image = bitmap;
         }
 

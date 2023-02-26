@@ -108,16 +108,16 @@ namespace Server
             }
 
             (Bitmap bmp, Size resolution) = obtainImage();
-            byte[] bytes = new byte[bmp.Height * bmp.Width * 3];
+            byte[] imageDataBytes = new byte[bmp.Height * bmp.Width * 3];
 
             for (int y = 0; y < bmp.Height; y++)
             {
                 for (int x = 0; x < bmp.Width; x++)
                 {
                     Color color = bmp.GetPixel(x, y);
-                    bytes[(x + (y * bmp.Width)) * 3] = color.R;
-                    bytes[((x + (y * bmp.Width)) * 3) + 1] = color.G;
-                    bytes[((x + (y * bmp.Width)) * 3) + 2] = color.B;
+                    imageDataBytes[(x + (y * bmp.Width)) * 3] = color.R;
+                    imageDataBytes[((x + (y * bmp.Width)) * 3) + 1] = color.G;
+                    imageDataBytes[((x + (y * bmp.Width)) * 3) + 2] = color.B;
                 }
             }
 
@@ -126,21 +126,21 @@ namespace Server
 
             for (int i = 0; i < packetCount; i++)
             {
-                int currentChunkSize = chunkSizePixels * 3;
-                int chunkOffset = chunkSizePixels * 3 * i;
+                int chunkSizeBytes = chunkSizePixels * 3;
+                int chunkOffsetBytes = chunkSizeBytes * i;
 
                 // Last packet usually has different size.
                 if (i == packetCount - 1)
                 {
-                    currentChunkSize = bytes.Length - chunkOffset;
+                    chunkSizeBytes = imageDataBytes.Length - chunkOffsetBytes;
                 }
 
                 int parameterOffset = sizeof(ushort) + sizeof(int) + sizeof(ushort) + sizeof(ushort);
-                var chunk = new byte[parameterOffset + currentChunkSize];
-                Buffer.BlockCopy(bytes, chunkOffset, chunk, parameterOffset, currentChunkSize);
+                var chunk = new byte[parameterOffset + chunkSizeBytes];
+                Buffer.BlockCopy(imageDataBytes, chunkOffsetBytes, chunk, parameterOffset, chunkSizeBytes);
 
                 BitConverter.GetBytes((ushort)i).CopyTo(chunk, 0);
-                BitConverter.GetBytes((int)bytes.Length).CopyTo(chunk, sizeof(ushort));
+                BitConverter.GetBytes((int)imageDataBytes.Length).CopyTo(chunk, sizeof(ushort));
                 BitConverter.GetBytes((ushort)bmp.Width).CopyTo(chunk, sizeof(ushort) + sizeof(int));
                 BitConverter.GetBytes((ushort)bmp.Height).CopyTo(chunk, sizeof(ushort) + sizeof(int) + sizeof(ushort));
 
@@ -151,28 +151,28 @@ namespace Server
             using (var stream = new MemoryStream())
             {
                 bmp.Save(stream, ImageFormat.Png);
-                bytes = stream.ToArray();
-                Log.Information($"Image size: {bytes.Length}");
+                imageDataBytes = stream.ToArray();
+                Log.Information($"Image size: {imageDataBytes.Length}");
             }
 
-            int chunkSize = ((bytes.Length - 1) / packetCount) + 1;
+            int chunkSize = ((imageDataBytes.Length - 1) / packetCount) + 1;
 
             for (int i = 0; i < packetCount; i++)
             {
-                int currentChunkSize = chunkSize;
+                int chunkSizeBytes = chunkSize;
 
                 // Last packet usually has different size.
                 if (i == packetCount - 1)
                 {
-                    currentChunkSize = bytes.Length - (chunkSize * i);
+                    chunkSizeBytes = imageDataBytes.Length - (chunkSize * i);
                 }
 
-                // TODO: var nået her til, skulle til at finde ud af en måde at få alle bytes med.
-                var chunk = new byte[sizeof(ushort) + sizeof(int) + currentChunkSize];
-                Buffer.BlockCopy(bytes, chunkSize * i, chunk, sizeof(ushort) + sizeof(int), currentChunkSize);
+                // TODO: var nået her til, skulle til at finde ud af en måde at få alle imageDataBytes med.
+                var chunk = new byte[sizeof(ushort) + sizeof(int) + chunkSizeBytes];
+                Buffer.BlockCopy(imageDataBytes, chunkSize * i, chunk, sizeof(ushort) + sizeof(int), chunkSizeBytes);
 
                 BitConverter.GetBytes((ushort)i).CopyTo(chunk, 0);
-                BitConverter.GetBytes((int)bytes.Length).CopyTo(chunk, sizeof(ushort));
+                BitConverter.GetBytes((int)imageDataBytes.Length).CopyTo(chunk, sizeof(ushort));
 
                 client.Send(chunk, chunk.Length);
             }*/
