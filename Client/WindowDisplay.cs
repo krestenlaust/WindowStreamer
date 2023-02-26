@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
+using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LabelSink;
 using Serilog;
+using Shared;
 
 namespace Client
 {
@@ -27,32 +29,80 @@ namespace Client
                 .CreateLogger();
         }
 
-        void WindowDisplay_Load(object sender, EventArgs e)
+        async void WindowDisplay_Load(object sender, EventArgs e)
         {
             formToPanelSize = Size.Subtract(Size, displayArea.Size);
+
+            await HandleCommandlineArgumentsAsync(Environment.GetCommandLineArgs());
         }
 
-        void toolStripButtonConnect_Click(object sender, EventArgs e)
+        async Task HandleCommandlineArgumentsAsync(string[] args)
+        {
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (!args[i].StartsWith("-"))
+                {
+                    continue;
+                }
+
+                switch (args[i])
+                {
+                    case "--connect":
+                    case "-c":
+                        if (args.Length == i + 1)
+                        {
+                            // No parameter given.
+                            continue;
+                        }
+
+                        string parameter = args[i + 1];
+
+                        var splittedParameter = parameter.Split(':');
+
+                        if (!IPAddress.TryParse(splittedParameter[0], out IPAddress address))
+                        {
+                            // Invalid parameter
+                            continue;
+                        }
+
+                        if (splittedParameter.Length == 1 || !int.TryParse(splittedParameter[1], out int targetPort))
+                        {
+                            targetPort = DefaultValues.MetaStreamPort;
+                        }
+
+                        await StartConnectionToServer(address, targetPort).ConfigureAwait(false);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        async void toolStripButtonConnect_ClickAsync(object sender, EventArgs e)
         {
             using var connectDialog = new ConnectWindow();
 
             if (connectDialog.ShowDialog() == DialogResult.OK)
             {
-                if (windowClient is not null)
-                {
-                    windowClient.ResolutionChanged -= WindowClient_ResolutionChanged;
-                    windowClient.NewFrame -= WindowClient_VideoframeRecieved;
-
-                    // TODO: Dispose of client
-                    windowClient.Dispose();
-                }
-
-                windowClient = new WindowClient(connectDialog.TargetIPAddress, connectDialog.TargetPort);
-                windowClient.ResolutionChanged += WindowClient_ResolutionChanged;
-                windowClient.NewFrame += WindowClient_VideoframeRecieved;
-
-                Task.Run(windowClient.ConnectToServerAsync);
+                await StartConnectionToServer(connectDialog.TargetIPAddress, connectDialog.TargetPort);
             }
+        }
+
+        async Task StartConnectionToServer(IPAddress address, int targetPort)
+        {
+            if (windowClient is not null)
+            {
+                windowClient.ResolutionChanged -= WindowClient_ResolutionChanged;
+                windowClient.NewFrame -= WindowClient_VideoframeRecieved;
+
+                windowClient.Dispose();
+            }
+
+            windowClient = new WindowClient(address, targetPort);
+            windowClient.ResolutionChanged += WindowClient_ResolutionChanged;
+            windowClient.NewFrame += WindowClient_VideoframeRecieved;
+
+            await windowClient.ConnectToServerAsync().ConfigureAwait(false);
         }
 
         void WindowClient_VideoframeRecieved(byte[] frame)
