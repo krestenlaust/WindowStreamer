@@ -17,8 +17,8 @@ namespace Server
         {
             sw = Console.Out;
 
-            LogStreamWriter lsw = new LogStreamWriter(richTextBoxOutput);
-            Console.SetOut(lsw);
+            //LogStreamWriter lsw = new LogStreamWriter(richTextBoxOutput);
+            //Console.SetOut(lsw);
         }
 
         void clearToolStripMenuItem_Click(object sender, EventArgs e)

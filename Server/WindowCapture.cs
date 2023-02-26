@@ -173,13 +173,13 @@ namespace Server
             {
                 videoResolution.Height = Screen.FromControl(this).Bounds.Height;
                 videoResolution.Width = Screen.FromControl(this).Bounds.Width;
-                captureAreaTopLeft = Screen.FromControl(this).Bounds.Location;
+                //captureAreaTopLeft = Screen.FromControl(this).Bounds.Location;
             }
             else
             {
                 videoResolution.Height = captureArea.Height;
                 videoResolution.Width = captureArea.Width;
-                captureAreaTopLeft = captureArea.Bounds.Location;
+                //captureAreaTopLeft = captureArea.Bounds.Location;
             }
 
             toolStripStatusLabelResolution.Text = videoResolution.Width.ToString() + "x" + videoResolution.Height.ToString();
