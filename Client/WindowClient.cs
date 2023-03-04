@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -9,7 +8,6 @@ using System.Threading.Tasks;
 using Protocol;
 using Serilog;
 using Shared;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 
 namespace Client
 {
@@ -137,7 +135,6 @@ namespace Client
                     imageDataOffset,
                     image,
                     chunkOffsetBytes,
-                    //chunkSizeBytes);
                     received.Buffer.Length - imageDataOffset);
 
                 if (chunks.Count == packetCount)
@@ -148,43 +145,6 @@ namespace Client
                 }
             }
         }
-
-        /*void RecieveDatagram(IAsyncResult res)
-        {
-            var endPoint = new IPEndPoint(serverIP, videostreamPort!.Value);
-            byte[] received = videoClient.EndReceive(res, ref endPoint!);
-            packetsReceived++;
-
-            ushort chunkIndex = BitConverter.ToUInt16(received, 0);
-            int totalSizeBytes = BitConverter.ToInt32(received, sizeof(ushort));
-            int chunkSizeBytes = ((totalSizeBytes - 1) / packetCount) + 1;
-
-            if (wholePacket is null)
-            {
-                wholePacket = new byte[totalSizeBytes];
-            }
-
-            Array src = received;
-            Array dst = wholePacket;
-            int srcOffset = sizeof(ushort) + sizeof(int);
-            int dstOffset = chunkSizeBytes * chunkIndex;
-            int count = received.Length - (sizeof(ushort) + sizeof(int));
-
-            // #5 Implementing chunking. #16 comment.
-            Buffer.BlockCopy(src, srcOffset, dst, dstOffset, count);
-
-            // Packet is assembled
-            if (chunksReceived == packetCount - 1)
-            {
-                NewFrame?.Invoke(wholePacket);
-                wholePacket = null;
-                chunksReceived = -1;
-            }
-
-            chunksReceived++;
-
-            videoClient.BeginReceive(new AsyncCallback(RecieveDatagram), null);
-        }*/
 
         async Task MetastreamLoop()
         {

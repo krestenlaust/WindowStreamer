@@ -114,16 +114,6 @@ namespace Client
             });
         }
 
-        /*
-        void WindowClient_VideoframeRecieved(byte[] frame)
-        {
-            //Log.Information("Updated frame");
-            bitmapStream?.Dispose();
-            bitmapStream = new MemoryStream((byte[])frame.Clone());
-
-            displayArea.Image = new Bitmap(bitmapStream);
-        }*/
-
         void WindowClient_ResolutionChanged(Size obj)
         {
             videoResolution = obj;
