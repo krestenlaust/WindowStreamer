@@ -106,8 +106,14 @@ namespace Server
 
         void SendPicture(UdpClient client)
         {
+            Stopwatch obtainImageSw = new Stopwatch();
+            obtainImageSw.Start();
             Bitmap bmp = obtainImage();
+            obtainImageSw.Stop();
             byte[] imageDataBytes = new byte[bmp.Height * bmp.Width * 3];
+
+            Stopwatch writeImageSw = new Stopwatch();
+            writeImageSw.Start();
 
             for (int y = 0; y < bmp.Height; y++)
             {
@@ -119,6 +125,9 @@ namespace Server
                     imageDataBytes[((x + (y * bmp.Width)) * 3) + 2] = color.B;
                 }
             }
+
+            writeImageSw.Stop();
+
 
             int totalSizePixels = bmp.Height * bmp.Width;
             int chunkSizeBytes = (((totalSizePixels * 3) - 1) / packetCount) + 1;
@@ -147,6 +156,8 @@ namespace Server
                 client.Send(chunk, chunk.Length);
             }
 
+            Log.Information($"Obtain image: {obtainImageSw.ElapsedMilliseconds} ms, convert image: {writeImageSw.ElapsedMilliseconds} ms");
+
             /*
             using (var stream = new MemoryStream())
             {
@@ -164,7 +175,7 @@ namespace Server
                 sw.Restart();
                 SendPicture(videoClient);
 
-                Log.Information(sw.ElapsedMilliseconds.ToString());
+                //Log.Information(sw.ElapsedMilliseconds.ToString());
                 await Task.Delay(Math.Max(frameIntervalMS - (int)sw.ElapsedMilliseconds, 0), token);
             }
         }
