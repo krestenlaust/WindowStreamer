@@ -156,11 +156,6 @@ namespace Server
             }*/
         }
 
-        public void DebugSendPicture()
-        {
-            SendPicture(videoClient);
-        }
-
         async Task BeginStreamLoop(CancellationToken token)
         {
             Stopwatch sw = new Stopwatch();

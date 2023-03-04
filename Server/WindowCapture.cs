@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.Net;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LabelSink;
@@ -282,14 +279,6 @@ namespace Server
         {
             Log.Information("Application closing...");
             Log.CloseAndFlush();
-        }
-
-        private void WindowCapture_KeyUp(object sender, KeyEventArgs e)
-        {
-            if(e.KeyCode == Keys.Space)
-            {
-                server.DebugSendPicture();
-            }
         }
     }
 }
