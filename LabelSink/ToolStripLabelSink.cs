@@ -21,7 +21,10 @@ namespace LabelSink
         public void Emit(LogEvent logEvent)
         {
             var message = logEvent.RenderMessage(formatProvider);
-            label.Text = message;
+            label.GetCurrentParent().Invoke((MethodInvoker)delegate
+            {
+                label.Text = message;
+            });
         }
     }
 

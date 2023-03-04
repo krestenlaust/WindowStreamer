@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.Net;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LabelSink;
@@ -39,7 +36,7 @@ namespace Server
             InitializeComponent();
 
             Log.Logger = new LoggerConfiguration()
-                .WriteTo.Console()
+                .WriteTo.Console(Serilog.Events.LogEventLevel.Debug)
                 .WriteTo.File("log-server.txt", rollingInterval: RollingInterval.Day)
                 .WriteTo.ToolStripLabel(toolStripStatusLabelLatest)
                 .CreateLogger();
@@ -122,11 +119,10 @@ namespace Server
             }
         }
 
-        (Bitmap, Size) ObtainImage()
+        Bitmap ObtainImage()
         {
-            return (
-                GetScreenPicture(captureArea.Location.X + Location.X, captureArea.Location.Y + Location.Y, videoResolution.Width, videoResolution.Height),
-                captureArea.Size);
+            Size size = new Size(videoResolution.Width, videoResolution.Height);
+            return GetScreenPicture(captureArea.Location.X + Location.X, captureArea.Location.Y + Location.Y + toolStripHeader.Height, size);
         }
 
         WindowServer.ConnectionReply HandleConnectionReply(IPAddress ipAddress)
@@ -165,7 +161,7 @@ namespace Server
 
         void BlockIPAddress(IPAddress ip)
         {
-            // TODO: Actually block IP
+            // TODO: (#15) Implement blocking IPs
             Console.WriteLine("Blocking IP: " + ip.ToString());
         }
 
@@ -257,7 +253,7 @@ namespace Server
             throw new NotImplementedException();
         }
 
-        static Bitmap GetScreenPicture(int x, int y, int width, int height)
+        static Bitmap GetScreenPicture(int x, int y, Size size)
         {
             // TODO: Debug funktionen for at oversætte skærm koordinaterne til pixels.
             /*Rectangle screen = Rectangle.Empty;
@@ -270,8 +266,8 @@ namespace Server
             position.Y = position.Y / screen.Height; // screen.Height: 1080
             */
 
-            var rect = new Rectangle(x, y, width, height);
-            var bmp = new Bitmap(rect.Width, rect.Height, PixelFormat.Format24bppRgb);
+            var rect = new Rectangle(x, y, size.Width, size.Height);
+            var bmp = new Bitmap(rect.Width, rect.Height, DefaultValues.ImageFormat);
 
             Graphics g = Graphics.FromImage(bmp);
             g.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size, CopyPixelOperation.SourceCopy);
