@@ -39,7 +39,7 @@ namespace Server
             InitializeComponent();
 
             Log.Logger = new LoggerConfiguration()
-                .WriteTo.Console()
+                .WriteTo.Console(Serilog.Events.LogEventLevel.Debug)
                 .WriteTo.File("log-server.txt", rollingInterval: RollingInterval.Day)
                 .WriteTo.ToolStripLabel(toolStripStatusLabelLatest)
                 .CreateLogger();
@@ -122,11 +122,10 @@ namespace Server
             }
         }
 
-        (Bitmap, Size) ObtainImage()
+        Bitmap ObtainImage()
         {
-            return (
-                GetScreenPicture(captureArea.Location.X + Location.X, captureArea.Location.Y + Location.Y, videoResolution.Width, videoResolution.Height),
-                captureArea.Size);
+            Size size = new Size(videoResolution.Width, videoResolution.Height);
+            return GetScreenPicture(captureArea.Location.X + Location.X, captureArea.Location.Y + Location.Y + toolStripHeader.Height, size);
         }
 
         WindowServer.ConnectionReply HandleConnectionReply(IPAddress ipAddress)
@@ -257,7 +256,7 @@ namespace Server
             throw new NotImplementedException();
         }
 
-        static Bitmap GetScreenPicture(int x, int y, int width, int height)
+        static Bitmap GetScreenPicture(int x, int y, Size size)
         {
             // TODO: Debug funktionen for at oversætte skærm koordinaterne til pixels.
             /*Rectangle screen = Rectangle.Empty;
@@ -270,7 +269,7 @@ namespace Server
             position.Y = position.Y / screen.Height; // screen.Height: 1080
             */
 
-            var rect = new Rectangle(x, y, width, height);
+            var rect = new Rectangle(x, y, size.Width, size.Height);
             var bmp = new Bitmap(rect.Width, rect.Height, DefaultValues.ImageFormat);
 
             Graphics g = Graphics.FromImage(bmp);
@@ -283,6 +282,14 @@ namespace Server
         {
             Log.Information("Application closing...");
             Log.CloseAndFlush();
+        }
+
+        private void WindowCapture_KeyUp(object sender, KeyEventArgs e)
+        {
+            if(e.KeyCode == Keys.Space)
+            {
+                server.DebugSendPicture();
+            }
         }
     }
 }

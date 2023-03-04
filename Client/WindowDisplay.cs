@@ -13,7 +13,6 @@ namespace Client
     public partial class WindowDisplay : Form
     {
         Size formToPanelSize;
-        MemoryStream bitmapStream;
         Size videoResolution;
 
         WindowClient windowClient;
@@ -23,8 +22,8 @@ namespace Client
             InitializeComponent();
 
             Log.Logger = new LoggerConfiguration()
-                .WriteTo.Console()
-                .WriteTo.File("log-client.txt", rollingInterval: RollingInterval.Day)
+                .WriteTo.Console(Serilog.Events.LogEventLevel.Debug)
+                .WriteTo.File("log-client.txt", rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Debug)
                 .WriteTo.ToolStripLabel(toolStripStatusLabelLatest)
                 .CreateLogger();
         }
@@ -107,8 +106,12 @@ namespace Client
 
         void WindowClient_VideoframeRecieved(Bitmap bitmap)
         {
-            Log.Information($"{bitmap.Width}x{bitmap.Height}");
-            displayArea.Image = bitmap;
+            //Log.Information($"{bitmap.Width}x{bitmap.Height}");
+
+            displayArea.Invoke((MethodInvoker)delegate
+            {
+                displayArea.Image = bitmap;
+            });
         }
 
         /*

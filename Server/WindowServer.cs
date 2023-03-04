@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -16,10 +18,14 @@ namespace Server
 {
     public class WindowServer
     {
-        readonly Func<(Bitmap, Size)> obtainImage;
+        const int packetCount = 8;
+
+        readonly Func<Bitmap> obtainImage;
         readonly IPAddress boundIP;
         readonly Func<IPAddress, ConnectionReply> handleConnectionRequest;
         readonly int metaPort;
+        readonly int frameIntervalMS = 50;
+        CancellationTokenSource videoStreamToken;
 
         // TODO: Why is internetwork specified here?
         TcpClient metaClient = new TcpClient(AddressFamily.InterNetwork);
@@ -27,7 +33,6 @@ namespace Server
         TcpListener clientListener;
         IPEndPoint clientEndpoint;
         UdpClient videoClient;
-        bool streamVideo = true;
         Size resolution;
 
         /// <summary>
@@ -38,7 +43,7 @@ namespace Server
         /// <param name="obtainImage">Handler for retrieving screenshots.</param>
         /// <param name="handleConnectionRequest">Handler for replying to connection attempts.</param>
         /// <param name="logger">Logging method.</param>
-        public WindowServer(IPAddress boundIP, int port, Size startingResolution, Func<(Bitmap, Size)> obtainImage, Func<IPAddress, ConnectionReply> handleConnectionRequest)
+        public WindowServer(IPAddress boundIP, int port, Size startingResolution, Func<Bitmap> obtainImage, Func<IPAddress, ConnectionReply> handleConnectionRequest)
         {
             this.boundIP = boundIP;
             this.obtainImage = obtainImage;
@@ -82,9 +87,8 @@ namespace Server
             metaStream = metaClient.GetStream();
             Log.Information("Connection recieved...");
 
-            Task.Run(MetastreamLoop);
-
             await HandshakeAsync();
+            await MetastreamLoop();
         }
 
         public void UpdateResolution(Size resolution)
@@ -100,16 +104,9 @@ namespace Server
             metaStream.Write(resChange, 0, resChange.Length);
         }
 
-        const int packetCount = 32;
-
         void SendPicture(UdpClient client)
         {
-            if (!client.Client.Connected || !streamVideo)
-            {
-                return;
-            }
-
-            (Bitmap bmp, Size resolution) = obtainImage();
+            Bitmap bmp = obtainImage();
             byte[] imageDataBytes = new byte[bmp.Height * bmp.Width * 3];
 
             for (int y = 0; y < bmp.Height; y++)
@@ -124,11 +121,10 @@ namespace Server
             }
 
             int totalSizePixels = bmp.Height * bmp.Width;
-            int chunkSizePixels = ((totalSizePixels - 1) / packetCount) + 1;
+            int chunkSizeBytes = (((totalSizePixels * 3) - 1) / packetCount) + 1;
 
             for (int i = 0; i < packetCount; i++)
             {
-                int chunkSizeBytes = chunkSizePixels * 3;
                 int chunkOffsetBytes = chunkSizeBytes * i;
 
                 // Last packet usually has different size.
@@ -146,6 +142,8 @@ namespace Server
                 BitConverter.GetBytes((ushort)bmp.Width).CopyTo(chunk, sizeof(ushort) + sizeof(int));
                 BitConverter.GetBytes((ushort)bmp.Height).CopyTo(chunk, sizeof(ushort) + sizeof(int) + sizeof(ushort));
 
+                Log.Debug($"Chunk {i} size: {chunk.Length - parameterOffset} / {chunkSizeBytes}");
+
                 client.Send(chunk, chunk.Length);
             }
 
@@ -155,40 +153,24 @@ namespace Server
                 bmp.Save(stream, ImageFormat.Png);
                 imageDataBytes = stream.ToArray();
                 Log.Information($"Image size: {imageDataBytes.Length}");
-            }
-
-            int chunkSize = ((imageDataBytes.Length - 1) / packetCount) + 1;
-
-            for (int i = 0; i < packetCount; i++)
-            {
-                int chunkSizeBytes = chunkSize;
-
-                // Last packet usually has different size.
-                if (i == packetCount - 1)
-                {
-                    chunkSizeBytes = imageDataBytes.Length - (chunkSize * i);
-                }
-
-                // TODO: var nået her til, skulle til at finde ud af en måde at få alle imageDataBytes med.
-                var chunk = new byte[sizeof(ushort) + sizeof(int) + chunkSizeBytes];
-                Buffer.BlockCopy(imageDataBytes, chunkSize * i, chunk, sizeof(ushort) + sizeof(int), chunkSizeBytes);
-
-                BitConverter.GetBytes((ushort)i).CopyTo(chunk, 0);
-                BitConverter.GetBytes((int)imageDataBytes.Length).CopyTo(chunk, sizeof(ushort));
-
-                client.Send(chunk, chunk.Length);
             }*/
-
-            Thread.Sleep(10);
         }
 
-        async Task BeginStreamLoop()
+        public void DebugSendPicture()
         {
-            while (streamVideo)
+            SendPicture(videoClient);
+        }
+
+        async Task BeginStreamLoop(CancellationToken token)
+        {
+            Stopwatch sw = new Stopwatch();
+            while (!token.IsCancellationRequested)
             {
+                sw.Restart();
                 SendPicture(videoClient);
 
-                await Task.Delay(50);
+                Log.Information(sw.ElapsedMilliseconds.ToString());
+                await Task.Delay(Math.Max(frameIntervalMS - (int)sw.ElapsedMilliseconds, 0), token);
             }
         }
 
@@ -197,6 +179,8 @@ namespace Server
             while (metaClient.Connected)
             {
                 byte[] buffer = new byte[Constants.MetaFrameLength];
+
+                // TODO: #3 - Sometimes makes the server crash when closing the client.
                 await metaStream.ReadAsync(buffer, 0, Constants.MetaFrameLength);
 
                 string[] metapacket = Encoding.UTF8.GetString(buffer).TrimEnd('\0').Split(Constants.ParameterSeparator);
@@ -208,8 +192,14 @@ namespace Server
                         break;
                     case ClientPacketHeader.UDPReady:
                         Log.Debug("Udp ready!");
-                        ConnectVideoStream();
-                        BeginStreamLoop();
+
+                        videoClient = new UdpClient();
+                        videoClient.Client.SendBufferSize = 1024_000;
+                        videoClient.DontFragment = false; // TODO: Properly remove this property assignment.
+                        videoClient.Connect(clientEndpoint.Address, DefaultValues.VideoStreamPort);
+
+                        videoStreamToken = new CancellationTokenSource();
+                        Task.Run(() => BeginStreamLoop(videoStreamToken.Token));
                         break;
                     default:
                         Log.Debug($"Recived this: {metapacket[0]}");
@@ -241,9 +231,6 @@ namespace Server
                 case ConnectionReply.Accept:
                     Log.Information("Accepting connection");
 
-                    videoClient = new UdpClient();
-                    streamVideo = true;
-
                     var replyAccept = Send.ConnectionReply(true, resolution, DefaultValues.VideoStreamPort);
                     metaStream.Write(replyAccept, 0, replyAccept.Length);
                     break;
@@ -260,12 +247,6 @@ namespace Server
                 default:
                     return;
             }
-        }
-
-        void ConnectVideoStream()
-        {
-            videoClient.Connect(clientEndpoint.Address, DefaultValues.VideoStreamPort);
-            videoClient.DontFragment = false;
         }
     }
 }

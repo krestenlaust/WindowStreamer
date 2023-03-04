@@ -1,18 +1,22 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Protocol;
 using Serilog;
 using Shared;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 
 namespace Client
 {
     public class WindowClient : IDisposable
     {
+        static readonly int packetCount = 8;
+
         readonly int metastreamPort;
         readonly IPAddress serverIP;
 
@@ -20,13 +24,6 @@ namespace Client
         UdpClient videoClient;
         TcpClient metaClient;
         NetworkStream metaStream;
-        Bitmap bitmap;
-
-        static readonly int packetCount = 32;
-        //byte[] wholePacket;
-        //int chunksReceived;
-        // Used for debugging
-        int packetsReceived;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WindowClient"/> class.
@@ -44,7 +41,6 @@ namespace Client
         /// Event called when a complete frame has been received.
         /// </summary>
         public event Action<Bitmap> NewFrame;
-        //public event Action<byte[]> NewFrame;
 
         /// <summary>
         /// Event called when the resolution is changed.
@@ -87,44 +83,70 @@ namespace Client
             metaStream?.Dispose();
         }
 
-        void RecieveDatagram(IAsyncResult res)
+        void InvokeNewFrame(byte[] imageData, ushort width, ushort height)
         {
-            var endPoint = new IPEndPoint(serverIP, videostreamPort!.Value);
-            byte[] received = videoClient.EndReceive(res, ref endPoint!);
-            packetsReceived++;
+            Log.Information(imageData.Length.ToString());
+            var bitmap = new Bitmap(width, height);
 
-            ushort chunkIndex = BitConverter.ToUInt16(received, 0);
-            int totalSizeBytes = BitConverter.ToInt32(received, sizeof(ushort));
-            int chunkSizeBytes = ((totalSizeBytes - 1) / packetCount) + 1;
-            ushort width = BitConverter.ToUInt16(received, sizeof(ushort) + sizeof(int));
-            ushort height = BitConverter.ToUInt16(received, sizeof(ushort) + sizeof(int) + sizeof(ushort));
-
-            int chunkOffsetBytes = chunkSizeBytes * chunkIndex;
-            int imageDataOffset = sizeof(ushort) + sizeof(int) + sizeof(ushort) + sizeof(ushort);
-
-            Span<byte> imageData = new Span<byte>(
-                received,
-                imageDataOffset,
-                received.Length - imageDataOffset);
-
-            if (bitmap is null || bitmap.Width != width || bitmap.Height != height)
+            for (int y = 0; y < bitmap.Height; y++)
             {
-                bitmap = new Bitmap(width, height);
+                for (int x = 0; x < bitmap.Width; x++)
+                {
+                    int i = (y * bitmap.Width * 3) + x * 3;
+
+                    bitmap.SetPixel(x, y, Color.FromArgb(imageData[i], imageData[i + 1], imageData[i + 2]));
+                }
             }
 
-            for (int i = 0; i < imageData.Length; i += 3)
+            NewFrame?.Invoke(bitmap);
+        }
+
+        async Task ListenVideoDatagramAsync()
+        {
+            byte[] image = null;
+            ushort imageWidth = 0;
+            ushort imageHeight = 0;
+            HashSet<ushort> chunks = new HashSet<ushort>();
+
+            while (metaClient.Connected)
             {
-                Color color = Color.FromArgb(imageData[i], imageData[i + 1], imageData[i + 2]);
+                var received = await videoClient.ReceiveAsync();
+                ushort chunkIndex = BitConverter.ToUInt16(received.Buffer, 0);
+                int totalSizeBytes = BitConverter.ToInt32(received.Buffer, sizeof(ushort));
+                int chunkSizeBytes = ((totalSizeBytes - 1) / packetCount) + 1;
+                ushort width = BitConverter.ToUInt16(received.Buffer, sizeof(ushort) + sizeof(int));
+                ushort height = BitConverter.ToUInt16(received.Buffer, sizeof(ushort) + sizeof(int) + sizeof(ushort));
 
-                // The server-side should be correct, it's somewhere around here the problem lies.
-                (int y, int x) = Math.DivRem((i / 3) + chunkOffsetBytes, width);
+                if (image is null || width != imageWidth || height != imageHeight)
+                {
+                    imageWidth = width;
+                    imageHeight = height;
+                    image = new byte[totalSizeBytes];
+                    chunks.Clear();
+                }
 
-                bitmap.SetPixel(x, y, color);
+                chunks.Add(chunkIndex);
+
+                int chunkOffsetBytes = chunkSizeBytes * chunkIndex;
+                int imageDataOffset = sizeof(ushort) + sizeof(int) + sizeof(ushort) + sizeof(ushort);
+
+                Log.Debug($"Chunk {chunkIndex} size: {received.Buffer.Length - imageDataOffset} / {chunkSizeBytes}, offset value: {image[chunkOffsetBytes]}");
+
+                Buffer.BlockCopy(
+                    received.Buffer,
+                    imageDataOffset,
+                    image,
+                    chunkOffsetBytes,
+                    //chunkSizeBytes);
+                    received.Buffer.Length - imageDataOffset);
+
+                if (chunks.Count == packetCount)
+                {
+                    chunks.Clear();
+
+                    Task.Run(() => InvokeNewFrame((byte[])image.Clone(), imageWidth, imageHeight));
+                }
             }
-
-            NewFrame?.Invoke((Bitmap)bitmap.Clone());
-
-            videoClient.BeginReceive(new AsyncCallback(RecieveDatagram), null);
         }
 
         /*void RecieveDatagram(IAsyncResult res)
@@ -171,6 +193,7 @@ namespace Client
             while (metaClient.Connected)
             {
                 var packet = new byte[Constants.MetaFrameLength];
+                // TODO: #3 - Sometimes makes the client crash when closing the server.
                 await metaStream.ReadAsync(packet, 0, Constants.MetaFrameLength);
 
                 string[] metapacket = Encoding.UTF8.GetString(packet).TrimEnd('\0').Split(Constants.ParameterSeparator);
@@ -203,7 +226,8 @@ namespace Client
                         IPEndPoint ipEndPoint = (IPEndPoint)metaClient.Client.RemoteEndPoint!;
 
                         videoClient = new UdpClient(videoPort);
-                        videoClient.BeginReceive(new AsyncCallback(RecieveDatagram), null);
+                        videoClient.Client.ReceiveBufferSize = 1024_000;
+                        Task.Run(ListenVideoDatagramAsync);
 
                         byte[] udpReady = Send.UDPReady(DefaultValues.FramerateCap);
                         metaStream.Write(udpReady, 0, udpReady.Length);

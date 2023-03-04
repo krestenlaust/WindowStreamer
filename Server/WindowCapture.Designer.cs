@@ -193,6 +193,7 @@
             this.Text = "Window Streamer - Server";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.WindowCapture_FormClosed);
             this.Load += new System.EventHandler(this.WindowCapture_LoadAsync);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.WindowCapture_KeyUp);
             this.Resize += new System.EventHandler(this.WindowCapture_Resize);
             this.statusStripFooter.ResumeLayout(false);
             this.statusStripFooter.PerformLayout();
