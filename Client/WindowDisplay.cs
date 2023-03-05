@@ -93,6 +93,7 @@ namespace Client
             {
                 windowClient.ResolutionChanged -= WindowClient_ResolutionChanged;
                 windowClient.NewFrame -= WindowClient_VideoframeRecieved;
+                windowClient.ConnectionClosed -= WindowClient_ConnectionClosed;
 
                 windowClient.Dispose();
             }
@@ -100,8 +101,14 @@ namespace Client
             windowClient = new WindowClient(address, targetPort);
             windowClient.ResolutionChanged += WindowClient_ResolutionChanged;
             windowClient.NewFrame += WindowClient_VideoframeRecieved;
+            windowClient.ConnectionClosed += WindowClient_ConnectionClosed;
 
             await windowClient.ConnectToServerAsync().ConfigureAwait(false);
+        }
+
+        private void WindowClient_ConnectionClosed()
+        {
+            Log.Information("Server disconnected");
         }
 
         void WindowClient_VideoframeRecieved(Bitmap bitmap)

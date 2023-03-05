@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Protocol;
 using Serilog;
@@ -11,17 +13,30 @@ using Shared;
 
 namespace Client
 {
+    public class InstanceAlreadyInUseException : Exception
+    {
+        public InstanceAlreadyInUseException(string? msg) : base(msg)
+        {
+        }
+    }
+
     public class WindowClient : IDisposable
     {
         static readonly int packetCount = 8;
 
-        readonly int metastreamPort;
-        readonly IPAddress serverIP;
+        readonly IPEndPoint serverEndpoint;
 
         int? videostreamPort;
         UdpClient videoClient;
         TcpClient metaClient;
         NetworkStream metaStream;
+
+        CancellationTokenSource metastreamToken;
+        CancellationTokenSource videostreamToken;
+        Task taskMetastream;
+        Task taskVideostream;
+
+        bool connectionClosedCalled;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WindowClient"/> class.
@@ -31,8 +46,7 @@ namespace Client
         /// <param name="logger"></param>
         public WindowClient(IPAddress serverIP, int metastreamPort)
         {
-            this.serverIP = serverIP;
-            this.metastreamPort = metastreamPort;
+            serverEndpoint = new IPEndPoint(serverIP, metastreamPort);
         }
 
         /// <summary>
@@ -45,37 +59,58 @@ namespace Client
         /// </summary>
         public event Action<Size> ResolutionChanged;
 
-        public async Task ConnectToServerAsync()
+        /// <summary>
+        /// Event called when the client has recieved a response from server, either by message (deny/accept), or action (socket forcefully closed).
+        /// </summary>
+        public event Action<bool> ConnectionAttemptFinished;
+
+        /// <summary>
+        /// Event called when the client has been disconnected from server, either by server closing, or by being kicked from server.
+        /// </summary>
+        public event Action ConnectionClosed;
+
+        /// <summary>
+        /// Tries to connect to server, returns whether the connection was successfully established.
+        /// <c>ConnectionAttemptFinished</c> is not invoked during this method.
+        /// </summary>
+        /// <returns>Whether the connection was sucessful.</returns>
+        public async Task<bool> ConnectToServerAsync()
         {
-            if (metaClient?.Connected == true)
+            if (metaClient is not null || videoClient is not null)
             {
-                Log.Information($"Disconnecting {serverIP}:{metastreamPort}");
-                metaClient.Close();
+                // Fatal because this should ever happen.
+                Log.Fatal("Client already connected, aborting new connection");
+                throw new InstanceAlreadyInUseException("This client has been connected previously. Please make a new instance instead.");
             }
 
             metaClient = new TcpClient();
 
-            Log.Information($"Connecting to {serverIP}:{metastreamPort}...");
+            Log.Information($"Connecting to {serverEndpoint.Address}:{serverEndpoint.Port}...");
 
             try
             {
-                await metaClient.ConnectAsync(serverIP, metastreamPort);
+                await metaClient.ConnectAsync(serverEndpoint.Address, serverEndpoint.Port);
             }
             catch (SocketException)
             {
                 Log.Information("Connection unsuccessful.");
-                return;
+                return false;
             }
 
             metaStream = metaClient.GetStream();
 
-            Log.Information($"Awaiting response from {serverIP}");
+            Log.Information($"Awaiting response from {serverEndpoint}");
 
-            await Task.Run(MetastreamLoop);
+            metastreamToken = new CancellationTokenSource();
+            taskMetastream = Task.Run(MetastreamLoop, metastreamToken.Token);
+            return true;
         }
 
         public void Dispose()
         {
+            metastreamToken?.Cancel();
+            videostreamToken?.Cancel();
+
             videoClient?.Dispose();
             metaClient?.Dispose();
             metaStream?.Dispose();
@@ -99,7 +134,22 @@ namespace Client
             NewFrame?.Invoke(bitmap);
         }
 
-        async Task ListenVideoDatagramAsync()
+        void ClientDisconnected()
+        {
+            if (connectionClosedCalled)
+            {
+                return;
+            }
+
+            connectionClosedCalled = true;
+            ConnectionClosed?.Invoke();
+        }
+
+        /// <summary>
+        /// Listens for videodatagrams, is stopped when <c>videostreamToken</c> is cancelled, or <c>metaClient</c> is disconnected.
+        /// Returns void because it's a loop.
+        /// </summary>
+        async void ListenVideoDatagramAsync()
         {
             byte[] image = null;
             ushort imageWidth = 0;
@@ -108,7 +158,23 @@ namespace Client
 
             while (metaClient.Connected)
             {
-                var received = await videoClient.ReceiveAsync();
+                UdpReceiveResult received;
+                try
+                {
+                    received = await videoClient.ReceiveAsync(videostreamToken.Token);
+                }
+                catch (SocketException)
+                {
+                    ClientDisconnected();
+                    return;
+                }
+
+                if (videostreamToken.Token.IsCancellationRequested)
+                {
+                    ClientDisconnected();
+                    return;
+                }
+
                 ushort chunkIndex = BitConverter.ToUInt16(received.Buffer, 0);
                 int totalSizeBytes = BitConverter.ToInt32(received.Buffer, sizeof(ushort));
                 int chunkSizeBytes = ((totalSizeBytes - 1) / packetCount) + 1;
@@ -141,20 +207,39 @@ namespace Client
                 {
                     chunks.Clear();
 
-                    Task.Run(() => InvokeNewFrame((byte[])image.Clone(), imageWidth, imageHeight));
+                    // Bring new frame to display on different thread to speed up packet processing on this thread.
+                    Task.Run(() => InvokeNewFrame((byte[])image.Clone(), imageWidth, imageHeight), videostreamToken.Token);
                 }
             }
         }
 
-        async Task MetastreamLoop()
+        /// <summary>
+        /// Listens for events from the server.
+        /// Returns void because it's a loop.
+        /// </summary>
+        async void MetastreamLoop()
         {
             bool handshakeFinished = false;
 
             while (metaClient.Connected)
             {
                 var packet = new byte[Constants.MetaFrameLength];
-                // TODO: #3 - Sometimes makes the client crash when closing the server.
-                await metaStream.ReadAsync(packet, 0, Constants.MetaFrameLength);
+
+                try
+                {
+                    await metaStream.ReadAsync(packet, 0, Constants.MetaFrameLength, metastreamToken.Token);
+                }
+                catch (IOException)
+                {
+                    ClientDisconnected();
+                    return;
+                }
+
+                if (metastreamToken.Token.IsCancellationRequested)
+                {
+                    ClientDisconnected();
+                    return;
+                }
 
                 string[] metapacket = Encoding.UTF8.GetString(packet).TrimEnd('\0').Split(Constants.ParameterSeparator);
                 var packetType = (ServerPacketHeader)int.Parse(metapacket[0]);
@@ -162,8 +247,6 @@ namespace Client
                 switch (packetType)
                 {
                     case ServerPacketHeader.ConnectionReply:
-                        Log.Debug($"Handshake recieved");
-
                         if (Parse.TryParseConnectionReply(metapacket, out bool accepted, out Size resolution, out int videoPort))
                         {
                             videostreamPort = videoPort;
@@ -179,23 +262,25 @@ namespace Client
                         {
                             // TODO: implement some connection ended logic.
                             Log.Information("Connection request denied :(");
+                            ConnectionAttemptFinished?.Invoke(false);
                             return;
                         }
 
                         Log.Information("Connection request accepted, awaiting handshake finish...");
-                        IPEndPoint ipEndPoint = (IPEndPoint)metaClient.Client.RemoteEndPoint!;
 
+                        // Initialize client and loop
                         videoClient = new UdpClient(videoPort);
-                        videoClient.Client.ReceiveBufferSize = 1024_000;
-                        Task.Run(ListenVideoDatagramAsync);
+                        videoClient.Client.ReceiveBufferSize = 1_024_000;
+                        videostreamToken = new CancellationTokenSource();
+                        taskVideostream = Task.Run(ListenVideoDatagramAsync, videostreamToken.Token);
 
                         byte[] udpReady = Send.UDPReady(DefaultValues.FramerateCap);
                         metaStream.Write(udpReady, 0, udpReady.Length);
 
                         handshakeFinished = true;
-
                         Log.Information("Stream established");
 
+                        ConnectionAttemptFinished?.Invoke(true);
                         break;
                     case ServerPacketHeader.ResolutionUpdate when handshakeFinished:
                         Log.Debug("Recieved resolution update");

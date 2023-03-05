@@ -128,7 +128,6 @@ namespace Server
 
             writeImageSw.Stop();
 
-
             int totalSizePixels = bmp.Height * bmp.Width;
             int chunkSizeBytes = (((totalSizePixels * 3) - 1) / packetCount) + 1;
 
