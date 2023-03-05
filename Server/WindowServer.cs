@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -16,41 +13,56 @@ using Shared;
 
 namespace Server
 {
-    public class WindowServer
+    public class InstanceAlreadyInUseException : Exception
+    {
+        public InstanceAlreadyInUseException(string msg)
+            : base(msg)
+        {
+        }
+    }
+
+    public class WindowServer : IDisposable
     {
         const int packetCount = 8;
 
         readonly Func<Bitmap> obtainImage;
-        readonly IPAddress boundIP;
+        readonly IPEndPoint boundEndpoint;
         readonly Func<IPAddress, ConnectionReply> handleConnectionRequest;
-        readonly int metaPort;
         readonly int frameIntervalMS = 50;
-        CancellationTokenSource videoStreamToken;
 
-        // TODO: Why is internetwork specified here?
-        TcpClient metaClient = new TcpClient(AddressFamily.InterNetwork);
-        NetworkStream metaStream;
-        TcpListener clientListener;
         IPEndPoint clientEndpoint;
+        TcpListener clientListener;
+        TcpClient metaClient;
         UdpClient videoClient;
         Size resolution;
+        bool connectionClosedInvoked;
+
+        Task metastreamTask;
+        Task videostreamTask;
+        CancellationTokenSource videostreamToken;
+        CancellationTokenSource metastreamToken;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WindowServer"/> class.
         /// </summary>
         /// <param name="boundIP">IP address to listen on, usually <c>IPAddress.Any</c>.</param>
+        /// <param name="port">Port to bind.</param>
         /// <param name="startingResolution">The resolution of the window.</param>
         /// <param name="obtainImage">Handler for retrieving screenshots.</param>
         /// <param name="handleConnectionRequest">Handler for replying to connection attempts.</param>
-        /// <param name="logger">Logging method.</param>
         public WindowServer(IPAddress boundIP, int port, Size startingResolution, Func<Bitmap> obtainImage, Func<IPAddress, ConnectionReply> handleConnectionRequest)
         {
-            this.boundIP = boundIP;
+            boundEndpoint = new IPEndPoint(boundIP, port);
             this.obtainImage = obtainImage;
             this.handleConnectionRequest = handleConnectionRequest;
             resolution = startingResolution;
-            metaPort = port;
         }
+
+        /// <summary>
+        /// Called whenever an active connection has been closed.
+        /// Is only called for connections that completed a handshake.
+        /// </summary>
+        public event Action ConnectionClosed;
 
         public enum ConnectionReply
         {
@@ -76,19 +88,38 @@ namespace Server
         [Obsolete("Not implemneted yet")]
         public bool Connected { get; private set; }
 
+        public void Dispose()
+        {
+            metastreamToken?.Cancel();
+            videostreamToken?.Cancel();
+
+            metaClient?.Dispose();
+            videoClient?.Dispose();
+        }
+
         public async Task StartServerAsync()
         {
-            clientListener?.Stop();
-            clientListener = new TcpListener(boundIP, metaPort);
+            if (clientListener is not null)
+            {
+                throw new InstanceAlreadyInUseException($"{nameof(clientListener)} is not null. Can't reuse same instance.");
+            }
+
+            clientListener = new TcpListener(boundEndpoint);
             clientListener.Start();
-            Log.Information($"Server started {boundIP}:{metaPort}");
+            Log.Information($"Server started {boundEndpoint}");
 
-            metaClient = await clientListener.AcceptTcpClientAsync();
-            metaStream = metaClient.GetStream();
-            Log.Information("Connection recieved...");
+            ConnectionReply reply;
+            do
+            {
+                metaClient = await clientListener.AcceptTcpClientAsync();
+                clientEndpoint = metaClient.Client.RemoteEndPoint as IPEndPoint;
+                Log.Information($"Connection recieved: {clientEndpoint}");
+                reply = handleConnectionRequest(clientEndpoint.Address);
+            }
+            while (!await HandshakeAsync(reply));
 
-            await HandshakeAsync();
-            await MetastreamLoop();
+            metastreamToken = new CancellationTokenSource();
+            metastreamTask = Task.Run(MetastreamLoop);
         }
 
         public void UpdateResolution(Size resolution)
@@ -101,15 +132,12 @@ namespace Server
             }
 
             var resChange = Send.ResolutionChange(resolution);
-            metaStream.Write(resChange, 0, resChange.Length);
+            var stream = metaClient.GetStream();
+            stream.Write(resChange, 0, resChange.Length);
         }
 
-        void SendPicture(UdpClient client)
+        static void SendPicture(Bitmap bmp, UdpClient client)
         {
-            Stopwatch obtainImageSw = new Stopwatch();
-            obtainImageSw.Start();
-            Bitmap bmp = obtainImage();
-            obtainImageSw.Stop();
             byte[] imageDataBytes = new byte[bmp.Height * bmp.Width * 3];
 
             Stopwatch writeImageSw = new Stopwatch();
@@ -155,38 +183,63 @@ namespace Server
                 client.Send(chunk, chunk.Length);
             }
 
-            Log.Information($"Obtain image: {obtainImageSw.ElapsedMilliseconds} ms, convert image: {writeImageSw.ElapsedMilliseconds} ms");
-
-            /*
-            using (var stream = new MemoryStream())
-            {
-                bmp.Save(stream, ImageFormat.Png);
-                imageDataBytes = stream.ToArray();
-                Log.Information($"Image size: {imageDataBytes.Length}");
-            }*/
+            // Log.Information($"Obtain image: {obtainImageSw.ElapsedMilliseconds} ms, convert image: {writeImageSw.ElapsedMilliseconds} ms");
         }
 
-        async Task BeginStreamLoop(CancellationToken token)
+        void ClientDisconnected()
         {
+            if (connectionClosedInvoked)
+            {
+                return;
+            }
+
+            connectionClosedInvoked = true;
+            ConnectionClosed?.Invoke();
+        }
+
+        async void BeginStreamLoop()
+        {
+            CancellationToken token = videostreamToken.Token;
+
             Stopwatch sw = new Stopwatch();
             while (!token.IsCancellationRequested)
             {
                 sw.Restart();
-                SendPicture(videoClient);
 
-                //Log.Information(sw.ElapsedMilliseconds.ToString());
+                Stopwatch obtainImageSw = new Stopwatch();
+                obtainImageSw.Start();
+                Bitmap bmp = obtainImage();
+                obtainImageSw.Stop();
+
+                SendPicture(bmp, videoClient);
+
+                // Log.Information(sw.ElapsedMilliseconds.ToString());
                 await Task.Delay(Math.Max(frameIntervalMS - (int)sw.ElapsedMilliseconds, 0), token);
             }
         }
 
-        async Task MetastreamLoop()
+        async void MetastreamLoop()
         {
             while (metaClient.Connected)
             {
+                var stream = metaClient.GetStream();
                 byte[] buffer = new byte[Constants.MetaFrameLength];
 
-                // TODO: #3 - Sometimes makes the server crash when closing the client.
-                await metaStream.ReadAsync(buffer, 0, Constants.MetaFrameLength);
+                try
+                {
+                    await stream.ReadAsync(buffer, 0, Constants.MetaFrameLength, metastreamToken.Token);
+                }
+                catch (IOException)
+                {
+                    ClientDisconnected();
+                    return;
+                }
+
+                if (metastreamToken.Token.IsCancellationRequested)
+                {
+                    ClientDisconnected();
+                    return;
+                }
 
                 string[] metapacket = Encoding.UTF8.GetString(buffer).TrimEnd('\0').Split(Constants.ParameterSeparator);
 
@@ -203,8 +256,8 @@ namespace Server
                         videoClient.DontFragment = false; // TODO: Properly remove this property assignment.
                         videoClient.Connect(clientEndpoint.Address, DefaultValues.VideoStreamPort);
 
-                        videoStreamToken = new CancellationTokenSource();
-                        Task.Run(() => BeginStreamLoop(videoStreamToken.Token));
+                        videostreamToken = new CancellationTokenSource();
+                        videostreamTask = Task.Run(BeginStreamLoop, videostreamToken.Token);
                         break;
                     default:
                         Log.Debug($"Recived this: {metapacket[0]}");
@@ -216,41 +269,40 @@ namespace Server
         }
 
         /// <summary>
-        /// Make handshake and begin listening loop.
+        /// Complete handshake based given replyAction-action.
         /// </summary>
         /// <returns></returns>
-        async Task HandshakeAsync()
+        async ValueTask<bool> HandshakeAsync(ConnectionReply replyAction)
         {
-            clientEndpoint = metaClient.Client.RemoteEndPoint as IPEndPoint;
+            var stream = metaClient.GetStream();
 
             Log.Information("Inbound connection, awaiting action...");
-            switch (handleConnectionRequest(clientEndpoint.Address))
+            switch (replyAction)
             {
                 case ConnectionReply.Close:
-
                     metaClient.Close();
 
-                    await StartServerAsync();
-                    return;
+                    Log.Information("Closed connection");
+                    return false;
 
                 case ConnectionReply.Accept:
                     Log.Information("Accepting connection");
 
                     var replyAccept = Send.ConnectionReply(true, resolution, DefaultValues.VideoStreamPort);
-                    metaStream.Write(replyAccept, 0, replyAccept.Length);
-                    break;
+                    await stream.WriteAsync(replyAccept);
+                    return true;
 
                 case ConnectionReply.Deny:
                     var replyDeny = Send.ConnectionReply(false, Size.Empty, 0);
-                    metaStream.Write(replyDeny);
+                    await stream.WriteAsync(replyDeny);
 
                     Log.Information($"Told {clientEndpoint.Address} to try again another day :)");
                     metaClient.Close();
 
-                    await StartServerAsync();
-                    return;
+                    return false;
+
                 default:
-                    return;
+                    return false;
             }
         }
     }

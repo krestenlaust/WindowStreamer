@@ -204,8 +204,21 @@ namespace Server
                 port = DefaultValues.MetaStreamPort;
             }
 
+            if (server is not null)
+            {
+                server.ConnectionClosed -= WindowServer_ConnectionClosed;
+                server.Dispose();
+            }
+
             server = new WindowServer(bindAddress, port, videoResolution, ObtainImage, HandleConnectionReply);
-            await server.StartServerAsync();
+            server.ConnectionClosed += WindowServer_ConnectionClosed;
+
+            await server.StartServerAsync().ConfigureAwait(false);
+        }
+
+        private void WindowServer_ConnectionClosed()
+        {
+            Log.Information("Client disconnected");
         }
 
         void toolStripButtonApplicationPicker_MouseHover(object sender, EventArgs e)

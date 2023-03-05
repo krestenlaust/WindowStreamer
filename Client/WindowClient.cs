@@ -29,7 +29,6 @@ namespace Client
         int? videostreamPort;
         UdpClient videoClient;
         TcpClient metaClient;
-        NetworkStream metaStream;
 
         CancellationTokenSource metastreamToken;
         CancellationTokenSource videostreamToken;
@@ -97,8 +96,6 @@ namespace Client
                 return false;
             }
 
-            metaStream = metaClient.GetStream();
-
             Log.Information($"Awaiting response from {serverEndpoint}");
 
             metastreamToken = new CancellationTokenSource();
@@ -113,7 +110,6 @@ namespace Client
 
             videoClient?.Dispose();
             metaClient?.Dispose();
-            metaStream?.Dispose();
         }
 
         void InvokeNewFrame(byte[] imageData, ushort width, ushort height)
@@ -223,11 +219,12 @@ namespace Client
 
             while (metaClient.Connected)
             {
+                var stream = metaClient.GetStream();
                 var packet = new byte[Constants.MetaFrameLength];
 
                 try
                 {
-                    await metaStream.ReadAsync(packet, 0, Constants.MetaFrameLength, metastreamToken.Token);
+                    await stream.ReadAsync(packet, 0, Constants.MetaFrameLength, metastreamToken.Token);
                 }
                 catch (IOException)
                 {
@@ -275,7 +272,7 @@ namespace Client
                         taskVideostream = Task.Run(ListenVideoDatagramAsync, videostreamToken.Token);
 
                         byte[] udpReady = Send.UDPReady(DefaultValues.FramerateCap);
-                        metaStream.Write(udpReady, 0, udpReady.Length);
+                        stream.Write(udpReady, 0, udpReady.Length);
 
                         handshakeFinished = true;
                         Log.Information("Stream established");
