@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,12 +25,12 @@ namespace Server
 
     public class WindowServer : IDisposable
     {
-        const int packetCount = 8;
+        const int packetCount = 128;
 
         readonly Func<Bitmap> obtainImage;
         readonly IPEndPoint boundEndpoint;
         readonly Func<IPAddress, ConnectionReply> handleConnectionRequest;
-        readonly int frameIntervalMS = 50;
+        readonly int frameIntervalMS = 34;
 
         IPEndPoint clientEndpoint;
         TcpListener clientListener;
@@ -101,7 +103,7 @@ namespace Server
         {
             if (clientListener is not null)
             {
-                throw new InstanceAlreadyInUseException($"{nameof(clientListener)} is not null. Can't reuse same instance.");
+                throw new InstanceAlreadyInUseException($"{nameof(clientListener)} is not null. Can'zero reuse same instance.");
             }
 
             clientListener = new TcpListener(boundEndpoint);
@@ -136,12 +138,10 @@ namespace Server
             stream.Write(resChange, 0, resChange.Length);
         }
 
-        static void SendPicture(Bitmap bmp, UdpClient client)
+        static byte[] ConvertBitmapToRawPixel24bpp(Bitmap bmp)
         {
+            /*
             byte[] imageDataBytes = new byte[bmp.Height * bmp.Width * 3];
-
-            Stopwatch writeImageSw = new Stopwatch();
-            writeImageSw.Start();
 
             for (int y = 0; y < bmp.Height; y++)
             {
@@ -152,12 +152,46 @@ namespace Server
                     imageDataBytes[((x + (y * bmp.Width)) * 3) + 1] = color.G;
                     imageDataBytes[((x + (y * bmp.Width)) * 3) + 2] = color.B;
                 }
-            }
+            }*/
 
-            writeImageSw.Stop();
+            BitmapData bmpData = bmp.LockBits(
+                new Rectangle(0, 0, bmp.Width, bmp.Height),
+                ImageLockMode.ReadOnly,
+                DefaultValues.ImageFormat);
 
-            int totalSizePixels = bmp.Height * bmp.Width;
-            int chunkSizeBytes = (((totalSizePixels * 3) - 1) / packetCount) + 1;
+            IntPtr imageDataPtr = bmpData.Scan0;
+            int byteCount = Math.Abs(bmpData.Stride) * bmp.Height;
+            byte[] imageDump = new byte[byteCount];
+
+            Marshal.Copy(imageDataPtr, imageDump, 0, byteCount);
+            bmp.UnlockBits(bmpData);
+
+            /*
+            byte[] imageDataBytes2 = new byte[bmp.Height * bmp.Width * 3];
+
+            int dstIndex = 0;
+            for (int i = 0; i < imageDump.Length; i++)
+            {
+                if ((i + 1) % bmpData.Stride == 0 && i != 0)
+                {
+                    // TODO: ultra mystisk fejl
+                    var zero = imageDump[i];
+                    //imageDataBytes2[i - 1]
+                }
+                else
+                {
+                    imageDataBytes2[dstIndex] = imageDump[i];
+                    dstIndex++;
+                }
+            }*/
+
+            return imageDump;
+        }
+
+        static void SendPicture(byte[] rawImageData24bpp, int width, int height, UdpClient client)
+        {
+            int totalSizePixels = width * height;
+            int chunkSizeBytes = ((rawImageData24bpp.Length - 1) / packetCount) + 1;
 
             for (int i = 0; i < packetCount; i++)
             {
@@ -166,24 +200,22 @@ namespace Server
                 // Last packet usually has different size.
                 if (i == packetCount - 1)
                 {
-                    chunkSizeBytes = imageDataBytes.Length - chunkOffsetBytes;
+                    chunkSizeBytes = rawImageData24bpp.Length - chunkOffsetBytes;
                 }
 
                 int parameterOffset = sizeof(ushort) + sizeof(int) + sizeof(ushort) + sizeof(ushort);
                 var chunk = new byte[parameterOffset + chunkSizeBytes];
-                Buffer.BlockCopy(imageDataBytes, chunkOffsetBytes, chunk, parameterOffset, chunkSizeBytes);
+                Buffer.BlockCopy(rawImageData24bpp, chunkOffsetBytes, chunk, parameterOffset, chunkSizeBytes);
 
                 BitConverter.GetBytes((ushort)i).CopyTo(chunk, 0);
-                BitConverter.GetBytes((int)imageDataBytes.Length).CopyTo(chunk, sizeof(ushort));
-                BitConverter.GetBytes((ushort)bmp.Width).CopyTo(chunk, sizeof(ushort) + sizeof(int));
-                BitConverter.GetBytes((ushort)bmp.Height).CopyTo(chunk, sizeof(ushort) + sizeof(int) + sizeof(ushort));
+                BitConverter.GetBytes((int)rawImageData24bpp.Length).CopyTo(chunk, sizeof(ushort));
+                BitConverter.GetBytes((ushort)width).CopyTo(chunk, sizeof(ushort) + sizeof(int));
+                BitConverter.GetBytes((ushort)height).CopyTo(chunk, sizeof(ushort) + sizeof(int) + sizeof(ushort));
 
                 Log.Debug($"Chunk {i} size: {chunk.Length - parameterOffset} / {chunkSizeBytes}");
 
                 client.Send(chunk, chunk.Length);
             }
-
-            // Log.Information($"Obtain image: {obtainImageSw.ElapsedMilliseconds} ms, convert image: {writeImageSw.ElapsedMilliseconds} ms");
         }
 
         void ClientDisconnected()
@@ -206,14 +238,19 @@ namespace Server
             {
                 sw.Restart();
 
-                Stopwatch obtainImageSw = new Stopwatch();
+                var obtainImageSw = new Stopwatch();
                 obtainImageSw.Start();
                 Bitmap bmp = obtainImage();
                 obtainImageSw.Stop();
 
-                SendPicture(bmp, videoClient);
+                var convertPictureSw = new Stopwatch();
+                convertPictureSw.Start();
+                byte[] rawImageData = ConvertBitmapToRawPixel24bpp(bmp);
+                convertPictureSw.Stop();
 
-                // Log.Information(sw.ElapsedMilliseconds.ToString());
+                SendPicture(rawImageData, bmp.Width, bmp.Height, videoClient);
+
+                Log.Information($"Obtain image: {obtainImageSw.ElapsedMilliseconds} ms, convert image: {convertPictureSw.ElapsedMilliseconds} ms");
                 await Task.Delay(Math.Max(frameIntervalMS - (int)sw.ElapsedMilliseconds, 0), token);
             }
         }

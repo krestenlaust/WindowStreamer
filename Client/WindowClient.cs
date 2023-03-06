@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,7 +24,7 @@ namespace Client
 
     public class WindowClient : IDisposable
     {
-        static readonly int packetCount = 8;
+        static readonly int packetCount = 128;
 
         readonly IPEndPoint serverEndpoint;
 
@@ -114,20 +116,28 @@ namespace Client
 
         void InvokeNewFrame(byte[] imageData, ushort width, ushort height)
         {
-            Log.Information(imageData.Length.ToString());
-            var bitmap = new Bitmap(width, height);
+            Log.Debug($"New frame size: {imageData.Length}");
+            var bmp = new Bitmap(width, height);
 
-            for (int y = 0; y < bitmap.Height; y++)
+            BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, DefaultValues.ImageFormat);
+
+            IntPtr imageDataPtr = bmpData.Scan0;
+
+            Marshal.Copy(imageData, 0, imageDataPtr, imageData.Length);
+            bmp.UnlockBits(bmpData);
+
+            /*
+            for (int y = 0; y < bmp.Height; y++)
             {
-                for (int x = 0; x < bitmap.Width; x++)
+                for (int x = 0; x < bmp.Width; x++)
                 {
-                    int i = (y * bitmap.Width * 3) + x * 3;
+                    int i = (y * bmp.Width * 3) + x * 3;
 
-                    bitmap.SetPixel(x, y, Color.FromArgb(imageData[i], imageData[i + 1], imageData[i + 2]));
+                    bmp.SetPixel(x, y, Color.FromArgb(imageData[i], imageData[i + 1], imageData[i + 2]));
                 }
-            }
+            }*/
 
-            NewFrame?.Invoke(bitmap);
+            NewFrame?.Invoke(bmp);
         }
 
         void ClientDisconnected()
