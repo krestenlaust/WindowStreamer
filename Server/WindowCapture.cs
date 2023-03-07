@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Net;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LabelSink;
@@ -42,8 +43,6 @@ namespace Server
                 .WriteTo.ToolStripLabel(toolStripStatusLabelLatest)
                 .CreateLogger();
         }
-
-        public IntPtr TargetWindowHandle { get; private set; }
 
         protected override void WndProc(ref Message m)
         {
@@ -168,16 +167,12 @@ namespace Server
 
         void WindowCapture_Resize(object sender, EventArgs e) => UpdateResolutionVariables();
 
-        void toolStripButtonFocusOnWindow_Click(object sender, EventArgs e)
-        {
-        }
-
         void toolStripButtonOptions_Click(object sender, EventArgs e)
         {
             new Options().ShowDialog();
         }
 
-        async void toolStripButtonConnect_ClickAsync(object sender, EventArgs e)
+        async void toolStripButtonActionStart_ClickAsync(object sender, EventArgs e)
         {
             IPAddress acceptedAddress;
             if (toolStripTextBoxAcceptableHost.Text == string.Empty)
@@ -198,6 +193,20 @@ namespace Server
             await StartServerAsync(acceptedAddress, targetPort);
         }
 
+        void toolStripButtonActionStop_Click(object sender, EventArgs e)
+        {
+            server.Dispose();
+            ToggleActionStartStopButtons(false);
+
+            Log.Information("Stopped server");
+        }
+
+        void ToggleActionStartStopButtons(bool serverRunning)
+        {
+            toolStripButtonActionStart.Visible = !serverRunning;
+            toolStripButtonActionStop.Visible = serverRunning;
+        }
+
         async Task StartServerAsync(IPAddress bindAddress, int port = 0)
         {
             if (port == 0)
@@ -211,29 +220,26 @@ namespace Server
                 server.Dispose();
             }
 
+            ToggleActionStartStopButtons(true);
+
             server = new WindowServer(bindAddress, port, videoResolution, ObtainImage, HandleConnectionReply);
             server.ConnectionClosed += WindowServer_ConnectionClosed;
 
-            await server.StartServerAsync().ConfigureAwait(false);
+            try
+            {
+                await server.StartServerAsync().ConfigureAwait(false);
+            }
+            catch (SocketException ex)
+            {
+                Log.Information($"Couldn't start server: {ex}");
+                ToggleActionStartStopButtons(false);
+            }
         }
 
         private void WindowServer_ConnectionClosed()
         {
             Log.Information("Client disconnected");
-        }
-
-        void toolStripButtonApplicationPicker_MouseHover(object sender, EventArgs e)
-        {
-        }
-
-        void toolStripButtonApplicationPicker_Click(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        void toolStripButtonApplicationSelector_Click(object sender, EventArgs e)
-        {
-            toolStripButtonApplicationSelector.ToolTipText = "Click here";
+            ToggleActionStartStopButtons(false);
         }
 
         void UpdateResolutionVariables()
@@ -260,11 +266,6 @@ namespace Server
         {
             LogWindow lw = sender as LogWindow;
             Console.SetOut(lw.sw);
-        }
-
-        void toolStripButtonDebug1_Click(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
         }
 
         static Bitmap GetScreenPicture(int x, int y, Size size)

@@ -176,8 +176,7 @@ namespace Client
                     ClientDisconnected();
                     return;
                 }
-
-                if (videostreamToken.Token.IsCancellationRequested)
+                catch (OperationCanceledException)
                 {
                     ClientDisconnected();
                     return;
@@ -251,9 +250,14 @@ namespace Client
                 }
 
                 string[] metapacket = Encoding.UTF8.GetString(packet).TrimEnd('\0').Split(Constants.ParameterSeparator);
-                var packetType = (ServerPacketHeader)int.Parse(metapacket[0]);
 
-                switch (packetType)
+                if (!int.TryParse(metapacket[0], out int packetTypeValue))
+                {
+                    Log.Debug($"Received invalid packet[0]: {metapacket[0]}");
+                    continue;
+                }
+
+                switch ((ServerPacketHeader)packetTypeValue)
                 {
                     case ServerPacketHeader.ConnectionReply:
                         if (Parse.TryParseConnectionReply(metapacket, out bool accepted, out Size resolution, out int videoPort))

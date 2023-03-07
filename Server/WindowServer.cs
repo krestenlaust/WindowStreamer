@@ -99,6 +99,12 @@ namespace Server
             videoClient?.Dispose();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="InstanceAlreadyInUseException">This method-instance has been called previously.</exception>
+        /// <exception cref="SocketException">Socket already registered.</exception>
         public async Task StartServerAsync()
         {
             if (clientListener is not null)
@@ -247,10 +253,26 @@ namespace Server
                 byte[] rawImageData = ConvertBitmapToRawPixel24bpp(bmp);
                 convertPictureSw.Stop();
 
-                SendPicture(rawImageData, bmp.Width, bmp.Height, videoClient);
+                try
+                {
+                    SendPicture(rawImageData, bmp.Width, bmp.Height, videoClient);
+                }
+                catch (ObjectDisposedException ex)
+                {
+                    Log.Debug($"Stream looped invoked exception: {ex}");
+                    return;
+                }
 
                 Log.Information($"Obtain image: {obtainImageSw.ElapsedMilliseconds} ms, convert image: {convertPictureSw.ElapsedMilliseconds} ms");
-                await Task.Delay(Math.Max(frameIntervalMS - (int)sw.ElapsedMilliseconds, 0), token);
+
+                try
+                {
+                    await Task.Delay(Math.Max(frameIntervalMS - (int)sw.ElapsedMilliseconds, 0), token);
+                }
+                catch (TaskCanceledException)
+                {
+                    return;
+                }
             }
         }
 
@@ -265,13 +287,12 @@ namespace Server
                 {
                     await stream.ReadAsync(buffer, 0, Constants.MetaFrameLength, metastreamToken.Token);
                 }
-                catch (IOException)
+                catch (IOException) // Client disconnected
                 {
                     ClientDisconnected();
                     return;
                 }
-
-                if (metastreamToken.Token.IsCancellationRequested)
+                catch (OperationCanceledException) // Server stopped
                 {
                     ClientDisconnected();
                     return;
