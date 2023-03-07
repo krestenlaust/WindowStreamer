@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LabelSink;
 using Serilog;
-using Shared;
 
 namespace Server
 {
     public partial class WindowCapture : Form
     {
+        static readonly int DefaultMetastreamPort = 10063;
         readonly Color transparencyKeyColor = Color.Orange;
 
         bool fullscreen;
@@ -71,7 +72,7 @@ namespace Server
             TransparencyKey = transparencyKeyColor;
             captureArea.BackColor = transparencyKeyColor;
             UpdateResolutionVariables();
-            toolStripTextBoxTargetPort.Text = DefaultValues.MetaStreamPort.ToString();
+            toolStripTextBoxTargetPort.Text = DefaultMetastreamPort.ToString();
 
             // Handle command-line arguments
             await HandleCommandlineArgumentsAsync(Environment.GetCommandLineArgs());
@@ -108,7 +109,7 @@ namespace Server
 
                         if (splittedParameter.Length == 1 || !int.TryParse(splittedParameter[1], out int targetPort))
                         {
-                            targetPort = DefaultValues.MetaStreamPort;
+                            targetPort = DefaultMetastreamPort;
                         }
 
                         await StartServerAsync(address, targetPort);
@@ -191,7 +192,7 @@ namespace Server
 
             if (!int.TryParse(toolStripTextBoxTargetPort.Text, out int targetPort))
             {
-                targetPort = DefaultValues.MetaStreamPort;
+                targetPort = DefaultMetastreamPort;
             }
 
             await StartServerAsync(acceptedAddress, targetPort);
@@ -201,7 +202,7 @@ namespace Server
         {
             if (port == 0)
             {
-                port = DefaultValues.MetaStreamPort;
+                port = DefaultMetastreamPort;
             }
 
             if (server is not null)
@@ -280,7 +281,7 @@ namespace Server
             */
 
             var rect = new Rectangle(x, y, size.Width, size.Height);
-            var bmp = new Bitmap(rect.Width, rect.Height, DefaultValues.ImageFormat);
+            var bmp = new Bitmap(rect.Width, rect.Height, PixelFormat.Format24bppRgb);
 
             Graphics g = Graphics.FromImage(bmp);
             g.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size, CopyPixelOperation.SourceCopy);

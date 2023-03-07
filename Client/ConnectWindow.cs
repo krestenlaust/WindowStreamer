@@ -1,28 +1,30 @@
 ﻿using System;
 using System.Net;
 using System.Windows.Forms;
-using Shared;
 
 namespace Client
 {
     public partial class ConnectWindow : Form
     {
-        public ConnectWindow()
+        public ConnectWindow(IPAddress defaultIP, int defaultPort)
         {
             InitializeComponent();
+
+            TargetIPAddress = defaultIP;
+            TargetPort = defaultPort;
         }
 
-        public IPAddress TargetIPAddress { get; set; }
+        public IPAddress TargetIPAddress { get; private set; }
 
-        public int TargetPort { get; set; }
+        public int TargetPort { get; private set; }
 
         IPAddress ip;
         int port;
 
         void ConnectWindow_Load(object sender, EventArgs e)
         {
-            textBoxTargetIPAddress.Text = "127.0.0.1";
-            textBoxTargetPort.Text = DefaultValues.MetaStreamPort.ToString();
+            textBoxTargetIPAddress.Text = TargetIPAddress.ToString();
+            textBoxTargetPort.Text = TargetPort.ToString();
         }
 
         void buttonConnect_Click(object sender, EventArgs e)

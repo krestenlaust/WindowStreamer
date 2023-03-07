@@ -11,43 +11,45 @@ using System.Threading;
 using System.Threading.Tasks;
 using Protocol;
 using Serilog;
-using Shared;
 
 namespace Client
 {
     public class InstanceAlreadyInUseException : Exception
     {
-        public InstanceAlreadyInUseException(string? msg) : base(msg)
+        public InstanceAlreadyInUseException(string? msg)
+            : base(msg)
         {
         }
     }
 
     public class WindowClient : IDisposable
     {
+        static readonly int DefaultMetastreamPort = 10063;
         static readonly int packetCount = 128;
 
         readonly IPEndPoint serverEndpoint;
+        readonly int framerateCap;
 
-        int? videostreamPort;
         UdpClient videoClient;
         TcpClient metaClient;
+        int? videostreamPort;
 
         CancellationTokenSource metastreamToken;
         CancellationTokenSource videostreamToken;
         Task taskMetastream;
         Task taskVideostream;
-
         bool connectionClosedCalled;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WindowClient"/> class.
         /// </summary>
-        /// <param name="serverIP"></param>
-        /// <param name="metastreamPort"></param>
-        /// <param name="logger"></param>
-        public WindowClient(IPAddress serverIP, int metastreamPort)
+        /// <param name="serverIP">The IP address of the server to connect to.</param>
+        /// <param name="serverPort">The port of the TCP server for control messages (metastream).</param>
+        /// <param name="framerateCap">The amount of image frames per second to ask the server to send.</param>
+        public WindowClient(IPAddress serverIP, int serverPort, int framerateCap)
         {
-            serverEndpoint = new IPEndPoint(serverIP, metastreamPort);
+            serverEndpoint = new IPEndPoint(serverIP, serverPort);
+            this.framerateCap = framerateCap;
         }
 
         /// <summary>
@@ -119,7 +121,7 @@ namespace Client
             Log.Debug($"New frame size: {imageData.Length}");
             var bmp = new Bitmap(width, height);
 
-            BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, DefaultValues.ImageFormat);
+            BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, PixelFormat.Format24bppRgb);
 
             IntPtr imageDataPtr = bmpData.Scan0;
 
@@ -281,7 +283,7 @@ namespace Client
                         videostreamToken = new CancellationTokenSource();
                         taskVideostream = Task.Run(ListenVideoDatagramAsync, videostreamToken.Token);
 
-                        byte[] udpReady = Send.UDPReady(DefaultValues.FramerateCap);
+                        byte[] udpReady = Send.UDPReady(framerateCap);
                         stream.Write(udpReady, 0, udpReady.Length);
 
                         handshakeFinished = true;

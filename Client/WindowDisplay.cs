@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Drawing;
-using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LabelSink;
 using Serilog;
-using Shared;
 
 namespace Client
 {
     public partial class WindowDisplay : Form
     {
+        static readonly int DefaultMetastreamPort = 10063;
+        static readonly int FramerateCap = 30;
+
         Size formToPanelSize;
         Size videoResolution;
 
@@ -66,7 +67,7 @@ namespace Client
 
                         if (splittedParameter.Length == 1 || !int.TryParse(splittedParameter[1], out int targetPort))
                         {
-                            targetPort = DefaultValues.MetaStreamPort;
+                            targetPort = DefaultMetastreamPort;
                         }
 
                         await StartConnectionToServer(address, targetPort).ConfigureAwait(false);
@@ -79,7 +80,7 @@ namespace Client
 
         async void toolStripButtonConnect_ClickAsync(object sender, EventArgs e)
         {
-            using var connectDialog = new ConnectWindow();
+            using var connectDialog = new ConnectWindow(IPAddress.Loopback, DefaultMetastreamPort);
 
             if (connectDialog.ShowDialog() == DialogResult.OK)
             {
@@ -98,7 +99,7 @@ namespace Client
                 windowClient.Dispose();
             }
 
-            windowClient = new WindowClient(address, targetPort);
+            windowClient = new WindowClient(address, targetPort, FramerateCap);
             windowClient.ResolutionChanged += WindowClient_ResolutionChanged;
             windowClient.NewFrame += WindowClient_VideoframeRecieved;
             windowClient.ConnectionClosed += WindowClient_ConnectionClosed;

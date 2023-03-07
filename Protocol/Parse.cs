@@ -4,6 +4,20 @@ namespace Protocol
 {
     public static class Parse
     {
+        public static bool TryParseUDPReady(string[] packet, out int framerateCap)
+        {
+            try
+            {
+                framerateCap = int.Parse(packet[1]);
+                return true;
+            }
+            catch (Exception)
+            {
+                framerateCap = 0;
+                return false;
+            }
+        }
+
         public static bool TryParseResolutionChange(string[] packet, out Size resolution)
         {
             try

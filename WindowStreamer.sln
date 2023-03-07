@@ -5,8 +5,6 @@ VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Client", "Client\Client.csproj", "{94BB8481-2578-4774-87B5-C962EC5089A7}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Shared", "Shared\Shared.shproj", "{3897DB87-7FEA-4428-9BBD-E5FA0E3E2F94}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Server", "Server\Server.csproj", "{086D53F3-45B9-47E2-8A14-20AABA1AEE9E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{02E84991-495C-4ADE-9874-2C8075A88170}"
@@ -16,7 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Protocol", "Protocol\Protocol.csproj", "{B336818A-F34D-4D51-9EB3-E87F9C2043F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LabelSink", "LabelSink\LabelSink.csproj", "{86A05382-A52D-446B-A3D8-D8C54060D83D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LabelSink", "LabelSink\LabelSink.csproj", "{86A05382-A52D-446B-A3D8-D8C54060D83D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -46,10 +44,5 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A04B70F6-3382-4AD4-BA41-9CB6B4201AAC}
-	EndGlobalSection
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		Shared\Shared.projitems*{086d53f3-45b9-47e2-8a14-20aaba1aee9e}*SharedItemsImports = 5
-		Shared\Shared.projitems*{3897db87-7fea-4428-9bbd-e5fa0e3e2f94}*SharedItemsImports = 13
-		Shared\Shared.projitems*{94bb8481-2578-4774-87b5-c962ec5089a7}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal

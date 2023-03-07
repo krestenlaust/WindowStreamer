@@ -11,7 +11,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Protocol;
 using Serilog;
-using Shared;
 
 namespace Server
 {
@@ -26,11 +25,12 @@ namespace Server
     public class WindowServer : IDisposable
     {
         const int packetCount = 128;
+        static readonly int DefaultVideoStreamPort = 10064;
 
         readonly Func<Bitmap> obtainImage;
         readonly IPEndPoint boundEndpoint;
         readonly Func<IPAddress, ConnectionReply> handleConnectionRequest;
-        readonly int frameIntervalMS = 34;
+        int frameIntervalMS = 34;
 
         IPEndPoint clientEndpoint;
         TcpListener clientListener;
@@ -157,7 +157,7 @@ namespace Server
             BitmapData bmpData = bmp.LockBits(
                 new Rectangle(0, 0, bmp.Width, bmp.Height),
                 ImageLockMode.ReadOnly,
-                DefaultValues.ImageFormat);
+                PixelFormat.Format24bppRgb);
 
             IntPtr imageDataPtr = bmpData.Scan0;
             int byteCount = Math.Abs(bmpData.Stride) * bmp.Height;
@@ -190,7 +190,6 @@ namespace Server
 
         static void SendPicture(byte[] rawImageData24bpp, int width, int height, UdpClient client)
         {
-            int totalSizePixels = width * height;
             int chunkSizeBytes = ((rawImageData24bpp.Length - 1) / packetCount) + 1;
 
             for (int i = 0; i < packetCount; i++)
@@ -288,16 +287,25 @@ namespace Server
                     case ClientPacketHeader.UDPReady:
                         Log.Debug("Udp ready!");
 
+                        if (!Parse.TryParseUDPReady(metapacket, out int framerateCap))
+                        {
+
+                            Log.Information("Invalid UDPReady packet");
+                            break;
+                        }
+
+                        frameIntervalMS = 1000 / framerateCap;
+
                         videoClient = new UdpClient();
                         videoClient.Client.SendBufferSize = 1024_000;
                         videoClient.DontFragment = false; // TODO: Properly remove this property assignment.
-                        videoClient.Connect(clientEndpoint.Address, DefaultValues.VideoStreamPort);
+                        videoClient.Connect(clientEndpoint.Address, DefaultVideoStreamPort);
 
                         videostreamToken = new CancellationTokenSource();
                         videostreamTask = Task.Run(BeginStreamLoop, videostreamToken.Token);
                         break;
                     default:
-                        Log.Debug($"Recived this: {metapacket[0]}");
+                        Log.Debug($"Received this: {metapacket[0]}");
                         break;
                 }
             }
@@ -325,7 +333,7 @@ namespace Server
                 case ConnectionReply.Accept:
                     Log.Information("Accepting connection");
 
-                    var replyAccept = Send.ConnectionReply(true, resolution, DefaultValues.VideoStreamPort);
+                    var replyAccept = Send.ConnectionReply(true, resolution, DefaultVideoStreamPort);
                     await stream.WriteAsync(replyAccept);
                     return true;
 
