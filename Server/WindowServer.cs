@@ -38,11 +38,13 @@ namespace Server
         UdpClient videoClient;
         Size resolution;
         bool connectionClosedInvoked;
+        bool objectDisposed;
 
         Task metastreamTask;
         Task videostreamTask;
         CancellationTokenSource videostreamToken;
         CancellationTokenSource metastreamToken;
+        CancellationTokenSource listeningToken;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WindowServer"/> class.
@@ -92,11 +94,27 @@ namespace Server
 
         public void Dispose()
         {
+            if (objectDisposed)
+            {
+                return;
+            }
+
+            objectDisposed = true;
+
+            // Halt server
+            listeningToken?.Cancel();
             metastreamToken?.Cancel();
             videostreamToken?.Cancel();
 
+            // Dispose of networked instances
+            clientListener?.Stop();
             metaClient?.Dispose();
             videoClient?.Dispose();
+
+            // Dispose of token sources
+            listeningToken?.Dispose();
+            metastreamToken?.Dispose();
+            videostreamToken?.Dispose();
         }
 
         /// <summary>
@@ -112,22 +130,34 @@ namespace Server
                 throw new InstanceAlreadyInUseException($"{nameof(clientListener)} is not null. Can'zero reuse same instance.");
             }
 
+            listeningToken = new CancellationTokenSource();
             clientListener = new TcpListener(boundEndpoint);
             clientListener.Start();
             Log.Information($"Server started {boundEndpoint}");
 
-            ConnectionReply reply;
-            do
+            try
             {
-                metaClient = await clientListener.AcceptTcpClientAsync();
-                clientEndpoint = metaClient.Client.RemoteEndPoint as IPEndPoint;
-                Log.Information($"Connection recieved: {clientEndpoint}");
-                reply = handleConnectionRequest(clientEndpoint.Address);
-            }
-            while (!await HandshakeAsync(reply));
+                ConnectionReply reply;
+                do
+                {
+                    metaClient = await clientListener.AcceptTcpClientAsync(listeningToken.Token);
+                    clientEndpoint = metaClient.Client.RemoteEndPoint as IPEndPoint;
+                    Log.Information($"Connection recieved: {clientEndpoint}");
+                    reply = handleConnectionRequest(clientEndpoint.Address);
+                }
+                while (!await HandshakeAsync(reply));
 
-            metastreamToken = new CancellationTokenSource();
-            metastreamTask = Task.Run(MetastreamLoop);
+                metastreamToken = new CancellationTokenSource();
+                metastreamTask = Task.Run(MetastreamLoop);
+            }
+            catch (SocketException ex)
+            {
+                Log.Error($"Server start crashed with following exception: {ex}");
+                Dispose();
+            }
+            catch (OperationCanceledException)
+            {
+            }
         }
 
         public void UpdateResolution(Size resolution)

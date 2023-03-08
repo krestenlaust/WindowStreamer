@@ -13,7 +13,7 @@ namespace Server
     public partial class WindowCapture : Form
     {
         static readonly int DefaultMetastreamPort = 10063;
-        readonly Color transparencyKeyColor = Color.Orange;
+        static readonly Color transparencyKeyColor = Color.Orange;
 
         bool fullscreen;
         Size videoResolution;
@@ -195,7 +195,8 @@ namespace Server
 
         void toolStripButtonActionStop_Click(object sender, EventArgs e)
         {
-            server.Dispose();
+            server?.Dispose();
+            server = null;
             ToggleActionStartStopButtons(false);
 
             Log.Information("Stopped server");
