@@ -73,6 +73,9 @@ namespace Server
             UpdateResolutionVariables();
             toolStripTextBoxTargetPort.Text = DefaultMetastreamPort.ToString();
 
+            // Update UI
+            ToggleActionStartStopButtons(false);
+
             // Handle command-line arguments
             await HandleCommandlineArgumentsAsync(Environment.GetCommandLineArgs());
         }
@@ -258,8 +261,7 @@ namespace Server
                 //captureAreaTopLeft = captureArea.Bounds.Location;
             }
 
-            toolStripStatusLabelResolution.Text = videoResolution.Width.ToString() + "x" + videoResolution.Height.ToString();
-
+            toolStripStatusLabelResolution.Text = $"{videoResolution.Width}x{videoResolution.Height}";
             server?.UpdateResolution(videoResolution);
         }
 
