@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Net;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using LabelSink;
@@ -12,7 +13,7 @@ namespace Server
     public partial class WindowCapture : Form
     {
         static readonly int DefaultMetastreamPort = 10063;
-        readonly Color transparencyKeyColor = Color.Orange;
+        static readonly Color transparencyKeyColor = Color.Orange;
 
         bool fullscreen;
         Size videoResolution;
@@ -43,8 +44,6 @@ namespace Server
                 .CreateLogger();
         }
 
-        public IntPtr TargetWindowHandle { get; private set; }
-
         protected override void WndProc(ref Message m)
         {
             if (m.Msg == 0x0112) // WM_SYSCOMMAND
@@ -73,6 +72,9 @@ namespace Server
             captureArea.BackColor = transparencyKeyColor;
             UpdateResolutionVariables();
             toolStripTextBoxTargetPort.Text = DefaultMetastreamPort.ToString();
+
+            // Update UI
+            ToggleActionStartStopButtons(false);
 
             // Handle command-line arguments
             await HandleCommandlineArgumentsAsync(Environment.GetCommandLineArgs());
@@ -168,16 +170,12 @@ namespace Server
 
         void WindowCapture_Resize(object sender, EventArgs e) => UpdateResolutionVariables();
 
-        void toolStripButtonFocusOnWindow_Click(object sender, EventArgs e)
-        {
-        }
-
         void toolStripButtonOptions_Click(object sender, EventArgs e)
         {
             new Options().ShowDialog();
         }
 
-        async void toolStripButtonConnect_ClickAsync(object sender, EventArgs e)
+        async void toolStripButtonActionStart_ClickAsync(object sender, EventArgs e)
         {
             IPAddress acceptedAddress;
             if (toolStripTextBoxAcceptableHost.Text == string.Empty)
@@ -198,6 +196,21 @@ namespace Server
             await StartServerAsync(acceptedAddress, targetPort);
         }
 
+        void toolStripButtonActionStop_Click(object sender, EventArgs e)
+        {
+            server?.Dispose();
+            server = null;
+            ToggleActionStartStopButtons(false);
+
+            Log.Information("Stopped server");
+        }
+
+        void ToggleActionStartStopButtons(bool serverRunning)
+        {
+            toolStripButtonActionStart.Visible = !serverRunning;
+            toolStripButtonActionStop.Visible = serverRunning;
+        }
+
         async Task StartServerAsync(IPAddress bindAddress, int port = 0)
         {
             if (port == 0)
@@ -211,29 +224,26 @@ namespace Server
                 server.Dispose();
             }
 
+            ToggleActionStartStopButtons(true);
+
             server = new WindowServer(bindAddress, port, videoResolution, ObtainImage, HandleConnectionReply);
             server.ConnectionClosed += WindowServer_ConnectionClosed;
 
-            await server.StartServerAsync().ConfigureAwait(false);
+            try
+            {
+                await server.StartServerAsync().ConfigureAwait(false);
+            }
+            catch (SocketException ex)
+            {
+                Log.Information($"Couldn't start server: {ex}");
+                ToggleActionStartStopButtons(false);
+            }
         }
 
         private void WindowServer_ConnectionClosed()
         {
             Log.Information("Client disconnected");
-        }
-
-        void toolStripButtonApplicationPicker_MouseHover(object sender, EventArgs e)
-        {
-        }
-
-        void toolStripButtonApplicationPicker_Click(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        void toolStripButtonApplicationSelector_Click(object sender, EventArgs e)
-        {
-            toolStripButtonApplicationSelector.ToolTipText = "Click here";
+            ToggleActionStartStopButtons(false);
         }
 
         void UpdateResolutionVariables()
@@ -251,8 +261,7 @@ namespace Server
                 //captureAreaTopLeft = captureArea.Bounds.Location;
             }
 
-            toolStripStatusLabelResolution.Text = videoResolution.Width.ToString() + "x" + videoResolution.Height.ToString();
-
+            toolStripStatusLabelResolution.Text = $"{videoResolution.Width}x{videoResolution.Height}";
             server?.UpdateResolution(videoResolution);
         }
 
@@ -260,11 +269,6 @@ namespace Server
         {
             LogWindow lw = sender as LogWindow;
             Console.SetOut(lw.sw);
-        }
-
-        void toolStripButtonDebug1_Click(object sender, EventArgs e)
-        {
-            throw new NotImplementedException();
         }
 
         static Bitmap GetScreenPicture(int x, int y, Size size)

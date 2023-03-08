@@ -38,11 +38,13 @@ namespace Server
         UdpClient videoClient;
         Size resolution;
         bool connectionClosedInvoked;
+        bool objectDisposed;
 
         Task metastreamTask;
         Task videostreamTask;
         CancellationTokenSource videostreamToken;
         CancellationTokenSource metastreamToken;
+        CancellationTokenSource listeningToken;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WindowServer"/> class.
@@ -92,13 +94,35 @@ namespace Server
 
         public void Dispose()
         {
+            if (objectDisposed)
+            {
+                return;
+            }
+
+            objectDisposed = true;
+
+            // Halt server
+            listeningToken?.Cancel();
             metastreamToken?.Cancel();
             videostreamToken?.Cancel();
 
+            // Dispose of networked instances
+            clientListener?.Stop();
             metaClient?.Dispose();
             videoClient?.Dispose();
+
+            // Dispose of token sources
+            listeningToken?.Dispose();
+            metastreamToken?.Dispose();
+            videostreamToken?.Dispose();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="InstanceAlreadyInUseException">This method-instance has been called previously.</exception>
+        /// <exception cref="SocketException">Socket already registered.</exception>
         public async Task StartServerAsync()
         {
             if (clientListener is not null)
@@ -106,22 +130,34 @@ namespace Server
                 throw new InstanceAlreadyInUseException($"{nameof(clientListener)} is not null. Can'zero reuse same instance.");
             }
 
+            listeningToken = new CancellationTokenSource();
             clientListener = new TcpListener(boundEndpoint);
             clientListener.Start();
             Log.Information($"Server started {boundEndpoint}");
 
-            ConnectionReply reply;
-            do
+            try
             {
-                metaClient = await clientListener.AcceptTcpClientAsync();
-                clientEndpoint = metaClient.Client.RemoteEndPoint as IPEndPoint;
-                Log.Information($"Connection recieved: {clientEndpoint}");
-                reply = handleConnectionRequest(clientEndpoint.Address);
-            }
-            while (!await HandshakeAsync(reply));
+                ConnectionReply reply;
+                do
+                {
+                    metaClient = await clientListener.AcceptTcpClientAsync(listeningToken.Token);
+                    clientEndpoint = metaClient.Client.RemoteEndPoint as IPEndPoint;
+                    Log.Information($"Connection recieved: {clientEndpoint}");
+                    reply = handleConnectionRequest(clientEndpoint.Address);
+                }
+                while (!await HandshakeAsync(reply));
 
-            metastreamToken = new CancellationTokenSource();
-            metastreamTask = Task.Run(MetastreamLoop);
+                metastreamToken = new CancellationTokenSource();
+                metastreamTask = Task.Run(MetastreamLoop);
+            }
+            catch (SocketException ex)
+            {
+                Log.Error($"Server start crashed with following exception: {ex}");
+                Dispose();
+            }
+            catch (OperationCanceledException)
+            {
+            }
         }
 
         public void UpdateResolution(Size resolution)
@@ -247,10 +283,26 @@ namespace Server
                 byte[] rawImageData = ConvertBitmapToRawPixel24bpp(bmp);
                 convertPictureSw.Stop();
 
-                SendPicture(rawImageData, bmp.Width, bmp.Height, videoClient);
+                try
+                {
+                    SendPicture(rawImageData, bmp.Width, bmp.Height, videoClient);
+                }
+                catch (ObjectDisposedException ex)
+                {
+                    Log.Debug($"Stream looped invoked exception: {ex}");
+                    return;
+                }
 
                 Log.Information($"Obtain image: {obtainImageSw.ElapsedMilliseconds} ms, convert image: {convertPictureSw.ElapsedMilliseconds} ms");
-                await Task.Delay(Math.Max(frameIntervalMS - (int)sw.ElapsedMilliseconds, 0), token);
+
+                try
+                {
+                    await Task.Delay(Math.Max(frameIntervalMS - (int)sw.ElapsedMilliseconds, 0), token);
+                }
+                catch (TaskCanceledException)
+                {
+                    return;
+                }
             }
         }
 
@@ -265,13 +317,12 @@ namespace Server
                 {
                     await stream.ReadAsync(buffer, 0, Constants.MetaFrameLength, metastreamToken.Token);
                 }
-                catch (IOException)
+                catch (IOException) // Client disconnected
                 {
                     ClientDisconnected();
                     return;
                 }
-
-                if (metastreamToken.Token.IsCancellationRequested)
+                catch (OperationCanceledException) // Server stopped
                 {
                     ClientDisconnected();
                     return;

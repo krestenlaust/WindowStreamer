@@ -38,6 +38,7 @@
             this.statusStripFooter = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabelLatest = new System.Windows.Forms.ToolStripStatusLabel();
             this.displayArea = new System.Windows.Forms.PictureBox();
+            this.toolStripStatusLabelResolution = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripHeader.SuspendLayout();
             this.statusStripFooter.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.displayArea)).BeginInit();
@@ -91,21 +92,25 @@
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            this.toolStripSeparator2.Visible = false;
             // 
             // toolStripButtonOptions
             // 
             this.toolStripButtonOptions.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripButtonOptions.Enabled = false;
             this.toolStripButtonOptions.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonOptions.Image")));
             this.toolStripButtonOptions.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonOptions.Name = "toolStripButtonOptions";
             this.toolStripButtonOptions.Size = new System.Drawing.Size(53, 22);
             this.toolStripButtonOptions.Text = "&Options";
+            this.toolStripButtonOptions.Visible = false;
             this.toolStripButtonOptions.Click += new System.EventHandler(this.toolStripButtonOptions_Click);
             // 
             // statusStripFooter
             // 
             this.statusStripFooter.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.statusStripFooter.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabelResolution,
             this.toolStripStatusLabelLatest});
             this.statusStripFooter.Location = new System.Drawing.Point(0, 279);
             this.statusStripFooter.Name = "statusStripFooter";
@@ -129,6 +134,12 @@
             this.displayArea.Size = new System.Drawing.Size(448, 254);
             this.displayArea.TabIndex = 2;
             this.displayArea.TabStop = false;
+            // 
+            // toolStripStatusLabelResolution
+            // 
+            this.toolStripStatusLabelResolution.Name = "toolStripStatusLabelResolution";
+            this.toolStripStatusLabelResolution.Size = new System.Drawing.Size(168, 17);
+            this.toolStripStatusLabelResolution.Text = "toolStripStatusLabelResolution";
             // 
             // WindowDisplay
             // 
@@ -166,6 +177,7 @@
         private System.Windows.Forms.ToolStripButton toolStripButtonConnect;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripButton toolStripButtonOptions;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelResolution;
     }
 }
 

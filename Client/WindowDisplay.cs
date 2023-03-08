@@ -33,6 +33,11 @@ namespace Client
         {
             formToPanelSize = Size.Subtract(Size, displayArea.Size);
 
+            // Update UI
+            ResizeToFit();
+            ToggleDragableBorder(!toolStripButtonResizeToFit.Checked);
+            toolStripStatusLabelResolution.Text = string.Empty;
+
             await HandleCommandlineArgumentsAsync(Environment.GetCommandLineArgs());
         }
 
@@ -131,6 +136,7 @@ namespace Client
                 Invoke((MethodInvoker)delegate
                 {
                     ResizeToFit();
+                    toolStripStatusLabelResolution.Text = $"{videoResolution.Width}x{videoResolution.Height}";
                 });
             }
         }
@@ -142,13 +148,29 @@ namespace Client
             if (toolStripButtonResizeToFit.Checked)
             {
                 ResizeToFit();
-                FormBorderStyle = FormBorderStyle.FixedSingle;
-                statusStripFooter.SizingGrip = false;
             }
-            else
+
+            ToggleDragableBorder(!toolStripButtonResizeToFit.Checked);
+        }
+
+        void ToggleDragableBorder(bool dragable)
+        {
+            if (dragable)
             {
                 FormBorderStyle = FormBorderStyle.Sizable;
                 statusStripFooter.SizingGrip = true;
+                MaximizeBox = true;
+            }
+            else
+            {
+                FormBorderStyle = FormBorderStyle.FixedSingle;
+                statusStripFooter.SizingGrip = false;
+                MaximizeBox = false;
+
+                if (WindowState == FormWindowState.Maximized)
+                {
+                    WindowState = FormWindowState.Normal;
+                }
             }
         }
 
