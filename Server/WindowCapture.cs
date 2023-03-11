@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Net;
@@ -15,6 +16,7 @@ namespace Server
         static readonly int DefaultMetastreamPort = 10063;
         static readonly Color transparencyKeyColor = Color.Orange;
 
+        readonly HashSet<IPAddress> blockedIPs = new HashSet<IPAddress>();
         bool fullscreen;
         Size videoResolution;
 
@@ -130,6 +132,12 @@ namespace Server
 
         WindowServer.ConnectionReply HandleConnectionReply(IPAddress ipAddress)
         {
+            if (blockedIPs.Contains(ipAddress))
+            {
+                Log.Information($"Denied blocked IP Address: {ipAddress}");
+                return WindowServer.ConnectionReply.Close;
+            }
+
             var prompt = new ConnectionPrompt(ipAddress.ToString())
             {
                 StartPosition = FormStartPosition.CenterParent,
@@ -139,7 +147,7 @@ namespace Server
             switch (prompt.ShowDialog())
             {
                 case DialogResult.Abort: // Block
-                    Log.Information("Blocked the following IP Address: " + ipAddress);
+                    Log.Information($"Blocked the following IP Address: {ipAddress}");
 
                     BlockIPAddress(ipAddress);
                     return WindowServer.ConnectionReply.Close;
@@ -164,8 +172,9 @@ namespace Server
 
         void BlockIPAddress(IPAddress ip)
         {
-            // TODO: (#15) Implement blocking IPs
-            Console.WriteLine("Blocking IP: " + ip.ToString());
+            blockedIPs.Add(ip);
+
+            Console.WriteLine($"Blocking IP: {ip}");
         }
 
         void WindowCapture_Resize(object sender, EventArgs e) => UpdateResolutionVariables();

@@ -233,17 +233,25 @@ namespace Client
                 var stream = metaClient.GetStream();
                 var packet = new byte[Constants.MetaFrameLength];
 
+                int readBytes;
+
                 try
                 {
-                    await stream.ReadAsync(packet, 0, Constants.MetaFrameLength, metastreamToken.Token);
+                    readBytes = await stream.ReadAsync(packet, 0, Constants.MetaFrameLength, metastreamToken.Token);
                 }
                 catch (IOException)
                 {
                     ClientDisconnected();
                     return;
                 }
+                catch (TaskCanceledException)
+                {
+                    ClientDisconnected();
+                    return;
+                }
 
-                if (metastreamToken.Token.IsCancellationRequested)
+                // As far as I know, when 0 bytes has been read and the reading function isn't blocking, the connection has stopped.
+                if (readBytes == 0)
                 {
                     ClientDisconnected();
                     return;

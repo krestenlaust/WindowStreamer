@@ -142,7 +142,7 @@ namespace Server
                 {
                     metaClient = await clientListener.AcceptTcpClientAsync(listeningToken.Token);
                     clientEndpoint = metaClient.Client.RemoteEndPoint as IPEndPoint;
-                    Log.Information($"Connection recieved: {clientEndpoint}");
+                    Log.Information($"Connection recieved: {clientEndpoint}, awaiting action");
                     reply = handleConnectionRequest(clientEndpoint.Address);
                 }
                 while (!await HandshakeAsync(reply));
@@ -372,27 +372,26 @@ namespace Server
         {
             var stream = metaClient.GetStream();
 
-            Log.Information("Inbound connection, awaiting action...");
             switch (replyAction)
             {
                 case ConnectionReply.Close:
+                    Log.Debug($"Closed connection from {clientEndpoint.Address}");
                     metaClient.Close();
 
-                    Log.Information("Closed connection");
                     return false;
 
                 case ConnectionReply.Accept:
-                    Log.Information("Accepting connection");
+                    Log.Debug($"Accepted connection from {clientEndpoint.Address}");
 
                     var replyAccept = Send.ConnectionReply(true, resolution, DefaultVideoStreamPort);
                     await stream.WriteAsync(replyAccept);
                     return true;
 
                 case ConnectionReply.Deny:
+                    Log.Debug($"Denied connection from {clientEndpoint.Address}");
                     var replyDeny = Send.ConnectionReply(false, Size.Empty, 0);
                     await stream.WriteAsync(replyDeny);
 
-                    Log.Information($"Told {clientEndpoint.Address} to try again another day :)");
                     metaClient.Close();
 
                     return false;
