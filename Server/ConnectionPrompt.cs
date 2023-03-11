@@ -19,7 +19,7 @@ namespace Server
 
         void ConnectionPrompt_Load(object sender, EventArgs e)
         {
-            labelConnect.Text = connectingIP + " wants to connect";
+            labelConnect.Text = labelConnect.Text.Replace("%ip%", connectingIP);
         }
 
         void buttonDeny_Click(object sender, EventArgs e)
