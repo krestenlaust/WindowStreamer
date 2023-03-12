@@ -193,7 +193,7 @@ namespace Client
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            new AboutBoxMain();
+            new AboutBoxMain().ShowDialog();
         }
 
         private void helpToolStripMenuItem_Click(object sender, EventArgs e)
