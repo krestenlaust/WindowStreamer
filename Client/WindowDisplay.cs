@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using LabelSink;
 using Serilog;
+using WindowStreamer.Common;
 
 namespace Client
 {
@@ -188,6 +189,16 @@ namespace Client
         {
             Log.Information("Application closing...");
             Log.CloseAndFlush();
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new WindowStreamer.Common.AboutBoxMain().ShowDialog();
+        }
+
+        private void helpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start(ProjectProperties.GithubUrl);
         }
     }
 }

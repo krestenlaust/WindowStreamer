@@ -66,7 +66,7 @@
     <EmbeddedResource Remove="Prompt.resx" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LabelSink\LabelSink.csproj" />
     <ProjectReference Include="..\Protocol\Protocol.csproj" />
+    <ProjectReference Include="..\WindowStreamer.Common\WindowStreamer.Common.csproj" />
   </ItemGroup>
 </Project>
