@@ -58,172 +58,156 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="labelConnect.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
+  <data name="buttonBlock.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="labelConnect.Location" type="System.Drawing.Point, System.Drawing">
-    <value>77, 29</value>
-  </data>
-  <data name="labelConnect.Size" type="System.Drawing.Size, System.Drawing">
-    <value>183, 20</value>
-  </data>
-  <data name="labelConnect.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="labelConnect.Text" xml:space="preserve">
-    <value>%ip% is connecting to you</value>
-  </data>
-  <data name="&gt;&gt;labelConnect.Name" xml:space="preserve">
-    <value>labelConnect</value>
-  </data>
-  <data name="&gt;&gt;labelConnect.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelConnect.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;labelConnect.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="buttonDeny.Location" type="System.Drawing.Point, System.Drawing">
-    <value>11, 91</value>
-  </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="buttonDeny.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 4, 3, 4</value>
-  </data>
-  <data name="buttonDeny.Size" type="System.Drawing.Size, System.Drawing">
-    <value>138, 89</value>
-  </data>
-  <data name="buttonDeny.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="buttonDeny.Text" xml:space="preserve">
-    <value>&amp;Deny</value>
+  <data name="buttonIgnore.Location" type="System.Drawing.Point, System.Drawing">
+    <value>259, 152</value>
   </data>
   <data name="&gt;&gt;buttonDeny.Name" xml:space="preserve">
     <value>buttonDeny</value>
   </data>
-  <data name="&gt;&gt;buttonDeny.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;buttonDeny.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;buttonDeny.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="buttonAccept.Location" type="System.Drawing.Point, System.Drawing">
-    <value>155, 91</value>
-  </data>
-  <data name="buttonAccept.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 4, 3, 4</value>
-  </data>
-  <data name="buttonAccept.Size" type="System.Drawing.Size, System.Drawing">
-    <value>87, 89</value>
-  </data>
-  <data name="buttonAccept.TabIndex" type="System.Int32, mscorlib">
+  <data name="&gt;&gt;buttonIgnore.ZOrder" xml:space="preserve">
     <value>1</value>
-  </data>
-  <data name="buttonAccept.Text" xml:space="preserve">
-    <value>&amp;Accept</value>
-  </data>
-  <data name="&gt;&gt;buttonAccept.Name" xml:space="preserve">
-    <value>buttonAccept</value>
-  </data>
-  <data name="&gt;&gt;buttonAccept.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;buttonAccept.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;buttonAccept.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="buttonIgnore.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Bottom, Right</value>
-  </data>
-  <data name="buttonIgnore.Location" type="System.Drawing.Point, System.Drawing">
-    <value>296, 203</value>
-  </data>
-  <data name="buttonIgnore.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 4, 3, 4</value>
-  </data>
-  <data name="buttonIgnore.Size" type="System.Drawing.Size, System.Drawing">
-    <value>138, 43</value>
-  </data>
-  <data name="buttonIgnore.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="buttonIgnore.Text" xml:space="preserve">
-    <value>&amp;Ignore</value>
-  </data>
-  <data name="&gt;&gt;buttonIgnore.Name" xml:space="preserve">
-    <value>buttonIgnore</value>
-  </data>
-  <data name="&gt;&gt;buttonIgnore.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;buttonIgnore.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;buttonIgnore.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="buttonBlock.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Bottom, Right</value>
-  </data>
   <data name="buttonBlock.Location" type="System.Drawing.Point, System.Drawing">
-    <value>187, 203</value>
+    <value>164, 152</value>
   </data>
-  <data name="buttonBlock.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 4, 3, 4</value>
-  </data>
-  <data name="buttonBlock.Size" type="System.Drawing.Size, System.Drawing">
-    <value>103, 43</value>
-  </data>
-  <data name="buttonBlock.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="buttonBlock.Text" xml:space="preserve">
-    <value>&amp;Block</value>
-  </data>
-  <data name="&gt;&gt;buttonBlock.Name" xml:space="preserve">
-    <value>buttonBlock</value>
+  <data name="buttonAccept.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
   </data>
   <data name="&gt;&gt;buttonBlock.Type" xml:space="preserve">
     <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;buttonBlock.Parent" xml:space="preserve">
-    <value>$this</value>
+  <data name="buttonDeny.Location" type="System.Drawing.Point, System.Drawing">
+    <value>10, 68</value>
   </data>
   <data name="&gt;&gt;buttonBlock.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
-  </metadata>
-  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
-    <value>8, 20</value>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>ConnectionPrompt</value>
   </data>
-  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>446, 260</value>
+  <data name="&gt;&gt;labelConnect.Name" xml:space="preserve">
+    <value>labelConnect</value>
   </data>
-  <data name="$this.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 4, 3, 4</value>
+  <data name="buttonDeny.Text" xml:space="preserve">
+    <value>&amp;Deny</value>
   </data>
-  <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
-    <value>CenterScreen</value>
+  <data name="labelConnect.Location" type="System.Drawing.Point, System.Drawing">
+    <value>67, 22</value>
+  </data>
+  <data name="&gt;&gt;labelConnect.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonIgnore.Name" xml:space="preserve">
+    <value>buttonIgnore</value>
+  </data>
+  <data name="buttonBlock.Size" type="System.Drawing.Size, System.Drawing">
+    <value>90, 32</value>
+  </data>
+  <data name="buttonDeny.Size" type="System.Drawing.Size, System.Drawing">
+    <value>121, 67</value>
+  </data>
+  <data name="buttonIgnore.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;buttonIgnore.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="buttonAccept.Size" type="System.Drawing.Size, System.Drawing">
+    <value>76, 67</value>
+  </data>
+  <data name="labelConnect.Text" xml:space="preserve">
+    <value>%ip% is connecting to you</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>Incoming transmission</value>
   </data>
-  <data name="&gt;&gt;$this.Name" xml:space="preserve">
-    <value>ConnectionPrompt</value>
+  <data name="&gt;&gt;labelConnect.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;buttonAccept.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>7, 15</value>
+  </data>
+  <data name="labelConnect.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="&gt;&gt;buttonIgnore.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;buttonBlock.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="buttonBlock.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Right</value>
+  </data>
+  <data name="buttonIgnore.Text" xml:space="preserve">
+    <value>&amp;Ignore</value>
+  </data>
+  <data name="labelConnect.Size" type="System.Drawing.Size, System.Drawing">
+    <value>148, 15</value>
+  </data>
+  <data name="&gt;&gt;buttonDeny.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="labelConnect.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;buttonDeny.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
+    <value>CenterScreen</value>
+  </data>
+  <data name="&gt;&gt;buttonDeny.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="buttonBlock.Text" xml:space="preserve">
+    <value>&amp;Block</value>
+  </data>
+  <data name="&gt;&gt;labelConnect.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="buttonIgnore.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Right</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
     <value>System.Windows.Forms.Form, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="buttonAccept.Text" xml:space="preserve">
+    <value>&amp;Accept</value>
+  </data>
+  <data name="buttonIgnore.Size" type="System.Drawing.Size, System.Drawing">
+    <value>121, 32</value>
+  </data>
+  <data name="buttonAccept.Location" type="System.Drawing.Point, System.Drawing">
+    <value>136, 68</value>
+  </data>
+  <data name="&gt;&gt;buttonAccept.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+    <value>390, 195</value>
+  </data>
+  <data name="&gt;&gt;buttonAccept.Name" xml:space="preserve">
+    <value>buttonAccept</value>
+  </data>
+  <data name="buttonDeny.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;buttonBlock.Name" xml:space="preserve">
+    <value>buttonBlock</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
 </root>

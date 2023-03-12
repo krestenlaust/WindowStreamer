@@ -54,31 +54,33 @@
             // 
             // statusStripFooter
             // 
+            resources.ApplyResources(this.statusStripFooter, "statusStripFooter");
             this.statusStripFooter.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.statusStripFooter.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabelResolution,
             this.toolStripStatusLabelLatest,
             this.toolStripStatusFPSCounter});
-            resources.ApplyResources(this.statusStripFooter, "statusStripFooter");
             this.statusStripFooter.Name = "statusStripFooter";
+            this.toolTipMain.SetToolTip(this.statusStripFooter, resources.GetString("statusStripFooter.ToolTip"));
             // 
             // toolStripStatusLabelResolution
             // 
-            this.toolStripStatusLabelResolution.Name = "toolStripStatusLabelResolution";
             resources.ApplyResources(this.toolStripStatusLabelResolution, "toolStripStatusLabelResolution");
+            this.toolStripStatusLabelResolution.Name = "toolStripStatusLabelResolution";
             // 
             // toolStripStatusLabelLatest
             // 
-            this.toolStripStatusLabelLatest.Name = "toolStripStatusLabelLatest";
             resources.ApplyResources(this.toolStripStatusLabelLatest, "toolStripStatusLabelLatest");
+            this.toolStripStatusLabelLatest.Name = "toolStripStatusLabelLatest";
             // 
             // toolStripStatusFPSCounter
             // 
-            this.toolStripStatusFPSCounter.Name = "toolStripStatusFPSCounter";
             resources.ApplyResources(this.toolStripStatusFPSCounter, "toolStripStatusFPSCounter");
+            this.toolStripStatusFPSCounter.Name = "toolStripStatusFPSCounter";
             // 
             // toolStripHeader
             // 
+            resources.ApplyResources(this.toolStripHeader, "toolStripHeader");
             this.toolStripHeader.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.toolStripHeader.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.toolStripHeader.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -90,19 +92,19 @@
             this.toolStripSeparator2,
             this.toolStripButtonOptions,
             this.toolStripDropDownButtonHelp});
-            resources.ApplyResources(this.toolStripHeader, "toolStripHeader");
             this.toolStripHeader.Name = "toolStripHeader";
             this.toolStripHeader.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
+            this.toolTipMain.SetToolTip(this.toolStripHeader, resources.GetString("toolStripHeader.ToolTip"));
             // 
             // toolStripTextBoxAcceptableHost
             // 
-            this.toolStripTextBoxAcceptableHost.Name = "toolStripTextBoxAcceptableHost";
             resources.ApplyResources(this.toolStripTextBoxAcceptableHost, "toolStripTextBoxAcceptableHost");
+            this.toolStripTextBoxAcceptableHost.Name = "toolStripTextBoxAcceptableHost";
             // 
             // toolStripLabel1
             // 
-            this.toolStripLabel1.Name = "toolStripLabel1";
             resources.ApplyResources(this.toolStripLabel1, "toolStripLabel1");
+            this.toolStripLabel1.Name = "toolStripLabel1";
             // 
             // toolStripTextBoxTargetPort
             // 
@@ -111,62 +113,63 @@
             // 
             // toolStripButtonActionStop
             // 
-            this.toolStripButtonActionStop.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             resources.ApplyResources(this.toolStripButtonActionStop, "toolStripButtonActionStop");
+            this.toolStripButtonActionStop.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.toolStripButtonActionStop.Name = "toolStripButtonActionStop";
             this.toolStripButtonActionStop.Click += new System.EventHandler(this.toolStripButtonActionStop_Click);
             // 
             // toolStripButtonActionStart
             // 
-            this.toolStripButtonActionStart.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             resources.ApplyResources(this.toolStripButtonActionStart, "toolStripButtonActionStart");
+            this.toolStripButtonActionStart.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.toolStripButtonActionStart.Name = "toolStripButtonActionStart";
             this.toolStripButtonActionStart.Click += new System.EventHandler(this.toolStripButtonActionStart_ClickAsync);
             // 
             // toolStripSeparator2
             // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
             resources.ApplyResources(this.toolStripSeparator2, "toolStripSeparator2");
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
             // 
             // toolStripButtonOptions
             // 
-            this.toolStripButtonOptions.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             resources.ApplyResources(this.toolStripButtonOptions, "toolStripButtonOptions");
+            this.toolStripButtonOptions.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.toolStripButtonOptions.Name = "toolStripButtonOptions";
             this.toolStripButtonOptions.Click += new System.EventHandler(this.toolStripButtonOptions_Click);
             // 
             // toolStripDropDownButtonHelp
             // 
+            resources.ApplyResources(this.toolStripDropDownButtonHelp, "toolStripDropDownButtonHelp");
             this.toolStripDropDownButtonHelp.AutoToolTip = false;
             this.toolStripDropDownButtonHelp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.toolStripDropDownButtonHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.helpToolStripMenuItem,
             this.toolStripSeparator3,
             this.aboutToolStripMenuItem});
-            resources.ApplyResources(this.toolStripDropDownButtonHelp, "toolStripDropDownButtonHelp");
             this.toolStripDropDownButtonHelp.Name = "toolStripDropDownButtonHelp";
             // 
             // helpToolStripMenuItem
             // 
-            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             resources.ApplyResources(this.helpToolStripMenuItem, "helpToolStripMenuItem");
+            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             this.helpToolStripMenuItem.Click += new System.EventHandler(this.helpToolStripMenuItem_Click);
             // 
             // toolStripSeparator3
             // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
             resources.ApplyResources(this.toolStripSeparator3, "toolStripSeparator3");
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
             // 
             // aboutToolStripMenuItem
             // 
-            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             resources.ApplyResources(this.aboutToolStripMenuItem, "aboutToolStripMenuItem");
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // captureArea
             // 
             resources.ApplyResources(this.captureArea, "captureArea");
             this.captureArea.Name = "captureArea";
+            this.toolTipMain.SetToolTip(this.captureArea, resources.GetString("captureArea.ToolTip"));
             // 
             // WindowCapture
             // 
@@ -176,6 +179,7 @@
             this.Controls.Add(this.toolStripHeader);
             this.Controls.Add(this.statusStripFooter);
             this.Name = "WindowCapture";
+            this.toolTipMain.SetToolTip(this, resources.GetString("$this.ToolTip"));
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.WindowCapture_FormClosed);
             this.Load += new System.EventHandler(this.WindowCapture_LoadAsync);
             this.Resize += new System.EventHandler(this.WindowCapture_Resize);
