@@ -316,7 +316,7 @@ namespace Server
 
         private void helpToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start(ProjectProperties.GithubUrl);
+            Helper.OpenUrl(ProjectProperties.GithubUrl);
         }
     }
 }

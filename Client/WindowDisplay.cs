@@ -193,12 +193,12 @@ namespace Client
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            new WindowStreamer.Common.AboutBoxMain().ShowDialog();
+            new AboutBoxMain();
         }
 
         private void helpToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start(ProjectProperties.GithubUrl);
+            Helper.OpenUrl(ProjectProperties.GithubUrl);
         }
     }
 }
