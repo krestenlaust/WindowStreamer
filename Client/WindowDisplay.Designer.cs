@@ -70,6 +70,7 @@
             this.toolStripButtonResizeToFit.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             resources.ApplyResources(this.toolStripButtonResizeToFit, "toolStripButtonResizeToFit");
             this.toolStripButtonResizeToFit.Name = "toolStripButtonResizeToFit";
+            this.toolStripButtonResizeToFit.Click += new System.EventHandler(this.toolStripButtonResizeToFit_Click);
             // 
             // toolStripSeparator1
             // 
@@ -81,6 +82,7 @@
             this.toolStripButtonConnect.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             resources.ApplyResources(this.toolStripButtonConnect, "toolStripButtonConnect");
             this.toolStripButtonConnect.Name = "toolStripButtonConnect";
+            this.toolStripButtonConnect.Click += new System.EventHandler(this.toolStripButtonConnect_ClickAsync);
             // 
             // toolStripSeparator2
             // 
@@ -92,6 +94,7 @@
             this.toolStripButtonOptions.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             resources.ApplyResources(this.toolStripButtonOptions, "toolStripButtonOptions");
             this.toolStripButtonOptions.Name = "toolStripButtonOptions";
+            this.toolStripButtonOptions.Click += new System.EventHandler(this.toolStripButtonOptions_Click);
             // 
             // toolStripDropDownButtonHelp
             // 
@@ -155,6 +158,8 @@
             this.Controls.Add(this.toolStripHeader);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "WindowDisplay";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.WindowDisplay_FormClosed);
+            this.Load += new System.EventHandler(this.WindowDisplay_LoadAsync);
             this.toolStripHeader.ResumeLayout(false);
             this.toolStripHeader.PerformLayout();
             this.statusStripFooter.ResumeLayout(false);

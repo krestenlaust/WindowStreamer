@@ -114,12 +114,14 @@
             this.toolStripButtonActionStop.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             resources.ApplyResources(this.toolStripButtonActionStop, "toolStripButtonActionStop");
             this.toolStripButtonActionStop.Name = "toolStripButtonActionStop";
+            this.toolStripButtonActionStop.Click += new System.EventHandler(this.toolStripButtonActionStop_Click);
             // 
             // toolStripButtonActionStart
             // 
             this.toolStripButtonActionStart.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             resources.ApplyResources(this.toolStripButtonActionStart, "toolStripButtonActionStart");
             this.toolStripButtonActionStart.Name = "toolStripButtonActionStart";
+            this.toolStripButtonActionStart.Click += new System.EventHandler(this.toolStripButtonActionStart_ClickAsync);
             // 
             // toolStripSeparator2
             // 
@@ -131,6 +133,7 @@
             this.toolStripButtonOptions.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             resources.ApplyResources(this.toolStripButtonOptions, "toolStripButtonOptions");
             this.toolStripButtonOptions.Name = "toolStripButtonOptions";
+            this.toolStripButtonOptions.Click += new System.EventHandler(this.toolStripButtonOptions_Click);
             // 
             // toolStripDropDownButtonHelp
             // 
@@ -173,6 +176,9 @@
             this.Controls.Add(this.toolStripHeader);
             this.Controls.Add(this.statusStripFooter);
             this.Name = "WindowCapture";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.WindowCapture_FormClosed);
+            this.Load += new System.EventHandler(this.WindowCapture_LoadAsync);
+            this.Resize += new System.EventHandler(this.WindowCapture_Resize);
             this.statusStripFooter.ResumeLayout(false);
             this.statusStripFooter.PerformLayout();
             this.toolStripHeader.ResumeLayout(false);

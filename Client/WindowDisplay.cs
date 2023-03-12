@@ -30,7 +30,7 @@ namespace Client
                 .CreateLogger();
         }
 
-        async void WindowDisplay_Load(object sender, EventArgs e)
+        async void WindowDisplay_LoadAsync(object sender, EventArgs e)
         {
             formToPanelSize = Size.Subtract(Size, displayArea.Size);
 

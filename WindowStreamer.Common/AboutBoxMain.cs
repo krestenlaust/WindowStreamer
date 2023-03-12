@@ -37,19 +37,6 @@ public partial class AboutBoxMain : Form
             return ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
         }
     }
-
-    public string AssemblyCompany
-    {
-        get
-        {
-            object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
-            if (attributes.Length == 0)
-            {
-                return "";
-            }
-            return ((AssemblyCompanyAttribute)attributes[0]).Company;
-        }
-    }
     #endregion
 
     private void AboutBoxMain_Load(object sender, EventArgs e)
