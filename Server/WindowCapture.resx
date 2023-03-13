@@ -298,13 +298,13 @@
     <value>Open manual button</value>
   </data>
   <data name="helpToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 24</value>
+    <value>225, 24</value>
   </data>
   <data name="helpToolStripMenuItem.Text" xml:space="preserve">
     <value>Open Readme</value>
   </data>
   <data name="toolStripSeparator3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>177, 6</value>
+    <value>222, 6</value>
   </data>
   <data name="aboutToolStripMenuItem.AccessibleDescription" xml:space="preserve">
     <value>A button that opens a modal with information about the author and the project</value>
@@ -313,10 +313,10 @@
     <value>About button</value>
   </data>
   <data name="aboutToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 24</value>
+    <value>225, 24</value>
   </data>
   <data name="aboutToolStripMenuItem.Text" xml:space="preserve">
-    <value>About</value>
+    <value>About WindowStreamer</value>
   </data>
   <data name="toolStripDropDownButtonHelp.Font" type="System.Drawing.Font, System.Drawing">
     <value>Segoe UI, 10pt</value>
@@ -339,7 +339,7 @@
     <value>50, 23</value>
   </data>
   <data name="toolStripDropDownButtonHelp.Text" xml:space="preserve">
-    <value>Help</value>
+    <value>&amp;Help</value>
   </data>
   <data name="toolStripHeader.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
