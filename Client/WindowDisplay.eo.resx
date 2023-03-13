@@ -74,7 +74,7 @@
 </value>
   </data>
   <data name="toolStripButtonResizeToFit.Size" type="System.Drawing.Size, System.Drawing">
-    <value>68, 22</value>
+    <value>78, 23</value>
   </data>
   <data name="toolStripButtonResizeToFit.Text" xml:space="preserve">
     <value>&amp;Regrandigi</value>
@@ -95,7 +95,7 @@
 </value>
   </data>
   <data name="toolStripButtonConnect.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 22</value>
+    <value>116, 23</value>
   </data>
   <data name="toolStripButtonConnect.Text" xml:space="preserve">
     <value>&amp;Konekti al servilo</value>
@@ -116,7 +116,7 @@
 </value>
   </data>
   <data name="toolStripButtonOptions.Size" type="System.Drawing.Size, System.Drawing">
-    <value>58, 22</value>
+    <value>67, 23</value>
   </data>
   <data name="toolStripButtonOptions.Text" xml:space="preserve">
     <value>Arg&amp;ordoj</value>
@@ -133,19 +133,25 @@
 </value>
   </data>
   <data name="toolStripDropDownButtonHelp.Size" type="System.Drawing.Size, System.Drawing">
-    <value>52, 22</value>
+    <value>58, 23</value>
   </data>
   <data name="toolStripDropDownButtonHelp.Text" xml:space="preserve">
     <value>Helpo</value>
   </data>
   <data name="helpToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>203, 24</value>
+  </data>
+  <data name="helpToolStripMenuItem.Text" xml:space="preserve">
+    <value>Malfermita retpaĝo</value>
   </data>
   <data name="toolStripSeparator3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>177, 6</value>
+    <value>200, 6</value>
   </data>
   <data name="aboutToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>203, 24</value>
+  </data>
+  <data name="aboutToolStripMenuItem.Text" xml:space="preserve">
+    <value>Pri WindowStreamer</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>Window Streamer - Video-fluilo</value>
