@@ -63,6 +63,7 @@
             buttonConnect.BackColor = System.Drawing.Color.FromArgb(128, 128, 255);
             buttonConnect.Name = "buttonConnect";
             buttonConnect.UseVisualStyleBackColor = false;
+            buttonConnect.Click += buttonConnect_Click;
             // 
             // buttonCancel
             // 
@@ -71,6 +72,7 @@
             buttonCancel.ForeColor = System.Drawing.SystemColors.ControlText;
             buttonCancel.Name = "buttonCancel";
             buttonCancel.UseVisualStyleBackColor = false;
+            buttonCancel.Click += buttonCancel_Click;
             // 
             // ConnectWindow
             // 
@@ -87,6 +89,7 @@
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             MaximizeBox = false;
             Name = "ConnectWindow";
+            Load += ConnectWindow_Load;
             ResumeLayout(false);
             PerformLayout();
         }
