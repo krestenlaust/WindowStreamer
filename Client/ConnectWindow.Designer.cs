@@ -29,67 +29,66 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConnectWindow));
-            this.textBoxTargetIPAddress = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.textBoxTargetPort = new System.Windows.Forms.TextBox();
-            this.buttonConnect = new System.Windows.Forms.Button();
-            this.buttonCancel = new System.Windows.Forms.Button();
-            this.SuspendLayout();
+            textBoxTargetIPAddress = new System.Windows.Forms.TextBox();
+            label1 = new System.Windows.Forms.Label();
+            label2 = new System.Windows.Forms.Label();
+            textBoxTargetPort = new System.Windows.Forms.TextBox();
+            buttonConnect = new System.Windows.Forms.Button();
+            buttonCancel = new System.Windows.Forms.Button();
+            SuspendLayout();
             // 
             // textBoxTargetIPAddress
             // 
-            resources.ApplyResources(this.textBoxTargetIPAddress, "textBoxTargetIPAddress");
-            this.textBoxTargetIPAddress.Name = "textBoxTargetIPAddress";
+            resources.ApplyResources(textBoxTargetIPAddress, "textBoxTargetIPAddress");
+            textBoxTargetIPAddress.Name = "textBoxTargetIPAddress";
             // 
             // label1
             // 
-            resources.ApplyResources(this.label1, "label1");
-            this.label1.Name = "label1";
+            resources.ApplyResources(label1, "label1");
+            label1.Name = "label1";
             // 
             // label2
             // 
-            resources.ApplyResources(this.label2, "label2");
-            this.label2.Name = "label2";
+            resources.ApplyResources(label2, "label2");
+            label2.Name = "label2";
             // 
             // textBoxTargetPort
             // 
-            resources.ApplyResources(this.textBoxTargetPort, "textBoxTargetPort");
-            this.textBoxTargetPort.Name = "textBoxTargetPort";
+            resources.ApplyResources(textBoxTargetPort, "textBoxTargetPort");
+            textBoxTargetPort.Name = "textBoxTargetPort";
             // 
             // buttonConnect
             // 
-            resources.ApplyResources(this.buttonConnect, "buttonConnect");
-            this.buttonConnect.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
-            this.buttonConnect.Name = "buttonConnect";
-            this.buttonConnect.UseVisualStyleBackColor = false;
+            resources.ApplyResources(buttonConnect, "buttonConnect");
+            buttonConnect.BackColor = System.Drawing.Color.FromArgb(128, 128, 255);
+            buttonConnect.Name = "buttonConnect";
+            buttonConnect.UseVisualStyleBackColor = false;
             // 
             // buttonCancel
             // 
-            resources.ApplyResources(this.buttonCancel, "buttonCancel");
-            this.buttonCancel.BackColor = System.Drawing.Color.Red;
-            this.buttonCancel.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.UseVisualStyleBackColor = false;
+            resources.ApplyResources(buttonCancel, "buttonCancel");
+            buttonCancel.BackColor = System.Drawing.Color.Red;
+            buttonCancel.ForeColor = System.Drawing.SystemColors.ControlText;
+            buttonCancel.Name = "buttonCancel";
+            buttonCancel.UseVisualStyleBackColor = false;
             // 
             // ConnectWindow
             // 
-            this.AcceptButton = this.buttonConnect;
+            AcceptButton = buttonConnect;
             resources.ApplyResources(this, "$this");
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.CancelButton = this.buttonCancel;
-            this.Controls.Add(this.buttonCancel);
-            this.Controls.Add(this.buttonConnect);
-            this.Controls.Add(this.textBoxTargetPort);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.textBoxTargetIPAddress);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.MaximizeBox = false;
-            this.Name = "ConnectWindow";
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            CancelButton = buttonCancel;
+            Controls.Add(buttonCancel);
+            Controls.Add(buttonConnect);
+            Controls.Add(textBoxTargetPort);
+            Controls.Add(label2);
+            Controls.Add(label1);
+            Controls.Add(textBoxTargetIPAddress);
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            MaximizeBox = false;
+            Name = "ConnectWindow";
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion

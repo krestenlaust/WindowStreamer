@@ -62,13 +62,13 @@
     <value>77, 20</value>
   </data>
   <data name="label1.Text" xml:space="preserve">
-    <value>IP-adresse</value>
+    <value>&amp;IP-adresse</value>
   </data>
   <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
     <value>102, 20</value>
   </data>
   <data name="label2.Text" xml:space="preserve">
-    <value>Netværks port</value>
+    <value>Netværks &amp;port</value>
   </data>
   <data name="buttonConnect.Text" xml:space="preserve">
     <value>Forbind (&amp;C)</value>

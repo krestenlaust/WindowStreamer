@@ -59,16 +59,16 @@
   </resheader>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>83, 15</value>
+    <value>105, 20</value>
   </data>
   <data name="label1.Text" xml:space="preserve">
-    <value>Cela IP-adreso</value>
+    <value>Cela &amp;IP-adreso</value>
   </data>
   <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>76, 15</value>
+    <value>97, 20</value>
   </data>
   <data name="label2.Text" xml:space="preserve">
-    <value>Cela retporto</value>
+    <value>Cela ret&amp;porto</value>
   </data>
   <data name="buttonConnect.Text" xml:space="preserve">
     <value>&amp;Konektu</value>
