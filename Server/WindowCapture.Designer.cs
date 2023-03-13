@@ -28,168 +28,149 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WindowCapture));
-            this.statusStripFooter = new System.Windows.Forms.StatusStrip();
-            this.toolStripStatusLabelResolution = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripStatusLabelLatest = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripStatusFPSCounter = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripHeader = new System.Windows.Forms.ToolStrip();
-            this.toolStripTextBoxAcceptableHost = new System.Windows.Forms.ToolStripTextBox();
-            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
-            this.toolStripTextBoxTargetPort = new System.Windows.Forms.ToolStripTextBox();
-            this.toolStripButtonActionStop = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButtonActionStart = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripButtonOptions = new System.Windows.Forms.ToolStripButton();
-            this.toolStripDropDownButtonHelp = new System.Windows.Forms.ToolStripDropDownButton();
-            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.captureArea = new System.Windows.Forms.Panel();
-            this.toolTipMain = new System.Windows.Forms.ToolTip(this.components);
-            this.statusStripFooter.SuspendLayout();
-            this.toolStripHeader.SuspendLayout();
-            this.SuspendLayout();
+            statusStripFooter = new System.Windows.Forms.StatusStrip();
+            toolStripStatusLabelResolution = new System.Windows.Forms.ToolStripStatusLabel();
+            toolStripStatusLabelLatest = new System.Windows.Forms.ToolStripStatusLabel();
+            toolStripStatusFPSCounter = new System.Windows.Forms.ToolStripStatusLabel();
+            toolStripHeader = new System.Windows.Forms.ToolStrip();
+            toolStripTextBoxAcceptableHost = new System.Windows.Forms.ToolStripTextBox();
+            toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
+            toolStripTextBoxTargetPort = new System.Windows.Forms.ToolStripTextBox();
+            toolStripButtonActionStop = new System.Windows.Forms.ToolStripButton();
+            toolStripButtonActionStart = new System.Windows.Forms.ToolStripButton();
+            toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            toolStripButtonOptions = new System.Windows.Forms.ToolStripButton();
+            toolStripDropDownButtonHelp = new System.Windows.Forms.ToolStripDropDownButton();
+            helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            captureArea = new System.Windows.Forms.Panel();
+            toolTipMain = new System.Windows.Forms.ToolTip(components);
+            statusStripFooter.SuspendLayout();
+            toolStripHeader.SuspendLayout();
+            SuspendLayout();
             // 
             // statusStripFooter
             // 
-            resources.ApplyResources(this.statusStripFooter, "statusStripFooter");
-            this.statusStripFooter.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.statusStripFooter.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripStatusLabelResolution,
-            this.toolStripStatusLabelLatest,
-            this.toolStripStatusFPSCounter});
-            this.statusStripFooter.Name = "statusStripFooter";
-            this.toolTipMain.SetToolTip(this.statusStripFooter, resources.GetString("statusStripFooter.ToolTip"));
+            statusStripFooter.ImageScalingSize = new System.Drawing.Size(20, 20);
+            statusStripFooter.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripStatusLabelResolution, toolStripStatusLabelLatest, toolStripStatusFPSCounter });
+            resources.ApplyResources(statusStripFooter, "statusStripFooter");
+            statusStripFooter.Name = "statusStripFooter";
             // 
             // toolStripStatusLabelResolution
             // 
-            resources.ApplyResources(this.toolStripStatusLabelResolution, "toolStripStatusLabelResolution");
-            this.toolStripStatusLabelResolution.Name = "toolStripStatusLabelResolution";
+            resources.ApplyResources(toolStripStatusLabelResolution, "toolStripStatusLabelResolution");
+            toolStripStatusLabelResolution.Name = "toolStripStatusLabelResolution";
             // 
             // toolStripStatusLabelLatest
             // 
-            resources.ApplyResources(this.toolStripStatusLabelLatest, "toolStripStatusLabelLatest");
-            this.toolStripStatusLabelLatest.Name = "toolStripStatusLabelLatest";
+            resources.ApplyResources(toolStripStatusLabelLatest, "toolStripStatusLabelLatest");
+            toolStripStatusLabelLatest.Name = "toolStripStatusLabelLatest";
             // 
             // toolStripStatusFPSCounter
             // 
-            resources.ApplyResources(this.toolStripStatusFPSCounter, "toolStripStatusFPSCounter");
-            this.toolStripStatusFPSCounter.Name = "toolStripStatusFPSCounter";
+            resources.ApplyResources(toolStripStatusFPSCounter, "toolStripStatusFPSCounter");
+            toolStripStatusFPSCounter.Name = "toolStripStatusFPSCounter";
             // 
             // toolStripHeader
             // 
-            resources.ApplyResources(this.toolStripHeader, "toolStripHeader");
-            this.toolStripHeader.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.toolStripHeader.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.toolStripHeader.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripTextBoxAcceptableHost,
-            this.toolStripLabel1,
-            this.toolStripTextBoxTargetPort,
-            this.toolStripButtonActionStop,
-            this.toolStripButtonActionStart,
-            this.toolStripSeparator2,
-            this.toolStripButtonOptions,
-            this.toolStripDropDownButtonHelp});
-            this.toolStripHeader.Name = "toolStripHeader";
-            this.toolStripHeader.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-            this.toolTipMain.SetToolTip(this.toolStripHeader, resources.GetString("toolStripHeader.ToolTip"));
+            toolStripHeader.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            toolStripHeader.ImageScalingSize = new System.Drawing.Size(20, 20);
+            toolStripHeader.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { toolStripTextBoxAcceptableHost, toolStripLabel1, toolStripTextBoxTargetPort, toolStripButtonActionStop, toolStripButtonActionStart, toolStripSeparator2, toolStripButtonOptions, toolStripDropDownButtonHelp });
+            resources.ApplyResources(toolStripHeader, "toolStripHeader");
+            toolStripHeader.Name = "toolStripHeader";
+            toolStripHeader.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
             // 
             // toolStripTextBoxAcceptableHost
             // 
-            resources.ApplyResources(this.toolStripTextBoxAcceptableHost, "toolStripTextBoxAcceptableHost");
-            this.toolStripTextBoxAcceptableHost.Name = "toolStripTextBoxAcceptableHost";
+            resources.ApplyResources(toolStripTextBoxAcceptableHost, "toolStripTextBoxAcceptableHost");
+            toolStripTextBoxAcceptableHost.Name = "toolStripTextBoxAcceptableHost";
             // 
             // toolStripLabel1
             // 
-            resources.ApplyResources(this.toolStripLabel1, "toolStripLabel1");
-            this.toolStripLabel1.Name = "toolStripLabel1";
+            resources.ApplyResources(toolStripLabel1, "toolStripLabel1");
+            toolStripLabel1.Name = "toolStripLabel1";
             // 
             // toolStripTextBoxTargetPort
             // 
-            resources.ApplyResources(this.toolStripTextBoxTargetPort, "toolStripTextBoxTargetPort");
-            this.toolStripTextBoxTargetPort.Name = "toolStripTextBoxTargetPort";
+            resources.ApplyResources(toolStripTextBoxTargetPort, "toolStripTextBoxTargetPort");
+            toolStripTextBoxTargetPort.Name = "toolStripTextBoxTargetPort";
             // 
             // toolStripButtonActionStop
             // 
-            resources.ApplyResources(this.toolStripButtonActionStop, "toolStripButtonActionStop");
-            this.toolStripButtonActionStop.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripButtonActionStop.Name = "toolStripButtonActionStop";
-            this.toolStripButtonActionStop.Click += new System.EventHandler(this.toolStripButtonActionStop_Click);
+            resources.ApplyResources(toolStripButtonActionStop, "toolStripButtonActionStop");
+            toolStripButtonActionStop.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            toolStripButtonActionStop.Name = "toolStripButtonActionStop";
+            toolStripButtonActionStop.Click += toolStripButtonActionStop_Click;
             // 
             // toolStripButtonActionStart
             // 
-            resources.ApplyResources(this.toolStripButtonActionStart, "toolStripButtonActionStart");
-            this.toolStripButtonActionStart.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripButtonActionStart.Name = "toolStripButtonActionStart";
-            this.toolStripButtonActionStart.Click += new System.EventHandler(this.toolStripButtonActionStart_ClickAsync);
+            resources.ApplyResources(toolStripButtonActionStart, "toolStripButtonActionStart");
+            toolStripButtonActionStart.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            toolStripButtonActionStart.Name = "toolStripButtonActionStart";
+            toolStripButtonActionStart.Click += toolStripButtonActionStart_ClickAsync;
             // 
             // toolStripSeparator2
             // 
-            resources.ApplyResources(this.toolStripSeparator2, "toolStripSeparator2");
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            toolStripSeparator2.Name = "toolStripSeparator2";
+            resources.ApplyResources(toolStripSeparator2, "toolStripSeparator2");
             // 
             // toolStripButtonOptions
             // 
-            resources.ApplyResources(this.toolStripButtonOptions, "toolStripButtonOptions");
-            this.toolStripButtonOptions.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripButtonOptions.Name = "toolStripButtonOptions";
-            this.toolStripButtonOptions.Click += new System.EventHandler(this.toolStripButtonOptions_Click);
+            resources.ApplyResources(toolStripButtonOptions, "toolStripButtonOptions");
+            toolStripButtonOptions.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            toolStripButtonOptions.Name = "toolStripButtonOptions";
+            toolStripButtonOptions.Click += toolStripButtonOptions_Click;
             // 
             // toolStripDropDownButtonHelp
             // 
-            resources.ApplyResources(this.toolStripDropDownButtonHelp, "toolStripDropDownButtonHelp");
-            this.toolStripDropDownButtonHelp.AutoToolTip = false;
-            this.toolStripDropDownButtonHelp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripDropDownButtonHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.helpToolStripMenuItem,
-            this.toolStripSeparator3,
-            this.aboutToolStripMenuItem});
-            this.toolStripDropDownButtonHelp.Name = "toolStripDropDownButtonHelp";
+            resources.ApplyResources(toolStripDropDownButtonHelp, "toolStripDropDownButtonHelp");
+            toolStripDropDownButtonHelp.AutoToolTip = false;
+            toolStripDropDownButtonHelp.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            toolStripDropDownButtonHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { helpToolStripMenuItem, toolStripSeparator3, aboutToolStripMenuItem });
+            toolStripDropDownButtonHelp.Name = "toolStripDropDownButtonHelp";
             // 
             // helpToolStripMenuItem
             // 
-            resources.ApplyResources(this.helpToolStripMenuItem, "helpToolStripMenuItem");
-            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Click += new System.EventHandler(this.helpToolStripMenuItem_Click);
+            resources.ApplyResources(helpToolStripMenuItem, "helpToolStripMenuItem");
+            helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+            helpToolStripMenuItem.Click += helpToolStripMenuItem_Click;
             // 
             // toolStripSeparator3
             // 
-            resources.ApplyResources(this.toolStripSeparator3, "toolStripSeparator3");
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            toolStripSeparator3.Name = "toolStripSeparator3";
+            resources.ApplyResources(toolStripSeparator3, "toolStripSeparator3");
             // 
             // aboutToolStripMenuItem
             // 
-            resources.ApplyResources(this.aboutToolStripMenuItem, "aboutToolStripMenuItem");
-            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            resources.ApplyResources(aboutToolStripMenuItem, "aboutToolStripMenuItem");
+            aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            aboutToolStripMenuItem.Click += aboutToolStripMenuItem_Click;
             // 
             // captureArea
             // 
-            resources.ApplyResources(this.captureArea, "captureArea");
-            this.captureArea.Name = "captureArea";
-            this.toolTipMain.SetToolTip(this.captureArea, resources.GetString("captureArea.ToolTip"));
+            resources.ApplyResources(captureArea, "captureArea");
+            captureArea.Name = "captureArea";
             // 
             // WindowCapture
             // 
             resources.ApplyResources(this, "$this");
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.captureArea);
-            this.Controls.Add(this.toolStripHeader);
-            this.Controls.Add(this.statusStripFooter);
-            this.Name = "WindowCapture";
-            this.toolTipMain.SetToolTip(this, resources.GetString("$this.ToolTip"));
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.WindowCapture_FormClosed);
-            this.Load += new System.EventHandler(this.WindowCapture_LoadAsync);
-            this.Resize += new System.EventHandler(this.WindowCapture_Resize);
-            this.statusStripFooter.ResumeLayout(false);
-            this.statusStripFooter.PerformLayout();
-            this.toolStripHeader.ResumeLayout(false);
-            this.toolStripHeader.PerformLayout();
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            Controls.Add(captureArea);
+            Controls.Add(toolStripHeader);
+            Controls.Add(statusStripFooter);
+            Name = "WindowCapture";
+            FormClosed += WindowCapture_FormClosed;
+            Load += WindowCapture_LoadAsync;
+            Resize += WindowCapture_Resize;
+            statusStripFooter.ResumeLayout(false);
+            statusStripFooter.PerformLayout();
+            toolStripHeader.ResumeLayout(false);
+            toolStripHeader.PerformLayout();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion

@@ -29,61 +29,60 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConnectionPrompt));
-            this.labelConnect = new System.Windows.Forms.Label();
-            this.buttonDeny = new System.Windows.Forms.Button();
-            this.buttonAccept = new System.Windows.Forms.Button();
-            this.buttonIgnore = new System.Windows.Forms.Button();
-            this.buttonBlock = new System.Windows.Forms.Button();
-            this.SuspendLayout();
+            labelConnect = new System.Windows.Forms.Label();
+            buttonDeny = new System.Windows.Forms.Button();
+            buttonAccept = new System.Windows.Forms.Button();
+            buttonIgnore = new System.Windows.Forms.Button();
+            buttonBlock = new System.Windows.Forms.Button();
+            SuspendLayout();
             // 
             // labelConnect
             // 
-            resources.ApplyResources(this.labelConnect, "labelConnect");
-            this.labelConnect.Name = "labelConnect";
+            resources.ApplyResources(labelConnect, "labelConnect");
+            labelConnect.Name = "labelConnect";
             // 
             // buttonDeny
             // 
-            resources.ApplyResources(this.buttonDeny, "buttonDeny");
-            this.buttonDeny.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(159)))), ((int)(((byte)(159)))), ((int)(((byte)(255)))));
-            this.buttonDeny.Name = "buttonDeny";
-            this.buttonDeny.UseVisualStyleBackColor = false;
+            resources.ApplyResources(buttonDeny, "buttonDeny");
+            buttonDeny.BackColor = System.Drawing.Color.FromArgb(159, 159, 255);
+            buttonDeny.Name = "buttonDeny";
+            buttonDeny.UseVisualStyleBackColor = false;
             // 
             // buttonAccept
             // 
-            resources.ApplyResources(this.buttonAccept, "buttonAccept");
-            this.buttonAccept.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(255)))));
-            this.buttonAccept.Name = "buttonAccept";
-            this.buttonAccept.UseVisualStyleBackColor = false;
+            resources.ApplyResources(buttonAccept, "buttonAccept");
+            buttonAccept.BackColor = System.Drawing.Color.FromArgb(128, 128, 255);
+            buttonAccept.Name = "buttonAccept";
+            buttonAccept.UseVisualStyleBackColor = false;
             // 
             // buttonIgnore
             // 
-            resources.ApplyResources(this.buttonIgnore, "buttonIgnore");
-            this.buttonIgnore.BackColor = System.Drawing.Color.DarkSalmon;
-            this.buttonIgnore.Name = "buttonIgnore";
-            this.buttonIgnore.UseVisualStyleBackColor = false;
+            resources.ApplyResources(buttonIgnore, "buttonIgnore");
+            buttonIgnore.BackColor = System.Drawing.Color.DarkSalmon;
+            buttonIgnore.Name = "buttonIgnore";
+            buttonIgnore.UseVisualStyleBackColor = false;
             // 
             // buttonBlock
             // 
-            resources.ApplyResources(this.buttonBlock, "buttonBlock");
-            this.buttonBlock.BackColor = System.Drawing.Color.Red;
-            this.buttonBlock.Name = "buttonBlock";
-            this.buttonBlock.UseVisualStyleBackColor = false;
+            resources.ApplyResources(buttonBlock, "buttonBlock");
+            buttonBlock.BackColor = System.Drawing.Color.Red;
+            buttonBlock.Name = "buttonBlock";
+            buttonBlock.UseVisualStyleBackColor = false;
             // 
             // ConnectionPrompt
             // 
             resources.ApplyResources(this, "$this");
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.buttonBlock);
-            this.Controls.Add(this.buttonIgnore);
-            this.Controls.Add(this.buttonAccept);
-            this.Controls.Add(this.buttonDeny);
-            this.Controls.Add(this.labelConnect);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.MaximizeBox = false;
-            this.Name = "ConnectionPrompt";
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            Controls.Add(buttonBlock);
+            Controls.Add(buttonIgnore);
+            Controls.Add(buttonAccept);
+            Controls.Add(buttonDeny);
+            Controls.Add(labelConnect);
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            MaximizeBox = false;
+            Name = "ConnectionPrompt";
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion

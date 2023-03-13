@@ -576,8 +576,17 @@
   <data name="&gt;&gt;logoPictureBox.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
+  <data name="labelProductName.AccessibleDescription" xml:space="preserve">
+    <value>Label containing name of project</value>
+  </data>
+  <data name="labelProductName.AccessibleName" xml:space="preserve">
+    <value>Project name</value>
+  </data>
   <data name="labelProductName.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
+  </data>
+  <data name="labelProductName.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI, 10pt</value>
   </data>
   <data name="labelProductName.Location" type="System.Drawing.Point, System.Drawing">
     <value>167, 0</value>
@@ -612,8 +621,17 @@
   <data name="&gt;&gt;labelProductName.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
+  <data name="labelVersion.AccessibleDescription" xml:space="preserve">
+    <value>Label containing the version of the software</value>
+  </data>
+  <data name="labelVersion.AccessibleName" xml:space="preserve">
+    <value>Version number</value>
+  </data>
   <data name="labelVersion.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
+  </data>
+  <data name="labelVersion.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI, 10pt</value>
   </data>
   <data name="labelVersion.Location" type="System.Drawing.Point, System.Drawing">
     <value>167, 30</value>
@@ -648,8 +666,17 @@
   <data name="&gt;&gt;labelVersion.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
+  <data name="labelCopyright.AccessibleDescription" xml:space="preserve">
+    <value>Label containing the copyright of the software</value>
+  </data>
+  <data name="labelCopyright.AccessibleName" xml:space="preserve">
+    <value>Copyright label</value>
+  </data>
   <data name="labelCopyright.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
+  </data>
+  <data name="labelCopyright.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI, 10pt</value>
   </data>
   <data name="labelCopyright.Location" type="System.Drawing.Point, System.Drawing">
     <value>167, 60</value>
@@ -684,8 +711,17 @@
   <data name="&gt;&gt;labelCopyright.ZOrder" xml:space="preserve">
     <value>3</value>
   </data>
+  <data name="labelCompanyName.AccessibleDescription" xml:space="preserve">
+    <value>Label containing the author of the software</value>
+  </data>
+  <data name="labelCompanyName.AccessibleName" xml:space="preserve">
+    <value>Author label</value>
+  </data>
   <data name="labelCompanyName.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
+  </data>
+  <data name="labelCompanyName.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI, 10pt</value>
   </data>
   <data name="labelCompanyName.Location" type="System.Drawing.Point, System.Drawing">
     <value>167, 90</value>
@@ -720,8 +756,17 @@
   <data name="&gt;&gt;labelCompanyName.ZOrder" xml:space="preserve">
     <value>4</value>
   </data>
+  <data name="textBoxDescription.AccessibleDescription" xml:space="preserve">
+    <value>A textbox containing a description of the software</value>
+  </data>
+  <data name="textBoxDescription.AccessibleName" xml:space="preserve">
+    <value>Description field</value>
+  </data>
   <data name="textBoxDescription.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
+  </data>
+  <data name="textBoxDescription.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI, 10pt</value>
   </data>
   <data name="textBoxDescription.Location" type="System.Drawing.Point, System.Drawing">
     <value>167, 123</value>
@@ -760,6 +805,9 @@ The project is available on GitHub: %url%</value>
   </data>
   <data name="okButton.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Right</value>
+  </data>
+  <data name="okButton.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI, 10pt</value>
   </data>
   <data name="okButton.Location" type="System.Drawing.Point, System.Drawing">
     <value>395, 277</value>
