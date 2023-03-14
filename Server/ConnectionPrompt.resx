@@ -72,10 +72,10 @@
     <value>Segoe UI, 10pt</value>
   </data>
   <data name="labelConnect.Location" type="System.Drawing.Point, System.Drawing">
-    <value>67, 22</value>
+    <value>77, 29</value>
   </data>
   <data name="labelConnect.Size" type="System.Drawing.Size, System.Drawing">
-    <value>170, 19</value>
+    <value>212, 23</value>
   </data>
   <data name="labelConnect.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -105,10 +105,14 @@
     <value>Segoe UI, 10pt</value>
   </data>
   <data name="buttonDeny.Location" type="System.Drawing.Point, System.Drawing">
-    <value>10, 68</value>
+    <value>11, 91</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="buttonDeny.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 4, 3, 4</value>
   </data>
   <data name="buttonDeny.Size" type="System.Drawing.Size, System.Drawing">
-    <value>121, 67</value>
+    <value>138, 89</value>
   </data>
   <data name="buttonDeny.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -138,10 +142,13 @@
     <value>Segoe UI, 10pt</value>
   </data>
   <data name="buttonAccept.Location" type="System.Drawing.Point, System.Drawing">
-    <value>136, 68</value>
+    <value>155, 91</value>
+  </data>
+  <data name="buttonAccept.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 4, 3, 4</value>
   </data>
   <data name="buttonAccept.Size" type="System.Drawing.Size, System.Drawing">
-    <value>76, 67</value>
+    <value>87, 89</value>
   </data>
   <data name="buttonAccept.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -175,10 +182,13 @@
     <value>Segoe UI, 10pt</value>
   </data>
   <data name="buttonIgnore.Location" type="System.Drawing.Point, System.Drawing">
-    <value>259, 141</value>
+    <value>296, 188</value>
+  </data>
+  <data name="buttonIgnore.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 4, 3, 4</value>
   </data>
   <data name="buttonIgnore.Size" type="System.Drawing.Size, System.Drawing">
-    <value>121, 43</value>
+    <value>138, 57</value>
   </data>
   <data name="buttonIgnore.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -211,10 +221,13 @@
     <value>Segoe UI, 10pt</value>
   </data>
   <data name="buttonBlock.Location" type="System.Drawing.Point, System.Drawing">
-    <value>164, 141</value>
+    <value>187, 188</value>
+  </data>
+  <data name="buttonBlock.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 4, 3, 4</value>
   </data>
   <data name="buttonBlock.Size" type="System.Drawing.Size, System.Drawing">
-    <value>90, 43</value>
+    <value>103, 57</value>
   </data>
   <data name="buttonBlock.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -238,10 +251,13 @@
     <value>True</value>
   </metadata>
   <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
-    <value>7, 15</value>
+    <value>8, 20</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>390, 195</value>
+    <value>446, 260</value>
+  </data>
+  <data name="$this.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 4, 3, 4</value>
   </data>
   <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
     <value>CenterScreen</value>

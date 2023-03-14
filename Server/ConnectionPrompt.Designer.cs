@@ -82,7 +82,7 @@
             Controls.Add(buttonAccept);
             Controls.Add(buttonDeny);
             Controls.Add(labelConnect);
-            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             Name = "ConnectionPrompt";
             Load += ConnectionPrompt_Load;

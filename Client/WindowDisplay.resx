@@ -73,7 +73,7 @@
   <data name="toolStripButtonResizeToFit.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAIDSURBVDhPpZLrS5NhGMb3j4SWh0oRQVExD4gonkDpg4hG
+        YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAAIDSURBVDhPpZLrS5NhGMb3j4SWh0oRQVExD4gonkDpg4hG
         YKxG6WBogkMZKgPNCEVJFBGdGETEvgwyO9DJE5syZw3PIlPEE9pgBCLZ5XvdMB8Ew8gXbl54nuf63dd9
         0OGSnwCahxbPRNPAPMw9Xpg6ZmF46kZZ0xSKzJPIrhpDWsVnpBhGkKx3nAX8Pv7z1zg8OoY/cITdn4fw
         bf/C0kYAN3Ma/w3gWfZL5kzTKBxjWyK2DftwI9tyMYCZKXbNHaD91bLYJrDXsYbrWfUKwJrPE9M2M1Oc
@@ -89,13 +89,13 @@
     <value>Magenta</value>
   </data>
   <data name="toolStripButtonResizeToFit.Size" type="System.Drawing.Size, System.Drawing">
-    <value>86, 23</value>
+    <value>105, 27</value>
   </data>
   <data name="toolStripButtonResizeToFit.Text" xml:space="preserve">
     <value>&amp;Resize to Fit</value>
   </data>
   <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>6, 26</value>
+    <value>6, 30</value>
   </data>
   <data name="toolStripButtonConnect.AccessibleDescription" xml:space="preserve">
     <value>A toolstrip button that opens a modal for connecting to a server</value>
@@ -109,7 +109,7 @@
   <data name="toolStripButtonConnect.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAIDSURBVDhPpZLrS5NhGMb3j4SWh0oRQVExD4gonkDpg4hG
+        YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAAIDSURBVDhPpZLrS5NhGMb3j4SWh0oRQVExD4gonkDpg4hG
         YKxG6WBogkMZKgPNCEVJFBGdGETEvgwyO9DJE5syZw3PIlPEE9pgBCLZ5XvdMB8Ew8gXbl54nuf63dd9
         0OGSnwCahxbPRNPAPMw9Xpg6ZmF46kZZ0xSKzJPIrhpDWsVnpBhGkKx3nAX8Pv7z1zg8OoY/cITdn4fw
         bf/C0kYAN3Ma/w3gWfZL5kzTKBxjWyK2DftwI9tyMYCZKXbNHaD91bLYJrDXsYbrWfUKwJrPE9M2M1Oc
@@ -125,13 +125,13 @@
     <value>Magenta</value>
   </data>
   <data name="toolStripButtonConnect.Size" type="System.Drawing.Size, System.Drawing">
-    <value>123, 23</value>
+    <value>151, 27</value>
   </data>
   <data name="toolStripButtonConnect.Text" xml:space="preserve">
     <value>&amp;Connect to Server</value>
   </data>
   <data name="toolStripSeparator2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>6, 26</value>
+    <value>6, 30</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="toolStripSeparator2.Visible" type="System.Boolean, mscorlib">
@@ -152,7 +152,7 @@
   <data name="toolStripButtonOptions.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAIDSURBVDhPpZLrS5NhGMb3j4SWh0oRQVExD4gonkDpg4hG
+        YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAAIDSURBVDhPpZLrS5NhGMb3j4SWh0oRQVExD4gonkDpg4hG
         YKxG6WBogkMZKgPNCEVJFBGdGETEvgwyO9DJE5syZw3PIlPEE9pgBCLZ5XvdMB8Ew8gXbl54nuf63dd9
         0OGSnwCahxbPRNPAPMw9Xpg6ZmF46kZZ0xSKzJPIrhpDWsVnpBhGkKx3nAX8Pv7z1zg8OoY/cITdn4fw
         bf/C0kYAN3Ma/w3gWfZL5kzTKBxjWyK2DftwI9tyMYCZKXbNHaD91bLYJrDXsYbrWfUKwJrPE9M2M1Oc
@@ -168,7 +168,7 @@
     <value>Magenta</value>
   </data>
   <data name="toolStripButtonOptions.Size" type="System.Drawing.Size, System.Drawing">
-    <value>62, 23</value>
+    <value>74, 27</value>
   </data>
   <data name="toolStripButtonOptions.Text" xml:space="preserve">
     <value>&amp;Options</value>
@@ -182,40 +182,13 @@
   <data name="toolStripDropDownButtonHelp.AccessibleName" xml:space="preserve">
     <value>Help dropdown-menu</value>
   </data>
-  <data name="helpToolStripMenuItem.AccessibleDescription" xml:space="preserve">
-    <value>A button that opens a webpage with a guide on how to use the product</value>
-  </data>
-  <data name="helpToolStripMenuItem.AccessibleName" xml:space="preserve">
-    <value>Open manual-button</value>
-  </data>
-  <data name="helpToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>225, 24</value>
-  </data>
-  <data name="helpToolStripMenuItem.Text" xml:space="preserve">
-    <value>Open Readme</value>
-  </data>
-  <data name="toolStripSeparator3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>222, 6</value>
-  </data>
-  <data name="aboutToolStripMenuItem.AccessibleDescription" xml:space="preserve">
-    <value>Opens a modal explaining who made the project and where to find the homepage</value>
-  </data>
-  <data name="aboutToolStripMenuItem.AccessibleName" xml:space="preserve">
-    <value>About-button</value>
-  </data>
-  <data name="aboutToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>225, 24</value>
-  </data>
-  <data name="aboutToolStripMenuItem.Text" xml:space="preserve">
-    <value>About WindowStreamer</value>
-  </data>
   <data name="toolStripDropDownButtonHelp.Font" type="System.Drawing.Font, System.Drawing">
     <value>Segoe UI, 10pt</value>
   </data>
   <data name="toolStripDropDownButtonHelp.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAEKSURBVEhL3ZG9DsFQHMXvczDZvIOtXsHObuhqkViI3Quw
+        YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAAEKSURBVEhL3ZG9DsFQHMXvczDZvIOtXsHObuhqkViI3Quw
         6CYmNoMYJJ0NBiFFIoIytOuf0+TeXP3yde+iyS+3OcP53Z4y3/dJJ4HAsiwyTVMp6BQCBIZhKAWdEcHV
         vSlBmeB82NFy1KLluEWOPRC5MoHdMWhazwi4RJlALgf4EuT6BI+5kCsTrGddUY658E+QvyXYHq9UnRyC
         U87f4aUApcXhnrI9Jzg/laQKFntXlHM+lSQK5psL5fvbp/JvJLGCQqmSWM5JkiCT84igXGtSrruKLQ0T
@@ -227,7 +200,7 @@
     <value>Magenta</value>
   </data>
   <data name="toolStripDropDownButtonHelp.Size" type="System.Drawing.Size, System.Drawing">
-    <value>50, 23</value>
+    <value>59, 27</value>
   </data>
   <data name="toolStripDropDownButtonHelp.Text" xml:space="preserve">
     <value>&amp;Help</value>
@@ -236,7 +209,7 @@
     <value>0, 0</value>
   </data>
   <data name="toolStripHeader.Size" type="System.Drawing.Size, System.Drawing">
-    <value>419, 26</value>
+    <value>632, 30</value>
   </data>
   <data name="toolStripHeader.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -256,6 +229,33 @@
   <data name="&gt;&gt;toolStripHeader.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
+  <data name="helpToolStripMenuItem.AccessibleDescription" xml:space="preserve">
+    <value>A button that opens a webpage with a guide on how to use the product</value>
+  </data>
+  <data name="helpToolStripMenuItem.AccessibleName" xml:space="preserve">
+    <value>Open manual-button</value>
+  </data>
+  <data name="helpToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>276, 28</value>
+  </data>
+  <data name="helpToolStripMenuItem.Text" xml:space="preserve">
+    <value>Open Readme</value>
+  </data>
+  <data name="toolStripSeparator3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>273, 6</value>
+  </data>
+  <data name="aboutToolStripMenuItem.AccessibleDescription" xml:space="preserve">
+    <value>Opens a modal explaining who made the project and where to find the homepage</value>
+  </data>
+  <data name="aboutToolStripMenuItem.AccessibleName" xml:space="preserve">
+    <value>About-button</value>
+  </data>
+  <data name="aboutToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>276, 28</value>
+  </data>
+  <data name="aboutToolStripMenuItem.Text" xml:space="preserve">
+    <value>About WindowStreamer</value>
+  </data>
   <metadata name="statusStripFooter.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>243, 23</value>
   </metadata>
@@ -269,7 +269,7 @@
     <value>Segoe UI, 10pt</value>
   </data>
   <data name="toolStripStatusLabelResolution.Size" type="System.Drawing.Size, System.Drawing">
-    <value>195, 19</value>
+    <value>240, 23</value>
   </data>
   <data name="toolStripStatusLabelResolution.Text" xml:space="preserve">
     <value>toolStripStatusLabelResolution</value>
@@ -284,20 +284,20 @@
     <value>Segoe UI, 10pt</value>
   </data>
   <data name="toolStripStatusLabelLatest.Size" type="System.Drawing.Size, System.Drawing">
-    <value>18, 19</value>
+    <value>22, 23</value>
   </data>
   <data name="toolStripStatusLabelLatest.Text" xml:space="preserve">
     <value>...</value>
   </data>
   <data name="statusStripFooter.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 294</value>
+    <value>0, 374</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="statusStripFooter.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>1, 0, 10, 0</value>
+    <value>1, 0, 11, 0</value>
   </data>
   <data name="statusStripFooter.Size" type="System.Drawing.Size, System.Drawing">
-    <value>419, 24</value>
+    <value>632, 29</value>
   </data>
   <data name="statusStripFooter.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -328,13 +328,13 @@
     <value>Fill</value>
   </data>
   <data name="displayArea.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 26</value>
+    <value>0, 30</value>
   </data>
   <data name="displayArea.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
+    <value>2, 3, 2, 3</value>
   </data>
   <data name="displayArea.Size" type="System.Drawing.Size, System.Drawing">
-    <value>419, 268</value>
+    <value>632, 344</value>
   </data>
   <data name="displayArea.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -355,16 +355,92 @@
     <value>True</value>
   </metadata>
   <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
-    <value>7, 15</value>
+    <value>8, 20</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>419, 318</value>
+    <value>632, 403</value>
+  </data>
+  <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        AAABAAEAICAAAAEAIACoEAAAFgAAACgAAAAgAAAAQAAAAAEAIAAAAAAAABAAAMMOAADDDgAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/
+        PwAA/z8cAP8/RQD/P0YA/z9GAP8/RgD/P0YA/z9GAP8/RgD/P0YA/z9GAP8/RgD/P0YA/z9GAP8/RgD/
+        P0YA/z9GAP8/RgD/P0YA/z9GAP8/MgD/PwIA/z8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAP8/AAD/P1oA/z/IAP8/rgD/P60A/z+tAP8/rQD/P60A/z+tAP8/rQD/P60A/z+tAP8/rQD/
+        P60A/z+tAP8/rQD/P60A/z+tAP8/rQD/P7sA/z+RAP8/BwD/PwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        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
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/3JTAP9yUjH/hGjv/4xy//+Mcv//jHL//4xy//+M
+        cv//jHL//4xy//+Mcv//jHL//4xy//+Mcv//jHL//4xy//+Mcv//jHL//4xy//+Mcv//gmbg/29OH/9x
+        UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/clMA/3JSMf+EaO//jHL//4xy//+M
+        cv//jHL//4xy//+Mcv//jHL//4xy//+Mcv//jHL//4xy//+Mcv//jHL//4xy//+Mcv//jHL//4xy//+C
+        ZuD/b04f/3FRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP9yUwD/clIx/4Nn7/+L
+        cf//i3H//4tx//+Lcf//i3H//4tx//+Lcf//i3H//4tx//+Lcf//i3H//4tx//+Lcf//i3H//4tx//+L
+        cf//i3H//4Fl4P9vTx//cVEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/3JSAP9x
+        UiP/eVur/31gt/99YLb/fWC2/31gtv99YLb/fWC2/31gtv99YLb/fWC2/31gtv99YLb/fWC2/31gtv99
+        YLb/fWC2/31gtv99YLf/eFqg/3BQFv9xUQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAD/cFAA/3BQAf9iPwX/XDcF/1w3Bf9cNwX/XDcF/1w3Bf9cNwX/XDcF/1w3Bf9cNwX/XDcF/1w3Bf9c
+        NwX/XDcF/1w3Bf9cNwX/XDcF/1w3Bf9kQQT/c1MB/3FRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAA//////////////////////4AAA/+AAAP/gAAD/4/P4/+Px+P/j4fj4A+
+        D4+APAePgDhHj4A4Q4+AMEOPgDBDj4A8T4+APE+PgDxPj4A8D4+APA+PgD//j4AAAA+AAAAPgAAD/4AA
+        A/+AAAP/gAAD/4AAA/+AAAP/gAAD//////8=
+</value>
   </data>
   <data name="$this.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>2, 2, 2, 2</value>
+    <value>2, 3, 2, 3</value>
   </data>
   <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
-    <value>300, 200</value>
+    <value>300, 250</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>Window Streamer - Client</value>

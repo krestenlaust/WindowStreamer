@@ -60,63 +60,14 @@
   <metadata name="statusStripFooter.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <data name="toolStripStatusLabelResolution.AccessibleDescription" xml:space="preserve">
-    <value>A label containing the size of the stream that is being sent</value>
-  </data>
-  <data name="toolStripStatusLabelResolution.AccessibleName" xml:space="preserve">
-    <value>Resolution size label</value>
-  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="toolStripStatusLabelResolution.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Segoe UI, 10pt</value>
-  </data>
-  <data name="toolStripStatusLabelResolution.Size" type="System.Drawing.Size, System.Drawing">
-    <value>195, 19</value>
-  </data>
-  <data name="toolStripStatusLabelResolution.Text" xml:space="preserve">
-    <value>toolStripStatusLabelResolution</value>
-  </data>
-  <data name="toolStripStatusLabelLatest.AccessibleDescription" xml:space="preserve">
-    <value>A label that contains the most recent log</value>
-  </data>
-  <data name="toolStripStatusLabelLatest.AccessibleName" xml:space="preserve">
-    <value>Recent log label</value>
-  </data>
-  <data name="toolStripStatusLabelLatest.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Segoe UI, 10pt</value>
-  </data>
-  <data name="toolStripStatusLabelLatest.Size" type="System.Drawing.Size, System.Drawing">
-    <value>18, 19</value>
-  </data>
-  <data name="toolStripStatusLabelLatest.Text" xml:space="preserve">
-    <value>...</value>
-  </data>
-  <data name="toolStripStatusFPSCounter.AccessibleDescription" xml:space="preserve">
-    <value>A label that contains the FPS that video is being streamed at</value>
-  </data>
-  <data name="toolStripStatusFPSCounter.AccessibleName" xml:space="preserve">
-    <value>FPS label</value>
-  </data>
-  <data name="toolStripStatusFPSCounter.Size" type="System.Drawing.Size, System.Drawing">
-    <value>29, 19</value>
-  </data>
-  <data name="toolStripStatusFPSCounter.Text" xml:space="preserve">
-    <value>FPS:</value>
-  </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="toolStripStatusFPSCounter.Visible" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
   <data name="statusStripFooter.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 307</value>
-  </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="statusStripFooter.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>1, 0, 12, 0</value>
+    <value>0, 374</value>
   </data>
   <data name="statusStripFooter.Size" type="System.Drawing.Size, System.Drawing">
-    <value>509, 24</value>
+    <value>632, 29</value>
   </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="statusStripFooter.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
@@ -135,217 +86,59 @@
   <data name="&gt;&gt;statusStripFooter.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
+  <data name="toolStripStatusLabelResolution.AccessibleDescription" xml:space="preserve">
+    <value>A label containing the size of the stream that is being sent</value>
+  </data>
+  <data name="toolStripStatusLabelResolution.AccessibleName" xml:space="preserve">
+    <value>Resolution size label</value>
+  </data>
+  <data name="toolStripStatusLabelResolution.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI, 10pt</value>
+  </data>
+  <data name="toolStripStatusLabelResolution.Size" type="System.Drawing.Size, System.Drawing">
+    <value>240, 23</value>
+  </data>
+  <data name="toolStripStatusLabelResolution.Text" xml:space="preserve">
+    <value>toolStripStatusLabelResolution</value>
+  </data>
+  <data name="toolStripStatusLabelLatest.AccessibleDescription" xml:space="preserve">
+    <value>A label that contains the most recent log</value>
+  </data>
+  <data name="toolStripStatusLabelLatest.AccessibleName" xml:space="preserve">
+    <value>Recent log label</value>
+  </data>
+  <data name="toolStripStatusLabelLatest.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI, 10pt</value>
+  </data>
+  <data name="toolStripStatusLabelLatest.Size" type="System.Drawing.Size, System.Drawing">
+    <value>22, 23</value>
+  </data>
+  <data name="toolStripStatusLabelLatest.Text" xml:space="preserve">
+    <value>...</value>
+  </data>
+  <data name="toolStripStatusFPSCounter.AccessibleDescription" xml:space="preserve">
+    <value>A label that contains the FPS that video is being streamed at</value>
+  </data>
+  <data name="toolStripStatusFPSCounter.AccessibleName" xml:space="preserve">
+    <value>FPS label</value>
+  </data>
+  <data name="toolStripStatusFPSCounter.Size" type="System.Drawing.Size, System.Drawing">
+    <value>35, 23</value>
+  </data>
+  <data name="toolStripStatusFPSCounter.Text" xml:space="preserve">
+    <value>FPS:</value>
+  </data>
+  <data name="toolStripStatusFPSCounter.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
   <metadata name="toolStripHeader.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>200, 20</value>
   </metadata>
-  <data name="toolStripTextBoxAcceptableHost.AccessibleDescription" xml:space="preserve">
-    <value>A textbox for the IP to bind the server to</value>
-  </data>
-  <data name="toolStripTextBoxAcceptableHost.AccessibleName" xml:space="preserve">
-    <value>Bound address textbox</value>
-  </data>
-  <data name="toolStripTextBoxAcceptableHost.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Segoe UI, 10pt</value>
-  </data>
-  <data name="toolStripTextBoxAcceptableHost.Size" type="System.Drawing.Size, System.Drawing">
-    <value>106, 26</value>
-  </data>
-  <data name="toolStripTextBoxAcceptableHost.ToolTipText" xml:space="preserve">
-    <value>IP to accept connection from, leave blank for any</value>
-  </data>
-  <data name="toolStripLabel1.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Segoe UI, 10pt</value>
-  </data>
-  <data name="toolStripLabel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>12, 23</value>
-  </data>
-  <data name="toolStripLabel1.Text" xml:space="preserve">
-    <value>:</value>
-  </data>
-  <data name="toolStripTextBoxTargetPort.AccessibleDescription" xml:space="preserve">
-    <value>A textbox with the port to bind the server to</value>
-  </data>
-  <data name="toolStripTextBoxTargetPort.AccessibleName" xml:space="preserve">
-    <value>Bound port textbox</value>
-  </data>
-  <data name="toolStripTextBoxTargetPort.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Segoe UI, 10pt</value>
-  </data>
-  <data name="toolStripTextBoxTargetPort.MaxLength" type="System.Int32, mscorlib">
-    <value>5</value>
-  </data>
-  <data name="toolStripTextBoxTargetPort.Size" type="System.Drawing.Size, System.Drawing">
-    <value>53, 26</value>
-  </data>
-  <data name="toolStripButtonActionStop.AccessibleDescription" xml:space="preserve">
-    <value>Button that stops the server</value>
-  </data>
-  <data name="toolStripButtonActionStop.AccessibleName" xml:space="preserve">
-    <value>Stop button</value>
-  </data>
-  <data name="toolStripButtonActionStop.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Segoe UI, 10pt</value>
-  </data>
-  <data name="toolStripButtonActionStop.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAIDSURBVDhPpZLrS5NhGMb3j4SWh0oRQVExD4gonkDpg4hG
-        YKxG6WBogkMZKgPNCEVJFBGdGETEvgwyO9DJE5syZw3PIlPEE9pgBCLZ5XvdMB8Ew8gXbl54nuf63dd9
-        0OGSnwCahxbPRNPAPMw9Xpg6ZmF46kZZ0xSKzJPIrhpDWsVnpBhGkKx3nAX8Pv7z1zg8OoY/cITdn4fw
-        bf/C0kYAN3Ma/w3gWfZL5kzTKBxjWyK2DftwI9tyMYCZKXbNHaD91bLYJrDXsYbrWfUKwJrPE9M2M1Oc
-        VzOOpHI7Jr376Hi9ogHqFIANO0/MmmmbmSmm9a8ze+I4MrNWAdjtoJgWcx+PSzg166yZZ8xM8XvXDix9
-        c4jIqFYAjoriBV9AhEPv1mH/sonogha0afbZMMZz+yreTGyhpusHwtNNCsA5U1zS4BLxzJIfg299qO32
-        Ir7UJtZfftyATqeT+8o2D8JSjQrAJblrncYL7ZJ2+bfaFnC/1S1NjL3diRat7qrO7wLRP3HjWsojBeCo
-        mDEo5mNjuweFGvjWg2EBhCbpkW78htSHHwRyNdmgAFzPEee2iFkzayy2OLXzT4gr6UdUnlXrullsxxQ+
-        kx0g8BTA3aZlButjSTyjODq/WcQcW/B/Je4OQhLvKQDnzN1mp0nnkvAhR8VuMzNrpm1mpjgkoVwB/v8D
-        TgDQASA1MVpwzwAAAABJRU5ErkJggg==
-</value>
-  </data>
-  <data name="toolStripButtonActionStop.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
-    <value>Magenta</value>
-  </data>
-  <data name="toolStripButtonActionStop.Size" type="System.Drawing.Size, System.Drawing">
-    <value>41, 23</value>
-  </data>
-  <data name="toolStripButtonActionStop.Text" xml:space="preserve">
-    <value>&amp;Stop</value>
-  </data>
-  <data name="toolStripButtonActionStart.AccessibleDescription" xml:space="preserve">
-    <value>Button that starts the server</value>
-  </data>
-  <data name="toolStripButtonActionStart.AccessibleName" xml:space="preserve">
-    <value>Start button</value>
-  </data>
-  <data name="toolStripButtonActionStart.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Segoe UI, 10pt</value>
-  </data>
-  <data name="toolStripButtonActionStart.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAIDSURBVDhPpZLrS5NhGMb3j4SWh0oRQVExD4gonkDpg4hG
-        YKxG6WBogkMZKgPNCEVJFBGdGETEvgwyO9DJE5syZw3PIlPEE9pgBCLZ5XvdMB8Ew8gXbl54nuf63dd9
-        0OGSnwCahxbPRNPAPMw9Xpg6ZmF46kZZ0xSKzJPIrhpDWsVnpBhGkKx3nAX8Pv7z1zg8OoY/cITdn4fw
-        bf/C0kYAN3Ma/w3gWfZL5kzTKBxjWyK2DftwI9tyMYCZKXbNHaD91bLYJrDXsYbrWfUKwJrPE9M2M1Oc
-        VzOOpHI7Jr376Hi9ogHqFIANO0/MmmmbmSmm9a8ze+I4MrNWAdjtoJgWcx+PSzg166yZZ8xM8XvXDix9
-        c4jIqFYAjoriBV9AhEPv1mH/sonogha0afbZMMZz+yreTGyhpusHwtNNCsA5U1zS4BLxzJIfg299qO32
-        Ir7UJtZfftyATqeT+8o2D8JSjQrAJblrncYL7ZJ2+bfaFnC/1S1NjL3diRat7qrO7wLRP3HjWsojBeCo
-        mDEo5mNjuweFGvjWg2EBhCbpkW78htSHHwRyNdmgAFzPEee2iFkzayy2OLXzT4gr6UdUnlXrullsxxQ+
-        kx0g8BTA3aZlButjSTyjODq/WcQcW/B/Je4OQhLvKQDnzN1mp0nnkvAhR8VuMzNrpm1mpjgkoVwB/v8D
-        TgDQASA1MVpwzwAAAABJRU5ErkJggg==
-</value>
-  </data>
-  <data name="toolStripButtonActionStart.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
-    <value>Magenta</value>
-  </data>
-  <data name="toolStripButtonActionStart.Size" type="System.Drawing.Size, System.Drawing">
-    <value>42, 23</value>
-  </data>
-  <data name="toolStripButtonActionStart.Text" xml:space="preserve">
-    <value>&amp;Start</value>
-  </data>
-  <data name="toolStripSeparator2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>6, 26</value>
-  </data>
-  <data name="toolStripButtonOptions.AccessibleDescription" xml:space="preserve">
-    <value>A button that opens a settings-modal</value>
-  </data>
-  <data name="toolStripButtonOptions.AccessibleName" xml:space="preserve">
-    <value>Options button</value>
-  </data>
-  <data name="toolStripButtonOptions.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="toolStripButtonOptions.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Segoe UI, 10pt</value>
-  </data>
-  <data name="toolStripButtonOptions.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAIDSURBVDhPpZLrS5NhGMb3j4SWh0oRQVExD4gonkDpg4hG
-        YKxG6WBogkMZKgPNCEVJFBGdGETEvgwyO9DJE5syZw3PIlPEE9pgBCLZ5XvdMB8Ew8gXbl54nuf63dd9
-        0OGSnwCahxbPRNPAPMw9Xpg6ZmF46kZZ0xSKzJPIrhpDWsVnpBhGkKx3nAX8Pv7z1zg8OoY/cITdn4fw
-        bf/C0kYAN3Ma/w3gWfZL5kzTKBxjWyK2DftwI9tyMYCZKXbNHaD91bLYJrDXsYbrWfUKwJrPE9M2M1Oc
-        VzOOpHI7Jr376Hi9ogHqFIANO0/MmmmbmSmm9a8ze+I4MrNWAdjtoJgWcx+PSzg166yZZ8xM8XvXDix9
-        c4jIqFYAjoriBV9AhEPv1mH/sonogha0afbZMMZz+yreTGyhpusHwtNNCsA5U1zS4BLxzJIfg299qO32
-        Ir7UJtZfftyATqeT+8o2D8JSjQrAJblrncYL7ZJ2+bfaFnC/1S1NjL3diRat7qrO7wLRP3HjWsojBeCo
-        mDEo5mNjuweFGvjWg2EBhCbpkW78htSHHwRyNdmgAFzPEee2iFkzayy2OLXzT4gr6UdUnlXrullsxxQ+
-        kx0g8BTA3aZlButjSTyjODq/WcQcW/B/Je4OQhLvKQDnzN1mp0nnkvAhR8VuMzNrpm1mpjgkoVwB/v8D
-        TgDQASA1MVpwzwAAAABJRU5ErkJggg==
-</value>
-  </data>
-  <data name="toolStripButtonOptions.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
-    <value>Magenta</value>
-  </data>
-  <data name="toolStripButtonOptions.Size" type="System.Drawing.Size, System.Drawing">
-    <value>62, 23</value>
-  </data>
-  <data name="toolStripButtonOptions.Text" xml:space="preserve">
-    <value>&amp;Options</value>
-  </data>
-  <data name="toolStripButtonOptions.Visible" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="toolStripDropDownButtonHelp.AccessibleDescription" xml:space="preserve">
-    <value>A button that opens a dropdown with normal help items</value>
-  </data>
-  <data name="toolStripDropDownButtonHelp.AccessibleName" xml:space="preserve">
-    <value>Help dropdown-menu</value>
-  </data>
-  <data name="helpToolStripMenuItem.AccessibleDescription" xml:space="preserve">
-    <value>A button that opens a webpage with a manual</value>
-  </data>
-  <data name="helpToolStripMenuItem.AccessibleName" xml:space="preserve">
-    <value>Open manual button</value>
-  </data>
-  <data name="helpToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>225, 24</value>
-  </data>
-  <data name="helpToolStripMenuItem.Text" xml:space="preserve">
-    <value>Open Readme</value>
-  </data>
-  <data name="toolStripSeparator3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>222, 6</value>
-  </data>
-  <data name="aboutToolStripMenuItem.AccessibleDescription" xml:space="preserve">
-    <value>A button that opens a modal with information about the author and the project</value>
-  </data>
-  <data name="aboutToolStripMenuItem.AccessibleName" xml:space="preserve">
-    <value>About button</value>
-  </data>
-  <data name="aboutToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>225, 24</value>
-  </data>
-  <data name="aboutToolStripMenuItem.Text" xml:space="preserve">
-    <value>About WindowStreamer</value>
-  </data>
-  <data name="toolStripDropDownButtonHelp.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Segoe UI, 10pt</value>
-  </data>
-  <data name="toolStripDropDownButtonHelp.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAEKSURBVEhL3ZG9DsFQHMXvczDZvIOtXsHObuhqkViI3Quw
-        6CYmNoMYJJ0NBiFFIoIytOuf0+TeXP3yde+iyS+3OcP53Z4y3/dJJ4HAsiwyTVMp6BQCBIZhKAWdEcHV
-        vSlBmeB82NFy1KLluEWOPRC5MoHdMWhazwi4RJlALgf4EuT6BI+5kCsTrGddUY658E+QvyXYHq9UnRyC
-        U87f4aUApcXhnrI9Jzg/laQKFntXlHM+lSQK5psL5fvbp/JvJLGCQqmSWM5JkiCT84igXGtSrruKLQ0T
-        luAdmZxHBG37FFuWBC/j5XKOmX8WAH7rcI6ZMffPgjQwN2bXJgDo/COBTpjneQ2dML0PY3cISreGe8HM
-        qgAAAABJRU5ErkJggg==
-</value>
-  </data>
-  <data name="toolStripDropDownButtonHelp.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
-    <value>Magenta</value>
-  </data>
-  <data name="toolStripDropDownButtonHelp.Size" type="System.Drawing.Size, System.Drawing">
-    <value>50, 23</value>
-  </data>
-  <data name="toolStripDropDownButtonHelp.Text" xml:space="preserve">
-    <value>&amp;Help</value>
-  </data>
   <data name="toolStripHeader.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
   </data>
   <data name="toolStripHeader.Size" type="System.Drawing.Size, System.Drawing">
-    <value>509, 26</value>
+    <value>632, 30</value>
   </data>
   <data name="toolStripHeader.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -365,6 +158,209 @@
   <data name="&gt;&gt;toolStripHeader.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
+  <data name="toolStripTextBoxAcceptableHost.AccessibleDescription" xml:space="preserve">
+    <value>A textbox for the IP to bind the server to</value>
+  </data>
+  <data name="toolStripTextBoxAcceptableHost.AccessibleName" xml:space="preserve">
+    <value>Bound address textbox</value>
+  </data>
+  <data name="toolStripTextBoxAcceptableHost.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI, 10pt</value>
+  </data>
+  <data name="toolStripTextBoxAcceptableHost.Size" type="System.Drawing.Size, System.Drawing">
+    <value>121, 30</value>
+  </data>
+  <data name="toolStripTextBoxAcceptableHost.ToolTipText" xml:space="preserve">
+    <value>IP to accept connection from, leave blank for any</value>
+  </data>
+  <data name="toolStripLabel1.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI, 10pt</value>
+  </data>
+  <data name="toolStripLabel1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>14, 27</value>
+  </data>
+  <data name="toolStripLabel1.Text" xml:space="preserve">
+    <value>:</value>
+  </data>
+  <data name="toolStripTextBoxTargetPort.AccessibleDescription" xml:space="preserve">
+    <value>A textbox with the port to bind the server to</value>
+  </data>
+  <data name="toolStripTextBoxTargetPort.AccessibleName" xml:space="preserve">
+    <value>Bound port textbox</value>
+  </data>
+  <data name="toolStripTextBoxTargetPort.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI, 10pt</value>
+  </data>
+  <data name="toolStripTextBoxTargetPort.MaxLength" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="toolStripTextBoxTargetPort.Size" type="System.Drawing.Size, System.Drawing">
+    <value>60, 30</value>
+  </data>
+  <data name="toolStripButtonActionStop.AccessibleDescription" xml:space="preserve">
+    <value>Button that stops the server</value>
+  </data>
+  <data name="toolStripButtonActionStop.AccessibleName" xml:space="preserve">
+    <value>Stop button</value>
+  </data>
+  <data name="toolStripButtonActionStop.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI, 10pt</value>
+  </data>
+  <data name="toolStripButtonActionStop.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAAIDSURBVDhPpZLrS5NhGMb3j4SWh0oRQVExD4gonkDpg4hG
+        YKxG6WBogkMZKgPNCEVJFBGdGETEvgwyO9DJE5syZw3PIlPEE9pgBCLZ5XvdMB8Ew8gXbl54nuf63dd9
+        0OGSnwCahxbPRNPAPMw9Xpg6ZmF46kZZ0xSKzJPIrhpDWsVnpBhGkKx3nAX8Pv7z1zg8OoY/cITdn4fw
+        bf/C0kYAN3Ma/w3gWfZL5kzTKBxjWyK2DftwI9tyMYCZKXbNHaD91bLYJrDXsYbrWfUKwJrPE9M2M1Oc
+        VzOOpHI7Jr376Hi9ogHqFIANO0/MmmmbmSmm9a8ze+I4MrNWAdjtoJgWcx+PSzg166yZZ8xM8XvXDix9
+        c4jIqFYAjoriBV9AhEPv1mH/sonogha0afbZMMZz+yreTGyhpusHwtNNCsA5U1zS4BLxzJIfg299qO32
+        Ir7UJtZfftyATqeT+8o2D8JSjQrAJblrncYL7ZJ2+bfaFnC/1S1NjL3diRat7qrO7wLRP3HjWsojBeCo
+        mDEo5mNjuweFGvjWg2EBhCbpkW78htSHHwRyNdmgAFzPEee2iFkzayy2OLXzT4gr6UdUnlXrullsxxQ+
+        kx0g8BTA3aZlButjSTyjODq/WcQcW/B/Je4OQhLvKQDnzN1mp0nnkvAhR8VuMzNrpm1mpjgkoVwB/v8D
+        TgDQASA1MVpwzwAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <data name="toolStripButtonActionStop.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
+    <value>Magenta</value>
+  </data>
+  <data name="toolStripButtonActionStop.Size" type="System.Drawing.Size, System.Drawing">
+    <value>48, 27</value>
+  </data>
+  <data name="toolStripButtonActionStop.Text" xml:space="preserve">
+    <value>&amp;Stop</value>
+  </data>
+  <data name="toolStripButtonActionStart.AccessibleDescription" xml:space="preserve">
+    <value>Button that starts the server</value>
+  </data>
+  <data name="toolStripButtonActionStart.AccessibleName" xml:space="preserve">
+    <value>Start button</value>
+  </data>
+  <data name="toolStripButtonActionStart.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI, 10pt</value>
+  </data>
+  <data name="toolStripButtonActionStart.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAAIDSURBVDhPpZLrS5NhGMb3j4SWh0oRQVExD4gonkDpg4hG
+        YKxG6WBogkMZKgPNCEVJFBGdGETEvgwyO9DJE5syZw3PIlPEE9pgBCLZ5XvdMB8Ew8gXbl54nuf63dd9
+        0OGSnwCahxbPRNPAPMw9Xpg6ZmF46kZZ0xSKzJPIrhpDWsVnpBhGkKx3nAX8Pv7z1zg8OoY/cITdn4fw
+        bf/C0kYAN3Ma/w3gWfZL5kzTKBxjWyK2DftwI9tyMYCZKXbNHaD91bLYJrDXsYbrWfUKwJrPE9M2M1Oc
+        VzOOpHI7Jr376Hi9ogHqFIANO0/MmmmbmSmm9a8ze+I4MrNWAdjtoJgWcx+PSzg166yZZ8xM8XvXDix9
+        c4jIqFYAjoriBV9AhEPv1mH/sonogha0afbZMMZz+yreTGyhpusHwtNNCsA5U1zS4BLxzJIfg299qO32
+        Ir7UJtZfftyATqeT+8o2D8JSjQrAJblrncYL7ZJ2+bfaFnC/1S1NjL3diRat7qrO7wLRP3HjWsojBeCo
+        mDEo5mNjuweFGvjWg2EBhCbpkW78htSHHwRyNdmgAFzPEee2iFkzayy2OLXzT4gr6UdUnlXrullsxxQ+
+        kx0g8BTA3aZlButjSTyjODq/WcQcW/B/Je4OQhLvKQDnzN1mp0nnkvAhR8VuMzNrpm1mpjgkoVwB/v8D
+        TgDQASA1MVpwzwAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <data name="toolStripButtonActionStart.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
+    <value>Magenta</value>
+  </data>
+  <data name="toolStripButtonActionStart.Size" type="System.Drawing.Size, System.Drawing">
+    <value>49, 27</value>
+  </data>
+  <data name="toolStripButtonActionStart.Text" xml:space="preserve">
+    <value>&amp;Start</value>
+  </data>
+  <data name="toolStripSeparator2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>6, 30</value>
+  </data>
+  <data name="toolStripButtonOptions.AccessibleDescription" xml:space="preserve">
+    <value>A button that opens a settings-modal</value>
+  </data>
+  <data name="toolStripButtonOptions.AccessibleName" xml:space="preserve">
+    <value>Options button</value>
+  </data>
+  <data name="toolStripButtonOptions.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="toolStripButtonOptions.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI, 10pt</value>
+  </data>
+  <data name="toolStripButtonOptions.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAAIDSURBVDhPpZLrS5NhGMb3j4SWh0oRQVExD4gonkDpg4hG
+        YKxG6WBogkMZKgPNCEVJFBGdGETEvgwyO9DJE5syZw3PIlPEE9pgBCLZ5XvdMB8Ew8gXbl54nuf63dd9
+        0OGSnwCahxbPRNPAPMw9Xpg6ZmF46kZZ0xSKzJPIrhpDWsVnpBhGkKx3nAX8Pv7z1zg8OoY/cITdn4fw
+        bf/C0kYAN3Ma/w3gWfZL5kzTKBxjWyK2DftwI9tyMYCZKXbNHaD91bLYJrDXsYbrWfUKwJrPE9M2M1Oc
+        VzOOpHI7Jr376Hi9ogHqFIANO0/MmmmbmSmm9a8ze+I4MrNWAdjtoJgWcx+PSzg166yZZ8xM8XvXDix9
+        c4jIqFYAjoriBV9AhEPv1mH/sonogha0afbZMMZz+yreTGyhpusHwtNNCsA5U1zS4BLxzJIfg299qO32
+        Ir7UJtZfftyATqeT+8o2D8JSjQrAJblrncYL7ZJ2+bfaFnC/1S1NjL3diRat7qrO7wLRP3HjWsojBeCo
+        mDEo5mNjuweFGvjWg2EBhCbpkW78htSHHwRyNdmgAFzPEee2iFkzayy2OLXzT4gr6UdUnlXrullsxxQ+
+        kx0g8BTA3aZlButjSTyjODq/WcQcW/B/Je4OQhLvKQDnzN1mp0nnkvAhR8VuMzNrpm1mpjgkoVwB/v8D
+        TgDQASA1MVpwzwAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <data name="toolStripButtonOptions.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
+    <value>Magenta</value>
+  </data>
+  <data name="toolStripButtonOptions.Size" type="System.Drawing.Size, System.Drawing">
+    <value>74, 27</value>
+  </data>
+  <data name="toolStripButtonOptions.Text" xml:space="preserve">
+    <value>&amp;Options</value>
+  </data>
+  <data name="toolStripButtonOptions.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="toolStripDropDownButtonHelp.AccessibleDescription" xml:space="preserve">
+    <value>A button that opens a dropdown with normal help items</value>
+  </data>
+  <data name="toolStripDropDownButtonHelp.AccessibleName" xml:space="preserve">
+    <value>Help dropdown-menu</value>
+  </data>
+  <data name="toolStripDropDownButtonHelp.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI, 10pt</value>
+  </data>
+  <data name="toolStripDropDownButtonHelp.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAJcEhZcwAAEnQAABJ0Ad5mH3gAAAEKSURBVEhL3ZG9DsFQHMXvczDZvIOtXsHObuhqkViI3Quw
+        6CYmNoMYJJ0NBiFFIoIytOuf0+TeXP3yde+iyS+3OcP53Z4y3/dJJ4HAsiwyTVMp6BQCBIZhKAWdEcHV
+        vSlBmeB82NFy1KLluEWOPRC5MoHdMWhazwi4RJlALgf4EuT6BI+5kCsTrGddUY658E+QvyXYHq9UnRyC
+        U87f4aUApcXhnrI9Jzg/laQKFntXlHM+lSQK5psL5fvbp/JvJLGCQqmSWM5JkiCT84igXGtSrruKLQ0T
+        luAdmZxHBG37FFuWBC/j5XKOmX8WAH7rcI6ZMffPgjQwN2bXJgDo/COBTpjneQ2dML0PY3cISreGe8HM
+        qgAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <data name="toolStripDropDownButtonHelp.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
+    <value>Magenta</value>
+  </data>
+  <data name="toolStripDropDownButtonHelp.Size" type="System.Drawing.Size, System.Drawing">
+    <value>59, 27</value>
+  </data>
+  <data name="toolStripDropDownButtonHelp.Text" xml:space="preserve">
+    <value>&amp;Help</value>
+  </data>
+  <data name="helpToolStripMenuItem.AccessibleDescription" xml:space="preserve">
+    <value>A button that opens a webpage with a manual</value>
+  </data>
+  <data name="helpToolStripMenuItem.AccessibleName" xml:space="preserve">
+    <value>Open manual button</value>
+  </data>
+  <data name="helpToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>276, 28</value>
+  </data>
+  <data name="helpToolStripMenuItem.Text" xml:space="preserve">
+    <value>Open Readme</value>
+  </data>
+  <data name="toolStripSeparator3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>273, 6</value>
+  </data>
+  <data name="aboutToolStripMenuItem.AccessibleDescription" xml:space="preserve">
+    <value>A button that opens a modal with information about the author and the project</value>
+  </data>
+  <data name="aboutToolStripMenuItem.AccessibleName" xml:space="preserve">
+    <value>About button</value>
+  </data>
+  <data name="aboutToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>276, 28</value>
+  </data>
+  <data name="aboutToolStripMenuItem.Text" xml:space="preserve">
+    <value>About WindowStreamer</value>
+  </data>
   <data name="captureArea.AccessibleDescription" xml:space="preserve">
     <value>The area where the screen is being captured</value>
   </data>
@@ -376,10 +372,14 @@
     <value>Fill</value>
   </data>
   <data name="captureArea.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 26</value>
+    <value>0, 30</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="captureArea.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 4, 3, 4</value>
   </data>
   <data name="captureArea.Size" type="System.Drawing.Size, System.Drawing">
-    <value>509, 281</value>
+    <value>632, 344</value>
   </data>
   <data name="captureArea.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -403,10 +403,92 @@
     <value>True</value>
   </metadata>
   <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
-    <value>7, 15</value>
+    <value>8, 20</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>509, 331</value>
+    <value>632, 403</value>
+  </data>
+  <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        AAABAAEAICAAAAEAIACoEAAAFgAAACgAAAAgAAAAQAAAAAEAIAAAAAAAABAAAMMOAADDDgAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABZz
+        /wAWc/8cFnP/RRZz/0YWc/9GFnP/RhZz/0YWc/9GFnP/RhZz/0YWc/9GFnP/RhZz/0YWc/9GFnP/RhZz
+        /0YWc/9GFnP/RhZz/0YWc/9GFnP/MhZz/wIWc/8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAFnP/ABZz/1oWc//IFnP/rhZz/60Wc/+tFnP/rRZz/60Wc/+tFnP/rRZz/60Wc/+tFnP/rRZz
+        /60Wc/+tFnP/rRZz/60Wc/+tFnP/rRZz/7sWc/+RFnP/BxZz/wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        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
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/3JTAP9yUjH/hGjv/4xy//+Mcv//jHL//4xy//+M
+        cv//jHL//4xy//+Mcv//jHL//4xy//+Mcv//jHL//4xy//+Mcv//jHL//4xy//+Mcv//gmbg/29OH/9x
+        UQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/clMA/3JSMf+EaO//jHL//4xy//+M
+        cv//jHL//4xy//+Mcv//jHL//4xy//+Mcv//jHL//4xy//+Mcv//jHL//4xy//+Mcv//jHL//4xy//+C
+        ZuD/b04f/3FRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP9yUwD/clIx/4Nn7/+L
+        cf//i3H//4tx//+Lcf//i3H//4tx//+Lcf//i3H//4tx//+Lcf//i3H//4tx//+Lcf//i3H//4tx//+L
+        cf//i3H//4Fl4P9vTx//cVEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/3JSAP9x
+        UiP/eVur/31gt/99YLb/fWC2/31gtv99YLb/fWC2/31gtv99YLb/fWC2/31gtv99YLb/fWC2/31gtv99
+        YLb/fWC2/31gtv99YLf/eFqg/3BQFv9xUQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAD/cFAA/3BQAf9iPwX/XDcF/1w3Bf9cNwX/XDcF/1w3Bf9cNwX/XDcF/1w3Bf9cNwX/XDcF/1w3Bf9c
+        NwX/XDcF/1w3Bf9cNwX/XDcF/1w3Bf9kQQT/c1MB/3FRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAA//////////////////////4AAA/+AAAP/gAAD/48D4/+PA+P/jwPj4A8
+        D4+APA+PgDADj4AwA4+AMEOPgDjHj4A8D4+APA+PgD4fj4A/H4+APz+PgD//j4AAAA+AAAAPgAAD/4AA
+        A/+AAAP/gAAD/4AAA/+AAAP/gAAD//////8=
+</value>
+  </data>
+  <data name="$this.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 4, 3, 4</value>
+  </data>
+  <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>300, 250</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>Window Streamer - Server</value>

@@ -86,7 +86,7 @@
             Controls.Add(label2);
             Controls.Add(label1);
             Controls.Add(textBoxTargetIPAddress);
-            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             Name = "ConnectWindow";
             Load += ConnectWindow_Load;
