@@ -20,6 +20,7 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <UseWindowsForms>true</UseWindowsForms>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+    <ApplicationIcon>Resources\ApplicationIcon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == ': Server - Debug|AnyCPU' ">
     <OutputPath>bin\: Server - Debug\</OutputPath>
@@ -64,6 +65,9 @@
   <ItemGroup>
     <Compile Remove="Preferences.cs" />
     <EmbeddedResource Remove="Prompt.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\ApplicationIcon.ico" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Protocol\Protocol.csproj" />
