@@ -55,6 +55,7 @@
             // logoPictureBox
             // 
             resources.ApplyResources(logoPictureBox, "logoPictureBox");
+            logoPictureBox.Image = Properties.Resources.Banner;
             logoPictureBox.Name = "logoPictureBox";
             tableLayoutPanel.SetRowSpan(logoPictureBox, 6);
             logoPictureBox.TabStop = false;
