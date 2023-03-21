@@ -19,6 +19,12 @@ public class ToolStripLabelSink : ILogEventSink
     public void Emit(LogEvent logEvent)
     {
         var message = logEvent.RenderMessage(formatProvider);
+
+        if (!label.GetCurrentParent().IsHandleCreated)
+        {
+            return;
+        }
+
         label.GetCurrentParent().Invoke((MethodInvoker)delegate
         {
             label.Text = message;

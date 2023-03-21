@@ -41,9 +41,12 @@ namespace Server
             InitializeComponent();
 
             Log.Logger = new LoggerConfiguration()
-                .WriteTo.Console(Serilog.Events.LogEventLevel.Debug)
+                .MinimumLevel.Debug()
+                .WriteTo.Logger(lc => lc
+                    .MinimumLevel.Information()
+                    .WriteTo.Console(Serilog.Events.LogEventLevel.Debug)
+                    .WriteTo.ToolStripLabel(toolStripStatusLabelLatest))
                 .WriteTo.File("log-server.txt", rollingInterval: RollingInterval.Day)
-                .WriteTo.ToolStripLabel(toolStripStatusLabelLatest)
                 .CreateLogger();
         }
 

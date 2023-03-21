@@ -24,9 +24,12 @@ namespace Client
             InitializeComponent();
 
             Log.Logger = new LoggerConfiguration()
-                .WriteTo.Console(Serilog.Events.LogEventLevel.Debug)
-                .WriteTo.File("log-client.txt", rollingInterval: RollingInterval.Day, restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Debug)
-                .WriteTo.ToolStripLabel(toolStripStatusLabelLatest)
+                .MinimumLevel.Debug()
+                .WriteTo.Logger(lc => lc
+                    .MinimumLevel.Information()
+                    .WriteTo.Console(Serilog.Events.LogEventLevel.Debug)
+                    .WriteTo.ToolStripLabel(toolStripStatusLabelLatest))
+                .WriteTo.File("log-client.txt", rollingInterval: RollingInterval.Day)
                 .CreateLogger();
         }
 
