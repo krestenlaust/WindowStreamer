@@ -67,6 +67,9 @@
     <EmbeddedResource Remove="Prompt.resx" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Gma.UserActivityMonitor.dll" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="Resources\ApplicationIcon.ico" />
   </ItemGroup>
   <ItemGroup>

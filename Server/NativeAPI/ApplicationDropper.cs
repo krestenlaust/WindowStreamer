@@ -96,15 +96,5 @@ namespace Server.NativeAPI
             public int x;
             public int y;
         }
-
-        [StructLayout(LayoutKind.Sequential)]
-        struct MSLLHOOKSTRUCT
-        {
-            public POINT pt;
-            public uint mouseData;
-            public uint flags;
-            public uint time;
-            public IntPtr dwExtraInfo;
-        }
     }
 }

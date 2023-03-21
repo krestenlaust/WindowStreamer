@@ -396,3 +396,6 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Shouldn't be pushed back and forth.
+/*/Properties/launchSettings.json
