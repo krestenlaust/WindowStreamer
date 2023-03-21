@@ -1,57 +1,56 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace Server
+namespace Server;
+
+public partial class Options : Form
 {
-    public partial class Options : Form
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Options"/> class.
+    /// </summary>
+    public Options()
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Options"/> class.
-        /// </summary>
-        public Options()
+        InitializeComponent();
+    }
+
+    Other.Preferences NewPreferences = Other.Prefs;
+
+    public void CheckChanges()
+    {
+        if (NewPreferences != Other.Prefs)
         {
-            InitializeComponent();
+            buttonApply.Enabled = true;
         }
+    }
 
-        Other.Preferences NewPreferences = Other.Prefs;
+    void Options_Load(object sender, EventArgs e)
+    {
+        buttonApply.Enabled = false;
+    }
 
-        public void CheckChanges()
-        {
-            if (NewPreferences != Other.Prefs)
-            {
-                buttonApply.Enabled = true;
-            }
-        }
+    void Apply()
+    {
+        Other.Prefs = NewPreferences;
+        buttonApply.Enabled = false;
+    }
 
-        void Options_Load(object sender, EventArgs e)
-        {
-            buttonApply.Enabled = false;
-        }
+    void buttonApply_Click(object sender, EventArgs e) => Apply();
 
-        void Apply()
-        {
-            Other.Prefs = NewPreferences;
-            buttonApply.Enabled = false;
-        }
+    void buttonCancel_Click(object sender, EventArgs e) => Close();
 
-        void buttonApply_Click(object sender, EventArgs e) => Apply();
+    void buttonOk_Click(object sender, EventArgs e)
+    {
+        Apply();
+        Close();
+    }
 
-        void buttonCancel_Click(object sender, EventArgs e) => Close();
+    void groupBox1_MouseHover(object sender, EventArgs e)
+    {
+        toolTipSettings.SetToolTip(groupBoxSharedWindow, "Play local over LAN");
+    }
 
-        void buttonOk_Click(object sender, EventArgs e)
-        {
-            Apply();
-            Close();
-        }
-
-        void groupBox1_MouseHover(object sender, EventArgs e)
-        {
-            toolTipSettings.SetToolTip(groupBoxSharedWindow, "Play local over LAN");
-        }
-
-        void checkBoxMouseClick_CheckedChanged(object sender, EventArgs e)
-        {
-            groupBoxMouseButtons.Enabled = checkBoxMouseClick.Checked;
-        }
+    void checkBoxMouseClick_CheckedChanged(object sender, EventArgs e)
+    {
+        groupBoxMouseButtons.Enabled = checkBoxMouseClick.Checked;
     }
 }

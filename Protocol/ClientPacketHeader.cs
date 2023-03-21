@@ -1,8 +1,7 @@
-﻿namespace Protocol
+﻿namespace Protocol;
+
+public enum ClientPacketHeader
 {
-    public enum ClientPacketHeader
-    {
-        UDPReady = 2,
-        Key = 3,
-    }
+    UDPReady = 2,
+    Key = 3,
 }

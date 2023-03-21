@@ -10,310 +10,309 @@ using LabelSink;
 using Serilog;
 using WindowStreamer.Common;
 
-namespace Server
+namespace Server;
+
+public partial class WindowCapture : Form
 {
-    public partial class WindowCapture : Form
+    static readonly int DefaultMetastreamPort = 10063;
+    static readonly Color transparencyKeyColor = Color.Orange;
+
+    readonly HashSet<IPAddress> blockedIPs = new ();
+    bool fullscreen;
+    Size videoResolution;
+
+    /// <summary>
+    /// Not sure what this field keeps track of.
+    /// </summary>
+    Size lastResolution;
+    Size fullscreenSize = new Size
     {
-        static readonly int DefaultMetastreamPort = 10063;
-        static readonly Color transparencyKeyColor = Color.Orange;
+        Width = 400,
+        Height = 100,
+    };
 
-        readonly HashSet<IPAddress> blockedIPs = new HashSet<IPAddress>();
-        bool fullscreen;
-        Size videoResolution;
+    WindowServer server;
 
-        /// <summary>
-        /// Not sure what this field keeps track of.
-        /// </summary>
-        Size lastResolution;
-        Size fullscreenSize = new Size
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WindowCapture"/> class.
+    /// </summary>
+    public WindowCapture()
+    {
+        InitializeComponent();
+
+        Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Debug()
+            .WriteTo.Logger(lc => lc
+                .MinimumLevel.Information()
+                .WriteTo.Console(Serilog.Events.LogEventLevel.Debug)
+                .WriteTo.ToolStripLabel(toolStripStatusLabelLatest))
+            .WriteTo.File("log-server.txt", rollingInterval: RollingInterval.Day)
+            .CreateLogger();
+    }
+
+    protected override void WndProc(ref Message m)
+    {
+        if (m.Msg == 0x0112) // WM_SYSCOMMAND
         {
-            Width = 400,
-            Height = 100,
-        };
-
-        WindowServer server;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="WindowCapture"/> class.
-        /// </summary>
-        public WindowCapture()
-        {
-            InitializeComponent();
-
-            Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .WriteTo.Logger(lc => lc
-                    .MinimumLevel.Information()
-                    .WriteTo.Console(Serilog.Events.LogEventLevel.Debug)
-                    .WriteTo.ToolStripLabel(toolStripStatusLabelLatest))
-                .WriteTo.File("log-server.txt", rollingInterval: RollingInterval.Day)
-                .CreateLogger();
-        }
-
-        protected override void WndProc(ref Message m)
-        {
-            if (m.Msg == 0x0112) // WM_SYSCOMMAND
+            if (m.WParam == new IntPtr(0xF030)) // Maximize event - SC_MAXIMIZE from Winuser.h
             {
-                if (m.WParam == new IntPtr(0xF030)) // Maximize event - SC_MAXIMIZE from Winuser.h
-                {
-                    fullscreen = true;
-                    lastResolution = Size;
-                    Size = fullscreenSize;
-                    UpdateResolutionVariables();
-                }
-                else if (m.WParam == new IntPtr(0xF120))
-                {
-                    fullscreen = false;
-                    Size = lastResolution;
-                    UpdateResolutionVariables();
-                }
+                fullscreen = true;
+                lastResolution = Size;
+                Size = fullscreenSize;
+                UpdateResolutionVariables();
             }
-
-            base.WndProc(ref m);
-        }
-
-        async void WindowCapture_LoadAsync(object sender, EventArgs e)
-        {
-            TransparencyKey = transparencyKeyColor;
-            captureArea.BackColor = transparencyKeyColor;
-            UpdateResolutionVariables();
-            toolStripTextBoxTargetPort.Text = DefaultMetastreamPort.ToString();
-
-            // Update UI
-            ToggleActionStartStopButtons(false);
-
-            // Handle command-line arguments
-            await HandleCommandlineArgumentsAsync(Environment.GetCommandLineArgs());
-        }
-
-        async Task HandleCommandlineArgumentsAsync(string[] args)
-        {
-            for (int i = 0; i < args.Length; i++)
+            else if (m.WParam == new IntPtr(0xF120))
             {
-                if (!args[i].StartsWith("-"))
-                {
-                    continue;
-                }
-
-                switch (args[i])
-                {
-                    case "--listen":
-                    case "-l":
-                        if (args.Length == i + 1)
-                        {
-                            // No parameter given.
-                            continue;
-                        }
-
-                        string parameter = args[i + 1];
-
-                        var splittedParameter = parameter.Split(':');
-
-                        if (!IPAddress.TryParse(splittedParameter[0], out IPAddress address))
-                        {
-                            // Invalid parameter
-                            continue;
-                        }
-
-                        if (splittedParameter.Length == 1 || !int.TryParse(splittedParameter[1], out int targetPort))
-                        {
-                            targetPort = DefaultMetastreamPort;
-                        }
-
-                        await StartServerAsync(address, targetPort);
-                        break;
-                    default:
-                        break;
-                }
+                fullscreen = false;
+                Size = lastResolution;
+                UpdateResolutionVariables();
             }
         }
 
-        Bitmap ObtainImage()
-        {
-            Size size = new Size(videoResolution.Width, videoResolution.Height);
-            return GetScreenPicture(captureArea.Location.X + Location.X, captureArea.Location.Y + Location.Y + toolStripHeader.Height, size);
-        }
+        base.WndProc(ref m);
+    }
 
-        WindowServer.ConnectionReply HandleConnectionReply(IPAddress ipAddress)
+    async void WindowCapture_LoadAsync(object sender, EventArgs e)
+    {
+        TransparencyKey = transparencyKeyColor;
+        captureArea.BackColor = transparencyKeyColor;
+        UpdateResolutionVariables();
+        toolStripTextBoxTargetPort.Text = DefaultMetastreamPort.ToString();
+
+        // Update UI
+        ToggleActionStartStopButtons(false);
+
+        // Handle command-line arguments
+        await HandleCommandlineArgumentsAsync(Environment.GetCommandLineArgs());
+    }
+
+    async Task HandleCommandlineArgumentsAsync(string[] args)
+    {
+        for (int i = 0; i < args.Length; i++)
         {
-            if (blockedIPs.Contains(ipAddress))
+            if (!args[i].StartsWith("-"))
             {
-                Log.Information($"Denied blocked IP Address: {ipAddress}");
-                return WindowServer.ConnectionReply.Close;
+                continue;
             }
 
-            var prompt = new ConnectionPrompt(ipAddress.ToString())
+            switch (args[i])
             {
-                StartPosition = FormStartPosition.CenterParent,
-                TopMost = true,
-            };
+                case "--listen":
+                case "-l":
+                    if (args.Length == i + 1)
+                    {
+                        // No parameter given.
+                        continue;
+                    }
 
-            switch (prompt.ShowDialog())
-            {
-                case DialogResult.Abort: // Block
-                    Log.Information($"Blocked the following IP Address: {ipAddress}");
+                    string parameter = args[i + 1];
 
-                    BlockIPAddress(ipAddress);
-                    return WindowServer.ConnectionReply.Close;
+                    var splittedParameter = parameter.Split(':');
 
-                case DialogResult.Ignore: // Ignore
-                    Log.Information("Ignoring connection");
-                    return WindowServer.ConnectionReply.Close;
+                    if (!IPAddress.TryParse(splittedParameter[0], out IPAddress address))
+                    {
+                        // Invalid parameter
+                        continue;
+                    }
 
-                case DialogResult.Yes: // Accept
-                    Log.Information("Accepting connection");
-                    return WindowServer.ConnectionReply.Accept;
+                    if (splittedParameter.Length == 1 || !int.TryParse(splittedParameter[1], out int targetPort))
+                    {
+                        targetPort = DefaultMetastreamPort;
+                    }
 
-                case DialogResult.No: // Deny
-                    Log.Information($"Told {ipAddress} to try again another day :)");
-                    return WindowServer.ConnectionReply.Deny;
+                    await StartServerAsync(address, targetPort);
+                    break;
                 default:
                     break;
             }
+        }
+    }
 
-            return 0;
+    Bitmap ObtainImage()
+    {
+        var size = new Size(videoResolution.Width, videoResolution.Height);
+        return GetScreenPicture(captureArea.Location.X + Location.X, captureArea.Location.Y + Location.Y + toolStripHeader.Height, size);
+    }
+
+    WindowServer.ConnectionReply HandleConnectionReply(IPAddress ipAddress)
+    {
+        if (blockedIPs.Contains(ipAddress))
+        {
+            Log.Information($"Denied blocked IP Address: {ipAddress}");
+            return WindowServer.ConnectionReply.Close;
         }
 
-        void BlockIPAddress(IPAddress ip)
+        var prompt = new ConnectionPrompt(ipAddress.ToString())
         {
-            blockedIPs.Add(ip);
+            StartPosition = FormStartPosition.CenterParent,
+            TopMost = true,
+        };
 
-            Console.WriteLine($"Blocking IP: {ip}");
+        switch (prompt.ShowDialog())
+        {
+            case DialogResult.Abort: // Block
+                Log.Information($"Blocked the following IP Address: {ipAddress}");
+
+                BlockIPAddress(ipAddress);
+                return WindowServer.ConnectionReply.Close;
+
+            case DialogResult.Ignore: // Ignore
+                Log.Information("Ignoring connection");
+                return WindowServer.ConnectionReply.Close;
+
+            case DialogResult.Yes: // Accept
+                Log.Information("Accepting connection");
+                return WindowServer.ConnectionReply.Accept;
+
+            case DialogResult.No: // Deny
+                Log.Information($"Told {ipAddress} to try again another day :)");
+                return WindowServer.ConnectionReply.Deny;
+            default:
+                break;
         }
 
-        void WindowCapture_Resize(object sender, EventArgs e) => UpdateResolutionVariables();
+        return 0;
+    }
 
-        void toolStripButtonOptions_Click(object sender, EventArgs e)
+    void BlockIPAddress(IPAddress ip)
+    {
+        blockedIPs.Add(ip);
+
+        Console.WriteLine($"Blocking IP: {ip}");
+    }
+
+    void WindowCapture_Resize(object sender, EventArgs e) => UpdateResolutionVariables();
+
+    void toolStripButtonOptions_Click(object sender, EventArgs e)
+    {
+        new Options().ShowDialog();
+    }
+
+    async void toolStripButtonActionStart_ClickAsync(object sender, EventArgs e)
+    {
+        IPAddress acceptedAddress;
+        if (toolStripTextBoxAcceptableHost.Text == string.Empty)
         {
-            new Options().ShowDialog();
+            acceptedAddress = IPAddress.Any;
+        }
+        else if (!IPAddress.TryParse(toolStripTextBoxAcceptableHost.Text, out acceptedAddress))
+        {
+            MessageBox.Show("IP not valid", "Error");
+            return;
         }
 
-        async void toolStripButtonActionStart_ClickAsync(object sender, EventArgs e)
+        if (!int.TryParse(toolStripTextBoxTargetPort.Text, out int targetPort))
         {
-            IPAddress acceptedAddress;
-            if (toolStripTextBoxAcceptableHost.Text == string.Empty)
-            {
-                acceptedAddress = IPAddress.Any;
-            }
-            else if (!IPAddress.TryParse(toolStripTextBoxAcceptableHost.Text, out acceptedAddress))
-            {
-                MessageBox.Show("IP not valid", "Error");
-                return;
-            }
-
-            if (!int.TryParse(toolStripTextBoxTargetPort.Text, out int targetPort))
-            {
-                targetPort = DefaultMetastreamPort;
-            }
-
-            await StartServerAsync(acceptedAddress, targetPort);
+            targetPort = DefaultMetastreamPort;
         }
 
-        void toolStripButtonActionStop_Click(object sender, EventArgs e)
+        await StartServerAsync(acceptedAddress, targetPort);
+    }
+
+    void toolStripButtonActionStop_Click(object sender, EventArgs e)
+    {
+        server?.Dispose();
+        server = null;
+        ToggleActionStartStopButtons(false);
+
+        Log.Information("Stopped server");
+    }
+
+    void ToggleActionStartStopButtons(bool serverRunning)
+    {
+        toolStripButtonActionStart.Visible = !serverRunning;
+        toolStripButtonActionStop.Visible = serverRunning;
+    }
+
+    async Task StartServerAsync(IPAddress bindAddress, int port = 0)
+    {
+        if (port == 0)
         {
-            server?.Dispose();
-            server = null;
+            port = DefaultMetastreamPort;
+        }
+
+        if (server is not null)
+        {
+            server.ConnectionClosed -= WindowServer_ConnectionClosed;
+            server.Dispose();
+        }
+
+        ToggleActionStartStopButtons(true);
+
+        server = new WindowServer(bindAddress, port, videoResolution, ObtainImage, HandleConnectionReply);
+        server.ConnectionClosed += WindowServer_ConnectionClosed;
+
+        try
+        {
+            await server.StartServerAsync().ConfigureAwait(false);
+        }
+        catch (SocketException ex)
+        {
+            Log.Information($"Couldn't start server: {ex}");
             ToggleActionStartStopButtons(false);
-
-            Log.Information("Stopped server");
         }
+    }
 
-        void ToggleActionStartStopButtons(bool serverRunning)
+    private void WindowServer_ConnectionClosed()
+    {
+        Log.Information("Client disconnected");
+        ToggleActionStartStopButtons(false);
+    }
+
+    void UpdateResolutionVariables()
+    {
+        if (fullscreen)
         {
-            toolStripButtonActionStart.Visible = !serverRunning;
-            toolStripButtonActionStop.Visible = serverRunning;
+            videoResolution.Height = Screen.FromControl(this).Bounds.Height;
+            videoResolution.Width = Screen.FromControl(this).Bounds.Width;
+            //captureAreaTopLeft = Screen.FromControl(this).Bounds.Location;
         }
-
-        async Task StartServerAsync(IPAddress bindAddress, int port = 0)
+        else
         {
-            if (port == 0)
-            {
-                port = DefaultMetastreamPort;
-            }
-
-            if (server is not null)
-            {
-                server.ConnectionClosed -= WindowServer_ConnectionClosed;
-                server.Dispose();
-            }
-
-            ToggleActionStartStopButtons(true);
-
-            server = new WindowServer(bindAddress, port, videoResolution, ObtainImage, HandleConnectionReply);
-            server.ConnectionClosed += WindowServer_ConnectionClosed;
-
-            try
-            {
-                await server.StartServerAsync().ConfigureAwait(false);
-            }
-            catch (SocketException ex)
-            {
-                Log.Information($"Couldn't start server: {ex}");
-                ToggleActionStartStopButtons(false);
-            }
+            videoResolution.Height = captureArea.Height;
+            videoResolution.Width = captureArea.Width;
+            //captureAreaTopLeft = captureArea.Bounds.Location;
         }
 
-        private void WindowServer_ConnectionClosed()
+        toolStripStatusLabelResolution.Text = $"{videoResolution.Width}x{videoResolution.Height}";
+        server?.UpdateResolution(videoResolution);
+    }
+
+    static Bitmap GetScreenPicture(int x, int y, Size size)
+    {
+        // TODO: Debug funktionen for at oversætte skærm koordinaterne til pixels.
+        /*Rectangle screen = Rectangle.Empty;
+        this.Invoke((MethodInvoker)delegate
         {
-            Log.Information("Client disconnected");
-            ToggleActionStartStopButtons(false);
-        }
+            screen = Screen.FromControl(this).WorkingArea;
+        });
 
-        void UpdateResolutionVariables()
-        {
-            if (fullscreen)
-            {
-                videoResolution.Height = Screen.FromControl(this).Bounds.Height;
-                videoResolution.Width = Screen.FromControl(this).Bounds.Width;
-                //captureAreaTopLeft = Screen.FromControl(this).Bounds.Location;
-            }
-            else
-            {
-                videoResolution.Height = captureArea.Height;
-                videoResolution.Width = captureArea.Width;
-                //captureAreaTopLeft = captureArea.Bounds.Location;
-            }
+        position.X = position.X / screen.Width; // screen.Width: 1920
+        position.Y = position.Y / screen.Height; // screen.Height: 1080
+        */
 
-            toolStripStatusLabelResolution.Text = $"{videoResolution.Width}x{videoResolution.Height}";
-            server?.UpdateResolution(videoResolution);
-        }
+        var rect = new Rectangle(x, y, size.Width, size.Height);
+        var bmp = new Bitmap(rect.Width, rect.Height, PixelFormat.Format24bppRgb);
 
-        static Bitmap GetScreenPicture(int x, int y, Size size)
-        {
-            // TODO: Debug funktionen for at oversætte skærm koordinaterne til pixels.
-            /*Rectangle screen = Rectangle.Empty;
-            this.Invoke((MethodInvoker)delegate
-            {
-                screen = Screen.FromControl(this).WorkingArea;
-            });
+        Graphics g = Graphics.FromImage(bmp);
+        g.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size, CopyPixelOperation.SourceCopy);
 
-            position.X = position.X / screen.Width; // screen.Width: 1920
-            position.Y = position.Y / screen.Height; // screen.Height: 1080
-            */
+        return bmp;
+    }
 
-            var rect = new Rectangle(x, y, size.Width, size.Height);
-            var bmp = new Bitmap(rect.Width, rect.Height, PixelFormat.Format24bppRgb);
+    private void WindowCapture_FormClosed(object sender, FormClosedEventArgs e)
+    {
+        Log.Information("Application closing...");
+        Log.CloseAndFlush();
+    }
 
-            Graphics g = Graphics.FromImage(bmp);
-            g.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size, CopyPixelOperation.SourceCopy);
+    private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        new WindowStreamer.Common.AboutBoxMain().ShowDialog();
+    }
 
-            return bmp;
-        }
-
-        private void WindowCapture_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            Log.Information("Application closing...");
-            Log.CloseAndFlush();
-        }
-
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            new WindowStreamer.Common.AboutBoxMain().ShowDialog();
-        }
-
-        private void helpToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Helper.OpenUrl(ProjectProperties.GithubUrl);
-        }
+    private void helpToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        Helper.OpenUrl(ProjectProperties.GithubUrl);
     }
 }

@@ -1,8 +1,7 @@
-﻿namespace Protocol
+﻿namespace Protocol;
+
+public enum ServerPacketHeader
 {
-    public enum ServerPacketHeader
-    {
-        ConnectionReply = 0,
-        ResolutionUpdate = 1,
-    }
+    ConnectionReply = 0,
+    ResolutionUpdate = 1,
 }
