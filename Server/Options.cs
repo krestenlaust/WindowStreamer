@@ -13,16 +13,6 @@ public partial class Options : Form
         InitializeComponent();
     }
 
-    Other.Preferences NewPreferences = Other.Prefs;
-
-    public void CheckChanges()
-    {
-        if (NewPreferences != Other.Prefs)
-        {
-            buttonApply.Enabled = true;
-        }
-    }
-
     void Options_Load(object sender, EventArgs e)
     {
         buttonApply.Enabled = false;
@@ -30,7 +20,6 @@ public partial class Options : Form
 
     void Apply()
     {
-        Other.Prefs = NewPreferences;
         buttonApply.Enabled = false;
     }
 
