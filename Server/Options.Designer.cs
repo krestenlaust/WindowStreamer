@@ -28,452 +28,416 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.buttonApply = new System.Windows.Forms.Button();
-            this.buttonCancel = new System.Windows.Forms.Button();
-            this.buttonOk = new System.Windows.Forms.Button();
-            this.tabControlMain = new System.Windows.Forms.TabControl();
-            this.tabPageGeneral = new System.Windows.Forms.TabPage();
-            this.checkBoxDebugWindow = new System.Windows.Forms.CheckBox();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.groupBoxSharedWindow = new System.Windows.Forms.GroupBox();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.tabPageStreaming = new System.Windows.Forms.TabPage();
-            this.tabPageRestrictions = new System.Windows.Forms.TabPage();
-            this.checkBox3 = new System.Windows.Forms.CheckBox();
-            this.checkBox2 = new System.Windows.Forms.CheckBox();
-            this.groupBoxMouse = new System.Windows.Forms.GroupBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.checkBoxMouseClick = new System.Windows.Forms.CheckBox();
-            this.checkBox4 = new System.Windows.Forms.CheckBox();
-            this.groupBoxMouseButtons = new System.Windows.Forms.GroupBox();
-            this.checkBox7 = new System.Windows.Forms.CheckBox();
-            this.checkBox6 = new System.Windows.Forms.CheckBox();
-            this.groupBoxKeys = new System.Windows.Forms.GroupBox();
-            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.checkedListBox3 = new System.Windows.Forms.CheckedListBox();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.checkedListBox1 = new System.Windows.Forms.CheckedListBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.checkedListBox2 = new System.Windows.Forms.CheckedListBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.toolTipSettings = new System.Windows.Forms.ToolTip(this.components);
-            this.tabControlMain.SuspendLayout();
-            this.tabPageGeneral.SuspendLayout();
-            this.groupBox4.SuspendLayout();
-            this.groupBoxSharedWindow.SuspendLayout();
-            this.tabPageRestrictions.SuspendLayout();
-            this.groupBoxMouse.SuspendLayout();
-            this.groupBoxMouseButtons.SuspendLayout();
-            this.groupBoxKeys.SuspendLayout();
-            this.flowLayoutPanel1.SuspendLayout();
-            this.groupBox3.SuspendLayout();
-            this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            this.SuspendLayout();
+            components = new System.ComponentModel.Container();
+            buttonApply = new System.Windows.Forms.Button();
+            buttonCancel = new System.Windows.Forms.Button();
+            buttonOk = new System.Windows.Forms.Button();
+            tabControlMain = new System.Windows.Forms.TabControl();
+            tabPageGeneral = new System.Windows.Forms.TabPage();
+            groupBox4 = new System.Windows.Forms.GroupBox();
+            button1 = new System.Windows.Forms.Button();
+            groupBoxSharedWindow = new System.Windows.Forms.GroupBox();
+            checkBox1 = new System.Windows.Forms.CheckBox();
+            tabPageStreaming = new System.Windows.Forms.TabPage();
+            tabPageRestrictions = new System.Windows.Forms.TabPage();
+            checkBox3 = new System.Windows.Forms.CheckBox();
+            checkBox2 = new System.Windows.Forms.CheckBox();
+            groupBoxMouse = new System.Windows.Forms.GroupBox();
+            label2 = new System.Windows.Forms.Label();
+            checkBoxMouseClick = new System.Windows.Forms.CheckBox();
+            checkBox4 = new System.Windows.Forms.CheckBox();
+            groupBoxMouseButtons = new System.Windows.Forms.GroupBox();
+            checkBox7 = new System.Windows.Forms.CheckBox();
+            checkBox6 = new System.Windows.Forms.CheckBox();
+            groupBoxKeys = new System.Windows.Forms.GroupBox();
+            flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            groupBox3 = new System.Windows.Forms.GroupBox();
+            checkedListBox3 = new System.Windows.Forms.CheckedListBox();
+            groupBox1 = new System.Windows.Forms.GroupBox();
+            checkedListBox1 = new System.Windows.Forms.CheckedListBox();
+            groupBox2 = new System.Windows.Forms.GroupBox();
+            checkedListBox2 = new System.Windows.Forms.CheckedListBox();
+            label1 = new System.Windows.Forms.Label();
+            tabPage1 = new System.Windows.Forms.TabPage();
+            toolTipSettings = new System.Windows.Forms.ToolTip(components);
+            tabControlMain.SuspendLayout();
+            tabPageGeneral.SuspendLayout();
+            groupBox4.SuspendLayout();
+            groupBoxSharedWindow.SuspendLayout();
+            tabPageRestrictions.SuspendLayout();
+            groupBoxMouse.SuspendLayout();
+            groupBoxMouseButtons.SuspendLayout();
+            groupBoxKeys.SuspendLayout();
+            flowLayoutPanel1.SuspendLayout();
+            groupBox3.SuspendLayout();
+            groupBox1.SuspendLayout();
+            groupBox2.SuspendLayout();
+            SuspendLayout();
             // 
             // buttonApply
             // 
-            this.buttonApply.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonApply.Location = new System.Drawing.Point(432, 345);
-            this.buttonApply.Name = "buttonApply";
-            this.buttonApply.Size = new System.Drawing.Size(79, 38);
-            this.buttonApply.TabIndex = 0;
-            this.buttonApply.Text = "&Apply";
-            this.buttonApply.UseVisualStyleBackColor = true;
-            this.buttonApply.Click += new System.EventHandler(this.buttonApply_Click);
+            buttonApply.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            buttonApply.Location = new System.Drawing.Point(432, 345);
+            buttonApply.Name = "buttonApply";
+            buttonApply.Size = new System.Drawing.Size(79, 38);
+            buttonApply.TabIndex = 0;
+            buttonApply.Text = "&Apply";
+            buttonApply.UseVisualStyleBackColor = true;
+            buttonApply.Click += buttonApply_Click;
             // 
             // buttonCancel
             // 
-            this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonCancel.Location = new System.Drawing.Point(352, 345);
-            this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.Size = new System.Drawing.Size(79, 38);
-            this.buttonCancel.TabIndex = 2;
-            this.buttonCancel.Text = "&Cancel";
-            this.buttonCancel.UseVisualStyleBackColor = true;
-            this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
+            buttonCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            buttonCancel.Location = new System.Drawing.Point(352, 345);
+            buttonCancel.Name = "buttonCancel";
+            buttonCancel.Size = new System.Drawing.Size(79, 38);
+            buttonCancel.TabIndex = 2;
+            buttonCancel.Text = "&Cancel";
+            buttonCancel.UseVisualStyleBackColor = true;
+            buttonCancel.Click += buttonCancel_Click;
             // 
             // buttonOk
             // 
-            this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonOk.Location = new System.Drawing.Point(271, 345);
-            this.buttonOk.Name = "buttonOk";
-            this.buttonOk.Size = new System.Drawing.Size(79, 38);
-            this.buttonOk.TabIndex = 3;
-            this.buttonOk.Text = "&OK";
-            this.buttonOk.UseVisualStyleBackColor = true;
-            this.buttonOk.Click += new System.EventHandler(this.buttonOk_Click);
+            buttonOk.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            buttonOk.Location = new System.Drawing.Point(271, 345);
+            buttonOk.Name = "buttonOk";
+            buttonOk.Size = new System.Drawing.Size(79, 38);
+            buttonOk.TabIndex = 3;
+            buttonOk.Text = "&OK";
+            buttonOk.UseVisualStyleBackColor = true;
+            buttonOk.Click += buttonOk_Click;
             // 
             // tabControlMain
             // 
-            this.tabControlMain.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabControlMain.Controls.Add(this.tabPageGeneral);
-            this.tabControlMain.Controls.Add(this.tabPageStreaming);
-            this.tabControlMain.Controls.Add(this.tabPageRestrictions);
-            this.tabControlMain.Controls.Add(this.tabPage1);
-            this.tabControlMain.Location = new System.Drawing.Point(5, 7);
-            this.tabControlMain.Name = "tabControlMain";
-            this.tabControlMain.SelectedIndex = 0;
-            this.tabControlMain.Size = new System.Drawing.Size(508, 333);
-            this.tabControlMain.TabIndex = 4;
+            tabControlMain.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            tabControlMain.Controls.Add(tabPageGeneral);
+            tabControlMain.Controls.Add(tabPageStreaming);
+            tabControlMain.Controls.Add(tabPageRestrictions);
+            tabControlMain.Controls.Add(tabPage1);
+            tabControlMain.Location = new System.Drawing.Point(5, 7);
+            tabControlMain.Name = "tabControlMain";
+            tabControlMain.SelectedIndex = 0;
+            tabControlMain.Size = new System.Drawing.Size(508, 333);
+            tabControlMain.TabIndex = 4;
             // 
             // tabPageGeneral
             // 
-            this.tabPageGeneral.Controls.Add(this.checkBoxDebugWindow);
-            this.tabPageGeneral.Controls.Add(this.groupBox4);
-            this.tabPageGeneral.Controls.Add(this.groupBoxSharedWindow);
-            this.tabPageGeneral.Location = new System.Drawing.Point(4, 24);
-            this.tabPageGeneral.Name = "tabPageGeneral";
-            this.tabPageGeneral.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageGeneral.Size = new System.Drawing.Size(500, 305);
-            this.tabPageGeneral.TabIndex = 0;
-            this.tabPageGeneral.Text = "Settings";
-            this.tabPageGeneral.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxDebugWindow
-            // 
-            this.checkBoxDebugWindow.AutoSize = true;
-            this.checkBoxDebugWindow.Location = new System.Drawing.Point(5, 280);
-            this.checkBoxDebugWindow.Name = "checkBoxDebugWindow";
-            this.checkBoxDebugWindow.Size = new System.Drawing.Size(110, 19);
-            this.checkBoxDebugWindow.TabIndex = 2;
-            this.checkBoxDebugWindow.Text = "DEBUG Window";
-            this.checkBoxDebugWindow.UseVisualStyleBackColor = true;
+            tabPageGeneral.Controls.Add(groupBox4);
+            tabPageGeneral.Controls.Add(groupBoxSharedWindow);
+            tabPageGeneral.Location = new System.Drawing.Point(4, 24);
+            tabPageGeneral.Name = "tabPageGeneral";
+            tabPageGeneral.Padding = new System.Windows.Forms.Padding(3);
+            tabPageGeneral.Size = new System.Drawing.Size(500, 305);
+            tabPageGeneral.TabIndex = 0;
+            tabPageGeneral.Text = "Settings";
+            tabPageGeneral.UseVisualStyleBackColor = true;
             // 
             // groupBox4
             // 
-            this.groupBox4.Controls.Add(this.button1);
-            this.groupBox4.Location = new System.Drawing.Point(15, 23);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(175, 94);
-            this.groupBox4.TabIndex = 1;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Settings for options";
+            groupBox4.Controls.Add(button1);
+            groupBox4.Location = new System.Drawing.Point(15, 23);
+            groupBox4.Name = "groupBox4";
+            groupBox4.Size = new System.Drawing.Size(175, 94);
+            groupBox4.TabIndex = 1;
+            groupBox4.TabStop = false;
+            groupBox4.Text = "Settings for options";
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(46, 38);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(63, 25);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
+            button1.Location = new System.Drawing.Point(46, 38);
+            button1.Name = "button1";
+            button1.Size = new System.Drawing.Size(63, 25);
+            button1.TabIndex = 0;
+            button1.Text = "button1";
+            button1.UseVisualStyleBackColor = true;
             // 
             // groupBoxSharedWindow
             // 
-            this.groupBoxSharedWindow.Controls.Add(this.checkBox1);
-            this.groupBoxSharedWindow.Location = new System.Drawing.Point(316, 6);
-            this.groupBoxSharedWindow.Name = "groupBoxSharedWindow";
-            this.groupBoxSharedWindow.Size = new System.Drawing.Size(175, 171);
-            this.groupBoxSharedWindow.TabIndex = 0;
-            this.groupBoxSharedWindow.TabStop = false;
-            this.groupBoxSharedWindow.Text = "Shared Window";
-            this.groupBoxSharedWindow.MouseHover += new System.EventHandler(this.groupBox1_MouseHover);
+            groupBoxSharedWindow.Controls.Add(checkBox1);
+            groupBoxSharedWindow.Location = new System.Drawing.Point(316, 6);
+            groupBoxSharedWindow.Name = "groupBoxSharedWindow";
+            groupBoxSharedWindow.Size = new System.Drawing.Size(175, 171);
+            groupBoxSharedWindow.TabIndex = 0;
+            groupBoxSharedWindow.TabStop = false;
+            groupBoxSharedWindow.Text = "Shared Window";
+            groupBoxSharedWindow.MouseHover += groupBox1_MouseHover;
             // 
             // checkBox1
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(98, -1);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(68, 19);
-            this.checkBox1.TabIndex = 0;
-            this.checkBox1.Text = "Enabled";
-            this.checkBox1.UseVisualStyleBackColor = true;
+            checkBox1.AutoSize = true;
+            checkBox1.Location = new System.Drawing.Point(98, -1);
+            checkBox1.Name = "checkBox1";
+            checkBox1.Size = new System.Drawing.Size(68, 19);
+            checkBox1.TabIndex = 0;
+            checkBox1.Text = "Enabled";
+            checkBox1.UseVisualStyleBackColor = true;
             // 
             // tabPageStreaming
             // 
-            this.tabPageStreaming.Location = new System.Drawing.Point(4, 24);
-            this.tabPageStreaming.Name = "tabPageStreaming";
-            this.tabPageStreaming.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageStreaming.Size = new System.Drawing.Size(500, 305);
-            this.tabPageStreaming.TabIndex = 1;
-            this.tabPageStreaming.Text = "Streaming";
-            this.tabPageStreaming.UseVisualStyleBackColor = true;
+            tabPageStreaming.Location = new System.Drawing.Point(4, 24);
+            tabPageStreaming.Name = "tabPageStreaming";
+            tabPageStreaming.Padding = new System.Windows.Forms.Padding(3);
+            tabPageStreaming.Size = new System.Drawing.Size(500, 305);
+            tabPageStreaming.TabIndex = 1;
+            tabPageStreaming.Text = "Streaming";
+            tabPageStreaming.UseVisualStyleBackColor = true;
             // 
             // tabPageRestrictions
             // 
-            this.tabPageRestrictions.Controls.Add(this.checkBox3);
-            this.tabPageRestrictions.Controls.Add(this.checkBox2);
-            this.tabPageRestrictions.Controls.Add(this.groupBoxMouse);
-            this.tabPageRestrictions.Controls.Add(this.groupBoxKeys);
-            this.tabPageRestrictions.Controls.Add(this.label1);
-            this.tabPageRestrictions.Location = new System.Drawing.Point(4, 24);
-            this.tabPageRestrictions.Name = "tabPageRestrictions";
-            this.tabPageRestrictions.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageRestrictions.Size = new System.Drawing.Size(500, 305);
-            this.tabPageRestrictions.TabIndex = 2;
-            this.tabPageRestrictions.Text = "Restrictions";
-            this.tabPageRestrictions.UseVisualStyleBackColor = true;
+            tabPageRestrictions.Controls.Add(checkBox3);
+            tabPageRestrictions.Controls.Add(checkBox2);
+            tabPageRestrictions.Controls.Add(groupBoxMouse);
+            tabPageRestrictions.Controls.Add(groupBoxKeys);
+            tabPageRestrictions.Controls.Add(label1);
+            tabPageRestrictions.Location = new System.Drawing.Point(4, 24);
+            tabPageRestrictions.Name = "tabPageRestrictions";
+            tabPageRestrictions.Padding = new System.Windows.Forms.Padding(3);
+            tabPageRestrictions.Size = new System.Drawing.Size(500, 305);
+            tabPageRestrictions.TabIndex = 2;
+            tabPageRestrictions.Text = "Restrictions";
+            tabPageRestrictions.UseVisualStyleBackColor = true;
             // 
             // checkBox3
             // 
-            this.checkBox3.AutoSize = true;
-            this.checkBox3.Location = new System.Drawing.Point(131, 241);
-            this.checkBox3.Name = "checkBox3";
-            this.checkBox3.Size = new System.Drawing.Size(128, 19);
-            this.checkBox3.TabIndex = 6;
-            this.checkBox3.Text = "Keyboard restrcited";
-            this.checkBox3.UseVisualStyleBackColor = true;
+            checkBox3.AutoSize = true;
+            checkBox3.Location = new System.Drawing.Point(131, 241);
+            checkBox3.Name = "checkBox3";
+            checkBox3.Size = new System.Drawing.Size(128, 19);
+            checkBox3.TabIndex = 6;
+            checkBox3.Text = "Keyboard restrcited";
+            checkBox3.UseVisualStyleBackColor = true;
             // 
             // checkBox2
             // 
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.Location = new System.Drawing.Point(8, 241);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(114, 19);
-            this.checkBox2.TabIndex = 0;
-            this.checkBox2.Text = "Mouse restricted";
-            this.checkBox2.UseVisualStyleBackColor = true;
+            checkBox2.AutoSize = true;
+            checkBox2.Location = new System.Drawing.Point(8, 241);
+            checkBox2.Name = "checkBox2";
+            checkBox2.Size = new System.Drawing.Size(114, 19);
+            checkBox2.TabIndex = 0;
+            checkBox2.Text = "Mouse restricted";
+            checkBox2.UseVisualStyleBackColor = true;
             // 
             // groupBoxMouse
             // 
-            this.groupBoxMouse.Controls.Add(this.label2);
-            this.groupBoxMouse.Controls.Add(this.checkBoxMouseClick);
-            this.groupBoxMouse.Controls.Add(this.checkBox4);
-            this.groupBoxMouse.Controls.Add(this.groupBoxMouseButtons);
-            this.groupBoxMouse.Location = new System.Drawing.Point(3, 112);
-            this.groupBoxMouse.Name = "groupBoxMouse";
-            this.groupBoxMouse.Size = new System.Drawing.Size(263, 124);
-            this.groupBoxMouse.TabIndex = 5;
-            this.groupBoxMouse.TabStop = false;
-            this.groupBoxMouse.Text = "Mouse";
+            groupBoxMouse.Controls.Add(label2);
+            groupBoxMouse.Controls.Add(checkBoxMouseClick);
+            groupBoxMouse.Controls.Add(checkBox4);
+            groupBoxMouse.Controls.Add(groupBoxMouseButtons);
+            groupBoxMouse.Location = new System.Drawing.Point(3, 112);
+            groupBoxMouse.Name = "groupBoxMouse";
+            groupBoxMouse.Size = new System.Drawing.Size(263, 124);
+            groupBoxMouse.TabIndex = 5;
+            groupBoxMouse.TabStop = false;
+            groupBoxMouse.Text = "Mouse";
             // 
             // label2
             // 
-            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point);
-            this.label2.Location = new System.Drawing.Point(4, 103);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(142, 13);
-            this.label2.TabIndex = 7;
-            this.label2.Text = "Selected = Enabled/Allowed";
+            label2.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            label2.AutoSize = true;
+            label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point);
+            label2.Location = new System.Drawing.Point(4, 103);
+            label2.Name = "label2";
+            label2.Size = new System.Drawing.Size(142, 13);
+            label2.TabIndex = 7;
+            label2.Text = "Selected = Enabled/Allowed";
             // 
             // checkBoxMouseClick
             // 
-            this.checkBoxMouseClick.AutoSize = true;
-            this.checkBoxMouseClick.Checked = true;
-            this.checkBoxMouseClick.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxMouseClick.Location = new System.Drawing.Point(4, 41);
-            this.checkBoxMouseClick.Name = "checkBoxMouseClick";
-            this.checkBoxMouseClick.Size = new System.Drawing.Size(89, 19);
-            this.checkBoxMouseClick.TabIndex = 1;
-            this.checkBoxMouseClick.Text = "Mouse click";
-            this.checkBoxMouseClick.UseVisualStyleBackColor = true;
-            this.checkBoxMouseClick.CheckedChanged += new System.EventHandler(this.checkBoxMouseClick_CheckedChanged);
+            checkBoxMouseClick.AutoSize = true;
+            checkBoxMouseClick.Checked = true;
+            checkBoxMouseClick.CheckState = System.Windows.Forms.CheckState.Checked;
+            checkBoxMouseClick.Location = new System.Drawing.Point(4, 41);
+            checkBoxMouseClick.Name = "checkBoxMouseClick";
+            checkBoxMouseClick.Size = new System.Drawing.Size(89, 19);
+            checkBoxMouseClick.TabIndex = 1;
+            checkBoxMouseClick.Text = "Mouse click";
+            checkBoxMouseClick.UseVisualStyleBackColor = true;
+            checkBoxMouseClick.CheckedChanged += checkBoxMouseClick_CheckedChanged;
             // 
             // checkBox4
             // 
-            this.checkBox4.AutoSize = true;
-            this.checkBox4.Location = new System.Drawing.Point(4, 20);
-            this.checkBox4.Name = "checkBox4";
-            this.checkBox4.Size = new System.Drawing.Size(148, 19);
-            this.checkBox4.TabIndex = 0;
-            this.checkBox4.Text = "Stream mouse position";
-            this.checkBox4.UseVisualStyleBackColor = true;
+            checkBox4.AutoSize = true;
+            checkBox4.Location = new System.Drawing.Point(4, 20);
+            checkBox4.Name = "checkBox4";
+            checkBox4.Size = new System.Drawing.Size(148, 19);
+            checkBox4.TabIndex = 0;
+            checkBox4.Text = "Stream mouse position";
+            checkBox4.UseVisualStyleBackColor = true;
             // 
             // groupBoxMouseButtons
             // 
-            this.groupBoxMouseButtons.Controls.Add(this.checkBox7);
-            this.groupBoxMouseButtons.Controls.Add(this.checkBox6);
-            this.groupBoxMouseButtons.Location = new System.Drawing.Point(17, 57);
-            this.groupBoxMouseButtons.Margin = new System.Windows.Forms.Padding(0);
-            this.groupBoxMouseButtons.Name = "groupBoxMouseButtons";
-            this.groupBoxMouseButtons.Padding = new System.Windows.Forms.Padding(1, 0, 1, 0);
-            this.groupBoxMouseButtons.Size = new System.Drawing.Size(118, 39);
-            this.groupBoxMouseButtons.TabIndex = 2;
-            this.groupBoxMouseButtons.TabStop = false;
+            groupBoxMouseButtons.Controls.Add(checkBox7);
+            groupBoxMouseButtons.Controls.Add(checkBox6);
+            groupBoxMouseButtons.Location = new System.Drawing.Point(17, 57);
+            groupBoxMouseButtons.Margin = new System.Windows.Forms.Padding(0);
+            groupBoxMouseButtons.Name = "groupBoxMouseButtons";
+            groupBoxMouseButtons.Padding = new System.Windows.Forms.Padding(1, 0, 1, 0);
+            groupBoxMouseButtons.Size = new System.Drawing.Size(118, 39);
+            groupBoxMouseButtons.TabIndex = 2;
+            groupBoxMouseButtons.TabStop = false;
             // 
             // checkBox7
             // 
-            this.checkBox7.AutoSize = true;
-            this.checkBox7.Dock = System.Windows.Forms.DockStyle.Right;
-            this.checkBox7.Location = new System.Drawing.Point(59, 16);
-            this.checkBox7.Margin = new System.Windows.Forms.Padding(3, 3, 3, 1);
-            this.checkBox7.Name = "checkBox7";
-            this.checkBox7.Padding = new System.Windows.Forms.Padding(0, 0, 4, 5);
-            this.checkBox7.Size = new System.Drawing.Size(58, 23);
-            this.checkBox7.TabIndex = 4;
-            this.checkBox7.Text = "Right";
-            this.checkBox7.UseVisualStyleBackColor = true;
+            checkBox7.AutoSize = true;
+            checkBox7.Dock = System.Windows.Forms.DockStyle.Right;
+            checkBox7.Location = new System.Drawing.Point(59, 16);
+            checkBox7.Margin = new System.Windows.Forms.Padding(3, 3, 3, 1);
+            checkBox7.Name = "checkBox7";
+            checkBox7.Padding = new System.Windows.Forms.Padding(0, 0, 4, 5);
+            checkBox7.Size = new System.Drawing.Size(58, 23);
+            checkBox7.TabIndex = 4;
+            checkBox7.Text = "Right";
+            checkBox7.UseVisualStyleBackColor = true;
             // 
             // checkBox6
             // 
-            this.checkBox6.AutoSize = true;
-            this.checkBox6.Dock = System.Windows.Forms.DockStyle.Left;
-            this.checkBox6.Location = new System.Drawing.Point(1, 16);
-            this.checkBox6.Margin = new System.Windows.Forms.Padding(3, 3, 3, 1);
-            this.checkBox6.Name = "checkBox6";
-            this.checkBox6.Padding = new System.Windows.Forms.Padding(4, 0, 0, 5);
-            this.checkBox6.Size = new System.Drawing.Size(50, 23);
-            this.checkBox6.TabIndex = 3;
-            this.checkBox6.Text = "Left";
-            this.checkBox6.UseVisualStyleBackColor = true;
+            checkBox6.AutoSize = true;
+            checkBox6.Dock = System.Windows.Forms.DockStyle.Left;
+            checkBox6.Location = new System.Drawing.Point(1, 16);
+            checkBox6.Margin = new System.Windows.Forms.Padding(3, 3, 3, 1);
+            checkBox6.Name = "checkBox6";
+            checkBox6.Padding = new System.Windows.Forms.Padding(4, 0, 0, 5);
+            checkBox6.Size = new System.Drawing.Size(50, 23);
+            checkBox6.TabIndex = 3;
+            checkBox6.Text = "Left";
+            checkBox6.UseVisualStyleBackColor = true;
             // 
             // groupBoxKeys
             // 
-            this.groupBoxKeys.Controls.Add(this.flowLayoutPanel1);
-            this.groupBoxKeys.Dock = System.Windows.Forms.DockStyle.Top;
-            this.groupBoxKeys.Location = new System.Drawing.Point(3, 3);
-            this.groupBoxKeys.Name = "groupBoxKeys";
-            this.groupBoxKeys.Size = new System.Drawing.Size(494, 105);
-            this.groupBoxKeys.TabIndex = 4;
-            this.groupBoxKeys.TabStop = false;
-            this.groupBoxKeys.Text = "Keys";
+            groupBoxKeys.Controls.Add(flowLayoutPanel1);
+            groupBoxKeys.Dock = System.Windows.Forms.DockStyle.Top;
+            groupBoxKeys.Location = new System.Drawing.Point(3, 3);
+            groupBoxKeys.Name = "groupBoxKeys";
+            groupBoxKeys.Size = new System.Drawing.Size(494, 105);
+            groupBoxKeys.TabIndex = 4;
+            groupBoxKeys.TabStop = false;
+            groupBoxKeys.Text = "Keys";
             // 
             // flowLayoutPanel1
             // 
-            this.flowLayoutPanel1.AutoScroll = true;
-            this.flowLayoutPanel1.Controls.Add(this.groupBox3);
-            this.flowLayoutPanel1.Controls.Add(this.groupBox1);
-            this.flowLayoutPanel1.Controls.Add(this.groupBox2);
-            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 19);
-            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(488, 83);
-            this.flowLayoutPanel1.TabIndex = 3;
+            flowLayoutPanel1.AutoScroll = true;
+            flowLayoutPanel1.Controls.Add(groupBox3);
+            flowLayoutPanel1.Controls.Add(groupBox1);
+            flowLayoutPanel1.Controls.Add(groupBox2);
+            flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            flowLayoutPanel1.Location = new System.Drawing.Point(3, 19);
+            flowLayoutPanel1.Name = "flowLayoutPanel1";
+            flowLayoutPanel1.Size = new System.Drawing.Size(488, 83);
+            flowLayoutPanel1.TabIndex = 3;
             // 
             // groupBox3
             // 
-            this.groupBox3.Controls.Add(this.checkedListBox3);
-            this.groupBox3.Location = new System.Drawing.Point(3, 1);
-            this.groupBox3.Margin = new System.Windows.Forms.Padding(3, 1, 3, 3);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(183, 92);
-            this.groupBox3.TabIndex = 4;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Function-keys";
+            groupBox3.Controls.Add(checkedListBox3);
+            groupBox3.Location = new System.Drawing.Point(3, 1);
+            groupBox3.Margin = new System.Windows.Forms.Padding(3, 1, 3, 3);
+            groupBox3.Name = "groupBox3";
+            groupBox3.Size = new System.Drawing.Size(183, 92);
+            groupBox3.TabIndex = 4;
+            groupBox3.TabStop = false;
+            groupBox3.Text = "Function-keys";
             // 
             // checkedListBox3
             // 
-            this.checkedListBox3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.checkedListBox3.FormattingEnabled = true;
-            this.checkedListBox3.Items.AddRange(new object[] {
-            "All",
-            "F1",
-            "F2",
-            "F3",
-            "F4",
-            "F5",
-            "F6",
-            "F7",
-            "F8",
-            "F9",
-            "F10",
-            "F11",
-            "F12"});
-            this.checkedListBox3.Location = new System.Drawing.Point(3, 19);
-            this.checkedListBox3.Name = "checkedListBox3";
-            this.checkedListBox3.Size = new System.Drawing.Size(177, 70);
-            this.checkedListBox3.TabIndex = 0;
+            checkedListBox3.Dock = System.Windows.Forms.DockStyle.Fill;
+            checkedListBox3.FormattingEnabled = true;
+            checkedListBox3.Items.AddRange(new object[] { "All", "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12" });
+            checkedListBox3.Location = new System.Drawing.Point(3, 19);
+            checkedListBox3.Name = "checkedListBox3";
+            checkedListBox3.Size = new System.Drawing.Size(177, 70);
+            checkedListBox3.TabIndex = 0;
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.checkedListBox1);
-            this.groupBox1.Location = new System.Drawing.Point(192, 1);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(3, 1, 3, 3);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(183, 75);
-            this.groupBox1.TabIndex = 2;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Modifiers";
+            groupBox1.Controls.Add(checkedListBox1);
+            groupBox1.Location = new System.Drawing.Point(192, 1);
+            groupBox1.Margin = new System.Windows.Forms.Padding(3, 1, 3, 3);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Size = new System.Drawing.Size(183, 75);
+            groupBox1.TabIndex = 2;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "Modifiers";
             // 
             // checkedListBox1
             // 
-            this.checkedListBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.checkedListBox1.FormattingEnabled = true;
-            this.checkedListBox1.Items.AddRange(new object[] {
-            "SHIFT",
-            "CTRL",
-            "Windows-Key"});
-            this.checkedListBox1.Location = new System.Drawing.Point(3, 19);
-            this.checkedListBox1.Name = "checkedListBox1";
-            this.checkedListBox1.Size = new System.Drawing.Size(177, 53);
-            this.checkedListBox1.TabIndex = 0;
+            checkedListBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            checkedListBox1.FormattingEnabled = true;
+            checkedListBox1.Items.AddRange(new object[] { "SHIFT", "CTRL", "Windows-Key" });
+            checkedListBox1.Location = new System.Drawing.Point(3, 19);
+            checkedListBox1.Name = "checkedListBox1";
+            checkedListBox1.Size = new System.Drawing.Size(177, 53);
+            checkedListBox1.TabIndex = 0;
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.checkedListBox2);
-            this.groupBox2.Location = new System.Drawing.Point(3, 97);
-            this.groupBox2.Margin = new System.Windows.Forms.Padding(3, 1, 3, 3);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(183, 88);
-            this.groupBox2.TabIndex = 3;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Special";
+            groupBox2.Controls.Add(checkedListBox2);
+            groupBox2.Location = new System.Drawing.Point(3, 97);
+            groupBox2.Margin = new System.Windows.Forms.Padding(3, 1, 3, 3);
+            groupBox2.Name = "groupBox2";
+            groupBox2.Size = new System.Drawing.Size(183, 88);
+            groupBox2.TabIndex = 3;
+            groupBox2.TabStop = false;
+            groupBox2.Text = "Special";
             // 
             // checkedListBox2
             // 
-            this.checkedListBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.checkedListBox2.FormattingEnabled = true;
-            this.checkedListBox2.Items.AddRange(new object[] {
-            "Caps Lock",
-            "Num Lock",
-            "Tabs",
-            "Escape"});
-            this.checkedListBox2.Location = new System.Drawing.Point(3, 19);
-            this.checkedListBox2.Name = "checkedListBox2";
-            this.checkedListBox2.Size = new System.Drawing.Size(177, 66);
-            this.checkedListBox2.TabIndex = 0;
+            checkedListBox2.Dock = System.Windows.Forms.DockStyle.Fill;
+            checkedListBox2.FormattingEnabled = true;
+            checkedListBox2.Items.AddRange(new object[] { "Caps Lock", "Num Lock", "Tabs", "Escape" });
+            checkedListBox2.Location = new System.Drawing.Point(3, 19);
+            checkedListBox2.Name = "checkedListBox2";
+            checkedListBox2.Size = new System.Drawing.Size(177, 66);
+            checkedListBox2.TabIndex = 0;
             // 
             // label1
             // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point);
-            this.label1.Location = new System.Drawing.Point(5, 287);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(195, 13);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Selected = Restricted, except otherwise";
+            label1.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            label1.AutoSize = true;
+            label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point);
+            label1.Location = new System.Drawing.Point(5, 287);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(195, 13);
+            label1.TabIndex = 1;
+            label1.Text = "Selected = Restricted, except otherwise";
             // 
             // tabPage1
             // 
-            this.tabPage1.Location = new System.Drawing.Point(4, 24);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(500, 305);
-            this.tabPage1.TabIndex = 3;
-            this.tabPage1.Text = "Presets";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            tabPage1.Location = new System.Drawing.Point(4, 24);
+            tabPage1.Name = "tabPage1";
+            tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            tabPage1.Size = new System.Drawing.Size(500, 305);
+            tabPage1.TabIndex = 3;
+            tabPage1.Text = "Presets";
+            tabPage1.UseVisualStyleBackColor = true;
             // 
             // Options
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(522, 390);
-            this.Controls.Add(this.tabControlMain);
-            this.Controls.Add(this.buttonOk);
-            this.Controls.Add(this.buttonCancel);
-            this.Controls.Add(this.buttonApply);
-            this.Name = "Options";
-            this.Text = "WindowStreamer Settings - Server";
-            this.Load += new System.EventHandler(this.Options_Load);
-            this.tabControlMain.ResumeLayout(false);
-            this.tabPageGeneral.ResumeLayout(false);
-            this.tabPageGeneral.PerformLayout();
-            this.groupBox4.ResumeLayout(false);
-            this.groupBoxSharedWindow.ResumeLayout(false);
-            this.groupBoxSharedWindow.PerformLayout();
-            this.tabPageRestrictions.ResumeLayout(false);
-            this.tabPageRestrictions.PerformLayout();
-            this.groupBoxMouse.ResumeLayout(false);
-            this.groupBoxMouse.PerformLayout();
-            this.groupBoxMouseButtons.ResumeLayout(false);
-            this.groupBoxMouseButtons.PerformLayout();
-            this.groupBoxKeys.ResumeLayout(false);
-            this.flowLayoutPanel1.ResumeLayout(false);
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox2.ResumeLayout(false);
-            this.ResumeLayout(false);
-
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(522, 390);
+            Controls.Add(tabControlMain);
+            Controls.Add(buttonOk);
+            Controls.Add(buttonCancel);
+            Controls.Add(buttonApply);
+            Name = "Options";
+            Text = "WindowStreamer Settings - Server";
+            Load += Options_Load;
+            tabControlMain.ResumeLayout(false);
+            tabPageGeneral.ResumeLayout(false);
+            groupBox4.ResumeLayout(false);
+            groupBoxSharedWindow.ResumeLayout(false);
+            groupBoxSharedWindow.PerformLayout();
+            tabPageRestrictions.ResumeLayout(false);
+            tabPageRestrictions.PerformLayout();
+            groupBoxMouse.ResumeLayout(false);
+            groupBoxMouse.PerformLayout();
+            groupBoxMouseButtons.ResumeLayout(false);
+            groupBoxMouseButtons.PerformLayout();
+            groupBoxKeys.ResumeLayout(false);
+            flowLayoutPanel1.ResumeLayout(false);
+            groupBox3.ResumeLayout(false);
+            groupBox1.ResumeLayout(false);
+            groupBox2.ResumeLayout(false);
+            ResumeLayout(false);
         }
 
         #endregion
@@ -509,6 +473,5 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.CheckBox checkBoxDebugWindow;
     }
 }
