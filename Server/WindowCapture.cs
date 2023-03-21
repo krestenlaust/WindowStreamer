@@ -278,12 +278,6 @@ namespace Server
             server?.UpdateResolution(videoResolution);
         }
 
-        void LogWindowClosed(object sender, FormClosedEventArgs e)
-        {
-            LogWindow lw = sender as LogWindow;
-            Console.SetOut(lw.sw);
-        }
-
         static Bitmap GetScreenPicture(int x, int y, Size size)
         {
             // TODO: Debug funktionen for at oversætte skærm koordinaterne til pixels.

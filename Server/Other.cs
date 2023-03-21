@@ -9,8 +9,6 @@
             public bool VideoStreaming { get; set; } = true;
         }
 
-        public static LogWindow LogWindow = null;
-
         public static Preferences Prefs;
     }
 }

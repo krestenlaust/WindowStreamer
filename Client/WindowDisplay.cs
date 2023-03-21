@@ -184,8 +184,6 @@ namespace Client
 
         void toolStripButtonOptions_Click(object sender, EventArgs e)
         {
-            Log.Debug($"Options opened");
-            new Options().ShowDialog();
         }
 
         private void WindowDisplay_FormClosed(object sender, FormClosedEventArgs e)
