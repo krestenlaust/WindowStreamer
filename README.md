@@ -52,5 +52,8 @@ Example usage: `Server.exe --listen 0.0.0.0:10063`, `Server.exe --listen 0.0.0.0
 ## Contributing
 ANY contribution is welcome! No need to worry about correctly formatting an issue or similar.
 
+### Extensions
+If you plan on contributing to anything related to connecting the applications, or something related to after a connection has been initiated, then this extension is very useful:  [Switchstartup Projects](https://heptapod.host/thirteen/switchstartupproject/). The project contains a configuration for it, that lets you debug both the server and the client at the same time, and start them with parameters, as opposed to having to connect them manually.
+
 ## License
 WindowStreamer is released under the GPL-3.0 License. See the LICENSE file for details.

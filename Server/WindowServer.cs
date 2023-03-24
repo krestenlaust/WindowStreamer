@@ -147,6 +147,8 @@ public class WindowServer : IDisposable
             }
             while (!await HandshakeAsync(reply));
 
+            Log.Information("Stream established");
+
             metastreamToken = new CancellationTokenSource();
             metastreamTask = Task.Run(MetastreamLoop);
         }
@@ -293,7 +295,7 @@ public class WindowServer : IDisposable
                 return;
             }
 
-            Log.Information($"Obtain image: {obtainImageSw.ElapsedMilliseconds} ms, convert image: {convertPictureSw.ElapsedMilliseconds} ms");
+            Log.Debug($"Obtain image: {obtainImageSw.ElapsedMilliseconds} ms, convert image: {convertPictureSw.ElapsedMilliseconds} ms");
 
             try
             {
