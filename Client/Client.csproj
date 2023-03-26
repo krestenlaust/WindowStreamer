@@ -37,7 +37,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Protocol\Protocol.csproj" />
     <ProjectReference Include="..\WindowStreamer.Common\WindowStreamer.Common.csproj" />
+    <ProjectReference Include="..\WindowStreamer.Protocol\WindowStreamer.Protocol.csproj" />
   </ItemGroup>
 </Project>

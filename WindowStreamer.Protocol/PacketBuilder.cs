@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace Protocol;
+namespace WindowStreamer.Protocol;
 
 public class PacketBuilder
 {

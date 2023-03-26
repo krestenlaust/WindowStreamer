@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace Protocol;
+namespace WindowStreamer.Protocol;
 
 public static class Parse
 {

@@ -1,4 +1,4 @@
-﻿namespace Protocol;
+﻿namespace WindowStreamer.Protocol;
 
 public enum ServerPacketHeader
 {
