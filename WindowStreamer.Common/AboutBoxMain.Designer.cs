@@ -105,7 +105,6 @@ partial class AboutBoxMain
         Name = "AboutBoxMain";
         ShowIcon = false;
         ShowInTaskbar = false;
-        Load += AboutBoxMain_Load;
         tableLayoutPanel.ResumeLayout(false);
         tableLayoutPanel.PerformLayout();
         ((System.ComponentModel.ISupportInitialize)logoPictureBox).EndInit();

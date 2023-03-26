@@ -10,6 +10,7 @@ public partial class ConnectionPrompt : Form
     /// <summary>
     /// Initializes a new instance of the <see cref="ConnectionPrompt"/> class.
     /// </summary>
+    /// <param name="connectingIP">The IP-address associated with the client connecting.</param>
     public ConnectionPrompt(string connectingIP)
     {
         InitializeComponent();

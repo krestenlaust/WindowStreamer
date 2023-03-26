@@ -82,8 +82,6 @@ public partial class WindowDisplay : Form
 
                     await StartConnectionToServer(address, targetPort).ConfigureAwait(false);
                     break;
-                default:
-                    break;
             }
         }
     }
@@ -124,8 +122,6 @@ public partial class WindowDisplay : Form
 
     void WindowClient_VideoframeRecieved(Bitmap bitmap)
     {
-        // Log.Information($"{bitmap.Width}x{bitmap.Height}");
-
         if (!displayArea.IsHandleCreated)
         {
             return;
@@ -187,10 +183,6 @@ public partial class WindowDisplay : Form
     void ResizeToFit() => ResizeDisplayArea(videoResolution);
 
     void ResizeDisplayArea(Size size) => Size = Size.Add(formToPanelSize, size);
-
-    void toolStripButtonOptions_Click(object sender, EventArgs e)
-    {
-    }
 
     private void WindowDisplay_FormClosed(object sender, FormClosedEventArgs e)
     {

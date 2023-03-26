@@ -35,27 +35,21 @@ public partial class ConnectWindow : Form
             return;
         }
 
-        if (int.TryParse(textBoxTargetPort.Text, out port))
-        {
-            TargetIPAddress = ip;
-            TargetPort = port;
-            DialogResult = DialogResult.OK;
-            Close();
-        }
-        else
+        if (!int.TryParse(textBoxTargetPort.Text, out port))
         {
             MessageBox.Show("Port not valid", "Error");
             return;
         }
+
+        TargetIPAddress = ip;
+        TargetPort = port;
+        DialogResult = DialogResult.OK;
+        Close();
     }
 
     void buttonCancel_Click(object sender, EventArgs e)
     {
         DialogResult = DialogResult.Abort;
         Close();
-    }
-
-    private void ConnectWindow_KeyUp(object sender, KeyEventArgs e)
-    {
     }
 }

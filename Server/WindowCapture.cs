@@ -25,11 +25,6 @@ public partial class WindowCapture : Form
     /// Not sure what this field keeps track of.
     /// </summary>
     Size lastResolution;
-    Size fullscreenSize = new Size
-    {
-        Width = 400,
-        Height = 100,
-    };
 
     WindowServer server;
 
@@ -56,9 +51,9 @@ public partial class WindowCapture : Form
         {
             if (m.WParam == new IntPtr(0xF030)) // Maximize event - SC_MAXIMIZE from Winuser.h
             {
+                // TODO: Not sure what to do here.
                 fullscreen = true;
                 lastResolution = Size;
-                Size = fullscreenSize;
                 UpdateResolutionVariables();
             }
             else if (m.WParam == new IntPtr(0xF120))
@@ -265,13 +260,11 @@ public partial class WindowCapture : Form
         {
             videoResolution.Height = Screen.FromControl(this).Bounds.Height;
             videoResolution.Width = Screen.FromControl(this).Bounds.Width;
-            //captureAreaTopLeft = Screen.FromControl(this).Bounds.Location;
         }
         else
         {
             videoResolution.Height = captureArea.Height;
             videoResolution.Width = captureArea.Width;
-            //captureAreaTopLeft = captureArea.Bounds.Location;
         }
 
         toolStripStatusLabelResolution.Text = $"{videoResolution.Width}x{videoResolution.Height}";

@@ -37,9 +37,6 @@ public partial class AboutBoxMain : Form
             return ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
         }
     }
-    #endregion
 
-    private void AboutBoxMain_Load(object sender, EventArgs e)
-    {
-    }
+    #endregion
 }

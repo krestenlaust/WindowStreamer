@@ -88,7 +88,6 @@ partial class WindowDisplay
         resources.ApplyResources(toolStripButtonOptions, "toolStripButtonOptions");
         toolStripButtonOptions.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
         toolStripButtonOptions.Name = "toolStripButtonOptions";
-        toolStripButtonOptions.Click += toolStripButtonOptions_Click;
         // 
         // toolStripDropDownButtonHelp
         // 
