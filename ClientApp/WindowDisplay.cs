@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Drawing;
 using System.Net;
-using System.Reflection.Emit;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CommonApp;
 using LabelSink;
 using Serilog;
-using WindowStreamer.Common;
+using WindowStreamer.Client;
 
 namespace ClientApp;
 

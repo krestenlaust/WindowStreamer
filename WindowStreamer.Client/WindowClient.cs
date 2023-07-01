@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Serilog;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Serilog;
 using WindowStreamer.Protocol;
 
-namespace ClientApp;
+namespace WindowStreamer.Client;
 
 public class InstanceAlreadyInUseException : Exception
 {

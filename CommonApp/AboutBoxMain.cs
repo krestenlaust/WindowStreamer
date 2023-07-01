@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace WindowStreamer.Common;
+namespace CommonApp;
 
 public partial class AboutBoxMain : Form
 {

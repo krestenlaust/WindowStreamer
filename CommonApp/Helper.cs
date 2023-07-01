@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace WindowStreamer.Common;
+namespace CommonApp;
 
 public static class Helper
 {

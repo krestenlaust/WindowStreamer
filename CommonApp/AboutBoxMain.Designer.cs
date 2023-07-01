@@ -1,4 +1,4 @@
-﻿namespace WindowStreamer.Common;
+﻿namespace CommonApp;
 
 partial class AboutBoxMain
 {

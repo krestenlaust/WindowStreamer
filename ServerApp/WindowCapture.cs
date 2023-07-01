@@ -6,9 +6,10 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CommonApp;
 using LabelSink;
 using Serilog;
-using WindowStreamer.Common;
+using WindowStreamer.Server;
 
 namespace ServerApp;
 
