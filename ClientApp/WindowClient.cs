@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using Serilog;
 using WindowStreamer.Protocol;
 
-namespace Client;
+namespace ClientApp;
 
 public class InstanceAlreadyInUseException : Exception
 {

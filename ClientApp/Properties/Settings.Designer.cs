@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Client.Properties; 
+namespace ClientApp.Properties; 
 
 
 [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

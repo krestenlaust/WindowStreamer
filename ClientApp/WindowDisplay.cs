@@ -8,7 +8,7 @@ using LabelSink;
 using Serilog;
 using WindowStreamer.Common;
 
-namespace Client;
+namespace ClientApp;
 
 public partial class WindowDisplay : Form
 {

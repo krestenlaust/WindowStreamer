@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Client.Properties; 
+namespace ClientApp.Properties; 
 using System;
 
 

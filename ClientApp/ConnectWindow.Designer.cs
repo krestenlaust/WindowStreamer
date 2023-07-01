@@ -1,4 +1,4 @@
-﻿namespace Client;
+﻿namespace ClientApp;
 
 partial class ConnectWindow
 {

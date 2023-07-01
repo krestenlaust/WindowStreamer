@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Server; 
+namespace ServerApp; 
 using System;
 
 

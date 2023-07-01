@@ -1,4 +1,4 @@
-﻿namespace Server;
+﻿namespace ServerApp;
 
 partial class ConnectionPrompt
 {

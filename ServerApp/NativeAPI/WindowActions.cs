@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Runtime.InteropServices;
 
-namespace Server.NativeAPI;
+namespace ServerApp.NativeAPI;
 
 internal static class WindowActions
 {

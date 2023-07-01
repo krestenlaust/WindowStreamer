@@ -10,7 +10,7 @@ using LabelSink;
 using Serilog;
 using WindowStreamer.Common;
 
-namespace Server;
+namespace ServerApp;
 
 public partial class WindowCapture : Form
 {

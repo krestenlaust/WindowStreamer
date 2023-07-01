@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace Server;
+namespace ServerApp;
 
 public partial class ConnectionPrompt : Form
 {

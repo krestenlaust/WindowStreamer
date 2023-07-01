@@ -2,7 +2,7 @@
 using System.Net;
 using System.Windows.Forms;
 
-namespace Client;
+namespace ClientApp;
 
 public partial class ConnectWindow : Form
 {
