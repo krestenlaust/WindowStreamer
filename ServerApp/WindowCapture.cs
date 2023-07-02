@@ -302,7 +302,7 @@ public partial class WindowCapture : Form
 
     private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        new WindowStreamer.Common.AboutBoxMain().ShowDialog();
+        new CommonApp.AboutBoxMain().ShowDialog();
     }
 
     private void helpToolStripMenuItem_Click(object sender, EventArgs e)
