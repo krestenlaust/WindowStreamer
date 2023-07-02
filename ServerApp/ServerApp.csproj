@@ -22,11 +22,11 @@
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
     <ApplicationIcon>Resources\ApplicationIcon.ico</ApplicationIcon>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == ': Server - Debug|AnyCPU' ">
-    <OutputPath>bin\: Server - Debug\</OutputPath>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == ': ServerApp - Debug|AnyCPU' ">
+    <OutputPath>bin\: ServerApp - Debug\</OutputPath>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == ': Client - Debug|AnyCPU' ">
-    <OutputPath>bin\: Client - Debug\</OutputPath>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == ': ClientApp - Debug|AnyCPU' ">
+    <OutputPath>bin\: ClientApp - Debug\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Gma.UserActivityMonitor">
