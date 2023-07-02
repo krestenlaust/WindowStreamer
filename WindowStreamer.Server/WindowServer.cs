@@ -340,7 +340,6 @@ public class WindowServer : IDisposable
 
                     if (!Parse.TryParseUDPReady(metapacket, out int framerateCap))
                     {
-
                         Log.Information("Invalid UDPReady packet");
                         break;
                     }

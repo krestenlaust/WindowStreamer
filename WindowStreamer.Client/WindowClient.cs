@@ -1,10 +1,10 @@
-﻿using Serilog;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Imaging;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
+using Serilog;
 using WindowStreamer.Protocol;
 
 namespace WindowStreamer.Client;
