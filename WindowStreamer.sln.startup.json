@@ -54,10 +54,10 @@
   "MultiProjectConfigurations": {
     "Client + Server (autoconnect)": {
       "Projects": {
-        "Server": {
+        "ServerApp": {
           "CommandLineArguments": "--listen 127.0.0.1"
         },
-        "Client": {
+        "ClientApp": {
           "CommandLineArguments": "--connect 127.0.0.1",
           "WorkingDirectory": "",
           "StartProject": true
@@ -66,10 +66,10 @@
     },
     "Client + Server": {
       "Projects": {
-        "Server": {
+        "ServerApp": {
           "CommandLineArguments": ""
         },
-        "Client": {
+        "ClientApp": {
           "CommandLineArguments": "",
           "WorkingDirectory": "",
           "StartProject": true
