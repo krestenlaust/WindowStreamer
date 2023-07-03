@@ -274,6 +274,8 @@ public partial class WindowCapture : Form
 
     static Bitmap GetScreenPicture(int x, int y, Size size)
     {
+        // TODO: Handle a size of 0
+
         // TODO: Debug funktionen for at oversætte skærm koordinaterne til pixels.
         /*Rectangle screen = Rectangle.Empty;
         this.Invoke((MethodInvoker)delegate
