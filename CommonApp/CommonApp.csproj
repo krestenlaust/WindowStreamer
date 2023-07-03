@@ -6,7 +6,7 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <PackageProjectUrl></PackageProjectUrl>
-    <RepositoryUrl>https://github.com/kres0345/WindowStreamer</RepositoryUrl>
+    <RepositoryUrl>https://github.com/krestenlaust/WindowStreamer</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
