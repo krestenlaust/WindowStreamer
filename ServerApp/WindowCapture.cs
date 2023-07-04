@@ -45,7 +45,7 @@ public partial class WindowCapture : Form
             .CreateLogger();
 
         connectionHandler = new ConnectionHandler();
-        screenshotGrabber = new ScreenshotGrabber();
+        screenshotGrabber = new ScreenshotGrabber(new GetCaptureAreaFromControls(this, captureArea, toolStripHeader));
     }
 
     protected override void WndProc(ref Message m)

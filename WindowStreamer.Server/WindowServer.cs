@@ -170,8 +170,7 @@ public partial class WindowServer : IDisposable
             }
         }*/
 
-        BitmapData bmpData = bmp.LockBits(
-            new Rectangle(0, 0, bmp.Width, bmp.Height),
+        BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height),
             ImageLockMode.ReadOnly,
             PixelFormat.Format24bppRgb);
 
@@ -255,7 +254,7 @@ public partial class WindowServer : IDisposable
 
             var obtainImageSw = new Stopwatch();
             obtainImageSw.Start();
-            Bitmap bmp = screenshotQuery.GetScreenshot();
+            Bitmap bmp = screenshotQuery.GetImage();
             obtainImageSw.Stop();
 
             var convertPictureSw = new Stopwatch();

@@ -7,11 +7,9 @@ namespace WindowStreamer.Server;
 /// </summary>
 public interface IScreenshotQuery
 {
-    public Size VideoResolution { get; }
-
     /// <summary>
     /// Grabs the next image to transmit.
     /// </summary>
     /// <returns>The screenshot to transmit.</returns>
-    public Bitmap GetScreenshot();
+    public Bitmap GetImage();
 }
