@@ -1,22 +1,6 @@
-﻿using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Net;
-using System.Net.Sockets;
-using System.Runtime.InteropServices;
-using System.Text;
-using Serilog;
-using WindowStreamer.Protocol;
+﻿using WindowStreamer.Server.Exceptions;
 
 namespace WindowStreamer.Server;
-
-public class InstanceAlreadyInUseException : Exception
-{
-    public InstanceAlreadyInUseException(string msg)
-        : base(msg)
-    {
-    }
-}
 
 public partial class WindowServer : IDisposable
 {
