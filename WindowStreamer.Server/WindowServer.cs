@@ -1,31 +1,15 @@
-﻿using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Net;
-using System.Net.Sockets;
-using System.Runtime.InteropServices;
-using System.Text;
-using Serilog;
-using WindowStreamer.Protocol;
+﻿using WindowStreamer.Server.Exceptions;
 
 namespace WindowStreamer.Server;
 
-public class InstanceAlreadyInUseException : Exception
-{
-    public InstanceAlreadyInUseException(string msg)
-        : base(msg)
-    {
-    }
-}
-
-public class WindowServer : IDisposable
+public partial class WindowServer : IDisposable
 {
     const int PacketCount = 128;
     static readonly int DefaultVideoStreamPort = 10064;
 
-    readonly Func<Bitmap> obtainImage;
+    readonly IScreenshotQuery screenshotQuery;
     readonly IPEndPoint boundEndpoint;
-    readonly Func<IPAddress, ConnectionReply> handleConnectionRequest;
+    readonly IConnectionHandler connectionHandler;
     int frameIntervalMS = 34;
 
     IPEndPoint clientEndpoint;
@@ -48,13 +32,13 @@ public class WindowServer : IDisposable
     /// <param name="boundIP">IP address to listen on, usually <c>IPAddress.Any</c>.</param>
     /// <param name="port">Port to bind.</param>
     /// <param name="startingResolution">The resolution of the window.</param>
-    /// <param name="obtainImage">Handler for retrieving screenshots.</param>
-    /// <param name="handleConnectionRequest">Handler for replying to connection attempts.</param>
-    public WindowServer(IPAddress boundIP, int port, Size startingResolution, Func<Bitmap> obtainImage, Func<IPAddress, ConnectionReply> handleConnectionRequest)
+    /// <param name="screenshotQuery">Handler for retrieving screenshots.</param>
+    /// <param name="connectionHandler">Handler for replying to connection attempts.</param>
+    public WindowServer(IPAddress boundIP, int port, Size startingResolution, IScreenshotQuery screenshotQuery, IConnectionHandler connectionHandler)
     {
         boundEndpoint = new IPEndPoint(boundIP, port);
-        this.obtainImage = obtainImage;
-        this.handleConnectionRequest = handleConnectionRequest;
+        this.screenshotQuery = screenshotQuery;
+        this.connectionHandler = connectionHandler;
         resolution = startingResolution;
     }
 
@@ -63,24 +47,6 @@ public class WindowServer : IDisposable
     /// Is only called for connections that completed a handshake.
     /// </summary>
     public event Action ConnectionClosed;
-
-    public enum ConnectionReply
-    {
-        /// <summary>
-        /// Accepts connection, and initiates handshake.
-        /// </summary>
-        Accept,
-
-        /// <summary>
-        /// Closes connection without further notice.
-        /// </summary>
-        Close,
-
-        /// <summary>
-        /// Responds to connection, then closes it.
-        /// </summary>
-        Deny,
-    }
 
     /// <summary>
     /// Gets a value indicating whether a connection has been initiated.
@@ -139,7 +105,7 @@ public class WindowServer : IDisposable
                 metaClient = await clientListener.AcceptTcpClientAsync(listeningToken.Token);
                 clientEndpoint = metaClient.Client.RemoteEndPoint as IPEndPoint;
                 Log.Information($"Connection recieved: {clientEndpoint}, awaiting action");
-                reply = handleConnectionRequest(clientEndpoint.Address);
+                reply = connectionHandler.HandleIncomingConnection(clientEndpoint.Address);
             }
             while (!await HandshakeAsync(reply));
 
@@ -188,8 +154,7 @@ public class WindowServer : IDisposable
             }
         }*/
 
-        BitmapData bmpData = bmp.LockBits(
-            new Rectangle(0, 0, bmp.Width, bmp.Height),
+        BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height),
             ImageLockMode.ReadOnly,
             PixelFormat.Format24bppRgb);
 
@@ -273,7 +238,7 @@ public class WindowServer : IDisposable
 
             var obtainImageSw = new Stopwatch();
             obtainImageSw.Start();
-            Bitmap bmp = obtainImage();
+            Bitmap bmp = screenshotQuery.GetImage();
             obtainImageSw.Stop();
 
             var convertPictureSw = new Stopwatch();

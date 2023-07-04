@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
@@ -16,9 +14,8 @@ namespace ServerApp;
 public partial class WindowCapture : Form
 {
     static readonly int DefaultMetastreamPort = 10063;
-    static readonly Color transparencyKeyColor = Color.Orange;
+    static readonly Color TransparencyKeyColor = Color.Orange;
 
-    readonly HashSet<IPAddress> blockedIPs = new ();
     bool fullscreen;
     Size videoResolution;
 
@@ -28,6 +25,8 @@ public partial class WindowCapture : Form
     Size lastResolution;
 
     WindowServer server;
+    ConnectionHandler connectionHandler;
+    ScreenshotGrabber screenshotGrabber;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="WindowCapture"/> class.
@@ -44,6 +43,9 @@ public partial class WindowCapture : Form
                 .WriteTo.ToolStripLabel(toolStripStatusLabelLatest))
             .WriteTo.File("log-server.txt", rollingInterval: RollingInterval.Day)
             .CreateLogger();
+
+        connectionHandler = new ConnectionHandler();
+        screenshotGrabber = new ScreenshotGrabber(new GetCaptureAreaFromControls(this, captureArea, toolStripHeader));
     }
 
     protected override void WndProc(ref Message m)
@@ -70,8 +72,8 @@ public partial class WindowCapture : Form
 
     async void WindowCapture_LoadAsync(object sender, EventArgs e)
     {
-        TransparencyKey = transparencyKeyColor;
-        captureArea.BackColor = transparencyKeyColor;
+        TransparencyKey = TransparencyKeyColor;
+        captureArea.BackColor = TransparencyKeyColor;
         UpdateResolutionVariables();
         toolStripTextBoxTargetPort.Text = DefaultMetastreamPort.ToString();
 
@@ -122,59 +124,6 @@ public partial class WindowCapture : Form
                     break;
             }
         }
-    }
-
-    Bitmap ObtainImage()
-    {
-        var size = new Size(videoResolution.Width, videoResolution.Height);
-        return GetScreenPicture(captureArea.Location.X + Location.X, captureArea.Location.Y + Location.Y + toolStripHeader.Height, size);
-    }
-
-    WindowServer.ConnectionReply HandleConnectionReply(IPAddress ipAddress)
-    {
-        if (blockedIPs.Contains(ipAddress))
-        {
-            Log.Information($"Denied blocked IP Address: {ipAddress}");
-            return WindowServer.ConnectionReply.Close;
-        }
-
-        var prompt = new ConnectionPrompt(ipAddress.ToString())
-        {
-            StartPosition = FormStartPosition.CenterParent,
-            TopMost = true,
-        };
-
-        switch (prompt.ShowDialog())
-        {
-            case DialogResult.Abort: // Block
-                Log.Information($"Blocked the following IP Address: {ipAddress}");
-
-                BlockIPAddress(ipAddress);
-                return WindowServer.ConnectionReply.Close;
-
-            case DialogResult.Ignore: // Ignore
-                Log.Information("Ignoring connection");
-                return WindowServer.ConnectionReply.Close;
-
-            case DialogResult.Yes: // Accept
-                Log.Information("Accepting connection");
-                return WindowServer.ConnectionReply.Accept;
-
-            case DialogResult.No: // Deny
-                Log.Information($"Told {ipAddress} to try again another day :)");
-                return WindowServer.ConnectionReply.Deny;
-            default:
-                break;
-        }
-
-        return 0;
-    }
-
-    void BlockIPAddress(IPAddress ip)
-    {
-        blockedIPs.Add(ip);
-
-        Console.WriteLine($"Blocking IP: {ip}");
     }
 
     void WindowCapture_Resize(object sender, EventArgs e) => UpdateResolutionVariables();
@@ -235,7 +184,7 @@ public partial class WindowCapture : Form
 
         ToggleActionStartStopButtons(true);
 
-        server = new WindowServer(bindAddress, port, videoResolution, ObtainImage, HandleConnectionReply);
+        server = new WindowServer(bindAddress, port, videoResolution, screenshotGrabber, connectionHandler);
         server.ConnectionClosed += WindowServer_ConnectionClosed;
 
         try
@@ -270,30 +219,6 @@ public partial class WindowCapture : Form
 
         toolStripStatusLabelResolution.Text = $"{videoResolution.Width}x{videoResolution.Height}";
         server?.UpdateResolution(videoResolution);
-    }
-
-    static Bitmap GetScreenPicture(int x, int y, Size size)
-    {
-        // TODO: Handle a size of 0
-
-        // TODO: Debug funktionen for at oversætte skærm koordinaterne til pixels.
-        /*Rectangle screen = Rectangle.Empty;
-        this.Invoke((MethodInvoker)delegate
-        {
-            screen = Screen.FromControl(this).WorkingArea;
-        });
-
-        position.X = position.X / screen.Width; // screen.Width: 1920
-        position.Y = position.Y / screen.Height; // screen.Height: 1080
-        */
-
-        var rect = new Rectangle(x, y, size.Width, size.Height);
-        var bmp = new Bitmap(rect.Width, rect.Height, PixelFormat.Format24bppRgb);
-
-        Graphics g = Graphics.FromImage(bmp);
-        g.CopyFromScreen(rect.Left, rect.Top, 0, 0, bmp.Size, CopyPixelOperation.SourceCopy);
-
-        return bmp;
     }
 
     private void WindowCapture_FormClosed(object sender, FormClosedEventArgs e)
