@@ -126,13 +126,6 @@ public partial class WindowCapture : Form
         }
     }
 
-    void BlockIPAddress(IPAddress ip)
-    {
-        connectionHandler.BlockedIPs.Add(ip);
-
-        Console.WriteLine($"Blocking IP: {ip}");
-    }
-
     void WindowCapture_Resize(object sender, EventArgs e) => UpdateResolutionVariables();
 
     void toolStripButtonOptions_Click(object sender, EventArgs e)

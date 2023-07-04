@@ -49,4 +49,11 @@ internal class ConnectionHandler : IConnectionHandler
 
         return 0;
     }
+
+    void BlockIPAddress(IPAddress ip)
+    {
+        BlockedIPs.Add(ip);
+
+        Log.Information($"Blocking IP: {ip}");
+    }
 }
