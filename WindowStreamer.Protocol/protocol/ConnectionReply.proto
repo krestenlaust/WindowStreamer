@@ -1,0 +1,4 @@
+message ConnectionReply {
+	required bool accepted = 1;
+	optional int32 videoPort = 2;
+}

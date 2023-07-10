@@ -1,0 +1,3 @@
+message UDPReady {
+	required int32 frameworkCap = 1;
+}
