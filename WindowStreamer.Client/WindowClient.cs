@@ -3,7 +3,7 @@ using System.Drawing.Imaging;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
-using System.Text;
+using Google.Protobuf;
 using Serilog;
 using WindowStreamer.Protocol;
 
@@ -215,27 +215,34 @@ public class WindowClient : IDisposable
         }
     }
 
+    void SendUDPReady(NetworkStream stream)
+    {
+        var msg = new UDPReady
+        {
+            FrameworkCap = framerateCap,
+        };
+
+        msg.WriteTo(stream);
+    }
+
     /// <summary>
     /// Listens for events from the server.
     /// Returns void because it's a loop.
     /// </summary>
     async void MetastreamLoop()
     {
-        bool handshakeFinished = false;
+        var stream = metaClient.GetStream();
 
         while (metaClient.Connected)
         {
-            var stream = metaClient.GetStream();
-            var packet = new byte[Constants.MetaFrameLength];
-
-            int readBytes;
-
+            ServerMessage msg;
             try
             {
-                readBytes = await stream.ReadAsync(packet, 0, Constants.MetaFrameLength, metastreamToken.Token);
+                msg = ServerMessage.Parser.ParseFrom(stream);
             }
-            catch (IOException)
+            catch (IOException ex)
             {
+                Log.Information($"Error parsing / reading from stream: {ex}");
                 ClientDisconnected();
                 return;
             }
@@ -245,36 +252,18 @@ public class WindowClient : IDisposable
                 return;
             }
 
-            // As far as I know, when 0 bytes has been read and the reading function isn't blocking, the connection has stopped.
-            if (readBytes == 0)
+            switch (msg.MsgCase)
             {
-                ClientDisconnected();
-                return;
-            }
+                case ServerMessage.MsgOneofCase.None:
+                    Log.Debug("Received unknown message");
+                    break;
+                case ServerMessage.MsgOneofCase.ConnectionReply:
+                    Log.Debug("Recieved connection reply");
+                    var connReply = msg.ConnectionReply;
 
-            string[] metapacket = Encoding.UTF8.GetString(packet).TrimEnd('\0').Split(Constants.ParameterSeparator);
+                    videostreamPort = connReply.VideoPort;
 
-            if (!int.TryParse(metapacket[0], out int packetTypeValue))
-            {
-                Log.Debug($"Received invalid packet[0]: {metapacket[0]}");
-                continue;
-            }
-
-            switch ((ServerPacketHeader)packetTypeValue)
-            {
-                case ServerPacketHeader.ConnectionReply:
-                    if (Parse.TryParseConnectionReply(metapacket, out bool accepted, out Size resolution, out int videoPort))
-                    {
-                        videostreamPort = videoPort;
-                        ResolutionChanged?.Invoke(resolution);
-                    }
-                    else
-                    {
-                        Log.Debug("Failed to parse packet");
-                        continue;
-                    }
-
-                    if (!accepted)
+                    if (!connReply.Accepted)
                     {
                         // TODO: implement some connection ended logic.
                         Log.Information("Connection request denied :(");
@@ -282,37 +271,26 @@ public class WindowClient : IDisposable
                         return;
                     }
 
+                    // Connection accepted, initialize udp-client and image-loop
                     Log.Information("Connection request accepted, awaiting handshake finish...");
-
-                    // Initialize client and loop
-                    videoClient = new UdpClient(videoPort);
+                    videoClient = new UdpClient(connReply.VideoPort);
                     videoClient.Client.ReceiveBufferSize = 1_024_000;
                     videostreamToken = new CancellationTokenSource();
                     taskVideostream = Task.Run(ListenVideoDatagramAsync, videostreamToken.Token);
 
-                    byte[] udpReady = Send.UDPReady(framerateCap);
-                    stream.Write(udpReady, 0, udpReady.Length);
+                    // Finish handshake
+                    SendUDPReady(stream);
 
-                    handshakeFinished = true;
-                    Log.Information("Stream established");
-
+                    Log.Information("Handshake finished");
                     ConnectionAttemptFinished?.Invoke(true);
+
                     break;
-                case ServerPacketHeader.ResolutionUpdate when handshakeFinished:
+                case ServerMessage.MsgOneofCase.ResolutionChange:
                     Log.Debug("Recieved resolution update");
 
-                    if (Parse.TryParseResolutionChange(metapacket, out Size newResolution))
-                    {
-                        ResolutionChanged?.Invoke(newResolution);
-                    }
-                    else
-                    {
-                        Log.Debug("Failed to parse packet");
-                    }
-
+                    ResolutionChanged?.Invoke(new Size(msg.ResolutionChange.Width, msg.ResolutionChange.Height));
                     break;
                 default:
-                    Log.Debug($"Recieved this: {metapacket[0]}");
                     break;
             }
         }
