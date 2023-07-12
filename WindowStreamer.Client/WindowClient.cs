@@ -217,12 +217,10 @@ public class WindowClient : IDisposable
 
     void SendUDPReady(NetworkStream stream)
     {
-        var msg = new UDPReady
+        new UDPReady
         {
-            FrameworkCap = framerateCap,
-        };
-
-        msg.WriteTo(stream);
+            FramerateCap = framerateCap,
+        }.WriteTo(stream);
     }
 
     /// <summary>
