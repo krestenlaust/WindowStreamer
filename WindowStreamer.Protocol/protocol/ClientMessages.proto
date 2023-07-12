@@ -1,5 +1,9 @@
-﻿message UDPReady {
-	required int32 frameworkCap = 1;
+﻿syntax = "proto3";
+
+package WindowStreamer.Protocol;
+
+message UDPReady {
+	int32 frameworkCap = 1;
 }
 
 message ClientMessage {
