@@ -3,11 +3,11 @@
 package WindowStreamer.Protocol;
 
 message UDPReady {
-	int32 frameworkCap = 1;
+	int32 framerateCap = 1;
 }
 
 message ClientMessage {
-    oneof Msg {
+    oneof msg {
         UDPReady UDPReady = 1;
     }
 }

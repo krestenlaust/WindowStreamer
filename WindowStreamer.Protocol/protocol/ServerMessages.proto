@@ -13,7 +13,7 @@ message ConnectionReply {
 }
 
 message ServerMessage {
-	oneof Msg {
+	oneof msg {
 		ConnectionReply ConnectionReply = 1;
 		ResolutionChange ResolutionChange = 2;
 	}

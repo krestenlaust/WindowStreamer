@@ -25,13 +25,13 @@ namespace WindowStreamer.Protocol {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
             "Ch1wcm90b2NvbC9DbGllbnRNZXNzYWdlcy5wcm90bxIXV2luZG93U3RyZWFt",
-            "ZXIuUHJvdG9jb2wiIAoIVURQUmVhZHkSFAoMZnJhbWV3b3JrQ2FwGAEgASgF",
+            "ZXIuUHJvdG9jb2wiIAoIVURQUmVhZHkSFAoMZnJhbWVyYXRlQ2FwGAEgASgF",
             "Ik0KDUNsaWVudE1lc3NhZ2USNQoIVURQUmVhZHkYASABKAsyIS5XaW5kb3dT",
-            "dHJlYW1lci5Qcm90b2NvbC5VRFBSZWFkeUgAQgUKA01zZ2IGcHJvdG8z"));
+            "dHJlYW1lci5Qcm90b2NvbC5VRFBSZWFkeUgAQgUKA21zZ2IGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::WindowStreamer.Protocol.UDPReady), global::WindowStreamer.Protocol.UDPReady.Parser, new[]{ "FrameworkCap" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::WindowStreamer.Protocol.UDPReady), global::WindowStreamer.Protocol.UDPReady.Parser, new[]{ "FramerateCap" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::WindowStreamer.Protocol.ClientMessage), global::WindowStreamer.Protocol.ClientMessage.Parser, new[]{ "UDPReady" }, new[]{ "Msg" }, null, null, null)
           }));
     }
@@ -73,7 +73,7 @@ namespace WindowStreamer.Protocol {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public UDPReady(UDPReady other) : this() {
-      frameworkCap_ = other.frameworkCap_;
+      framerateCap_ = other.framerateCap_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -83,15 +83,15 @@ namespace WindowStreamer.Protocol {
       return new UDPReady(this);
     }
 
-    /// <summary>Field number for the "frameworkCap" field.</summary>
-    public const int FrameworkCapFieldNumber = 1;
-    private int frameworkCap_;
+    /// <summary>Field number for the "framerateCap" field.</summary>
+    public const int FramerateCapFieldNumber = 1;
+    private int framerateCap_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public int FrameworkCap {
-      get { return frameworkCap_; }
+    public int FramerateCap {
+      get { return framerateCap_; }
       set {
-        frameworkCap_ = value;
+        framerateCap_ = value;
       }
     }
 
@@ -110,7 +110,7 @@ namespace WindowStreamer.Protocol {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (FrameworkCap != other.FrameworkCap) return false;
+      if (FramerateCap != other.FramerateCap) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -118,7 +118,7 @@ namespace WindowStreamer.Protocol {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override int GetHashCode() {
       int hash = 1;
-      if (FrameworkCap != 0) hash ^= FrameworkCap.GetHashCode();
+      if (FramerateCap != 0) hash ^= FramerateCap.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -137,9 +137,9 @@ namespace WindowStreamer.Protocol {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      if (FrameworkCap != 0) {
+      if (FramerateCap != 0) {
         output.WriteRawTag(8);
-        output.WriteInt32(FrameworkCap);
+        output.WriteInt32(FramerateCap);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -151,9 +151,9 @@ namespace WindowStreamer.Protocol {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      if (FrameworkCap != 0) {
+      if (FramerateCap != 0) {
         output.WriteRawTag(8);
-        output.WriteInt32(FrameworkCap);
+        output.WriteInt32(FramerateCap);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -165,8 +165,8 @@ namespace WindowStreamer.Protocol {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public int CalculateSize() {
       int size = 0;
-      if (FrameworkCap != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(FrameworkCap);
+      if (FramerateCap != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(FramerateCap);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -180,8 +180,8 @@ namespace WindowStreamer.Protocol {
       if (other == null) {
         return;
       }
-      if (other.FrameworkCap != 0) {
-        FrameworkCap = other.FrameworkCap;
+      if (other.FramerateCap != 0) {
+        FramerateCap = other.FramerateCap;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -199,7 +199,7 @@ namespace WindowStreamer.Protocol {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 8: {
-            FrameworkCap = input.ReadInt32();
+            FramerateCap = input.ReadInt32();
             break;
           }
         }
@@ -218,7 +218,7 @@ namespace WindowStreamer.Protocol {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
           case 8: {
-            FrameworkCap = input.ReadInt32();
+            FramerateCap = input.ReadInt32();
             break;
           }
         }
@@ -290,7 +290,7 @@ namespace WindowStreamer.Protocol {
     }
 
     private object msg_;
-    /// <summary>Enum of possible cases for the "Msg" oneof.</summary>
+    /// <summary>Enum of possible cases for the "msg" oneof.</summary>
     public enum MsgOneofCase {
       None = 0,
       UDPReady = 1,

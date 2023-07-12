@@ -31,7 +31,7 @@ namespace WindowStreamer.Protocol {
             "cnQiogEKDVNlcnZlck1lc3NhZ2USQwoPQ29ubmVjdGlvblJlcGx5GAEgASgL",
             "MiguV2luZG93U3RyZWFtZXIuUHJvdG9jb2wuQ29ubmVjdGlvblJlcGx5SAAS",
             "RQoQUmVzb2x1dGlvbkNoYW5nZRgCIAEoCzIpLldpbmRvd1N0cmVhbWVyLlBy",
-            "b3RvY29sLlJlc29sdXRpb25DaGFuZ2VIAEIFCgNNc2diBnByb3RvMw=="));
+            "b3RvY29sLlJlc29sdXRpb25DaGFuZ2VIAEIFCgNtc2diBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
@@ -590,7 +590,7 @@ namespace WindowStreamer.Protocol {
     }
 
     private object msg_;
-    /// <summary>Enum of possible cases for the "Msg" oneof.</summary>
+    /// <summary>Enum of possible cases for the "msg" oneof.</summary>
     public enum MsgOneofCase {
       None = 0,
       ConnectionReply = 1,
