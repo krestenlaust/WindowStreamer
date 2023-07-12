@@ -1,0 +1,17 @@
+message ResolutionChange {
+	required int32 width = 1;
+	required int32 height = 2;
+}
+
+message ConnectionReply {
+	required bool accepted = 1;
+	optional int32 videoPort = 2;
+	optional ResolutionChange resolutionChange = 3;
+}
+
+message ServerMessage {
+    oneof Msg {
+        ConnectionReply ConnectionReply = 1;
+        ResolutionChange ResolutionChange = 2;
+    }
+}

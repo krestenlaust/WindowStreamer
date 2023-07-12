@@ -1,0 +1,9 @@
+﻿message UDPReady {
+	required int32 frameworkCap = 1;
+}
+
+message ClientMessage {
+    oneof Msg {
+        UDPReady UDPReady = 1;
+    }
+}
