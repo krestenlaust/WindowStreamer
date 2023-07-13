@@ -1,8 +1,17 @@
-﻿using WindowStreamer.Server.Exceptions;
+﻿using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Net;
+using System.Net.Sockets;
+using System.Runtime.InteropServices;
+using Google.Protobuf;
+using Serilog;
+using WindowStreamer.Protocol;
+using WindowStreamer.Server.Exceptions;
 
 namespace WindowStreamer.Server;
 
-public partial class WindowServer : IDisposable
+public class WindowServer : IDisposable
 {
     const int PacketCount = 128;
     static readonly int DefaultVideoStreamPort = 10064;
@@ -80,7 +89,7 @@ public partial class WindowServer : IDisposable
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <returns></returns>
     /// <exception cref="InstanceAlreadyInUseException">This method-instance has been called previously.</exception>
@@ -124,18 +133,28 @@ public partial class WindowServer : IDisposable
         }
     }
 
+    /// <summary>
+    /// Notifies client of resolution change.
+    /// </summary>
+    /// <param name="resolution">The new resolution.</param>
     public void UpdateResolution(Size resolution)
     {
         // Notifies client of resolution change.
-        if (metaClient?.Connected == false)
+        if (metaClient is null || !metaClient.Connected)
         {
             Log.Debug("Not connected...");
             return;
         }
 
-        var resChange = Send.ResolutionChange(resolution);
         var stream = metaClient.GetStream();
-        stream.Write(resChange, 0, resChange.Length);
+        new ServerMessage
+        {
+            ResolutionChange = new ResolutionChange
+            {
+                Width = resolution.Width,
+                Height = resolution.Height,
+            },
+        }.WriteDelimitedTo(stream);
     }
 
     static byte[] ConvertBitmapToRawPixel24bpp(Bitmap bmp)
@@ -271,14 +290,14 @@ public partial class WindowServer : IDisposable
 
     async void MetastreamLoop()
     {
+        var stream = metaClient.GetStream();
+
         while (metaClient.Connected)
         {
-            var stream = metaClient.GetStream();
-            byte[] buffer = new byte[Constants.MetaFrameLength];
-
+            ClientMessage msg;
             try
             {
-                await stream.ReadAsync(buffer, 0, Constants.MetaFrameLength, metastreamToken.Token);
+                msg = ClientMessage.Parser.ParseDelimitedFrom(stream);
             }
             catch (IOException)
             {
@@ -293,23 +312,16 @@ public partial class WindowServer : IDisposable
                 return;
             }
 
-            string[] metapacket = Encoding.UTF8.GetString(buffer).TrimEnd('\0').Split(Constants.ParameterSeparator);
-
-            switch ((ClientPacketHeader)int.Parse(metapacket[0]))
+            switch (msg.MsgCase)
             {
-                case ClientPacketHeader.Key:
-                    Log.Debug($"Recieved key: {metapacket[1]}");
+                case ClientMessage.MsgOneofCase.None:
+                    Log.Debug("Unknown message received");
                     break;
-                case ClientPacketHeader.UDPReady:
+                case ClientMessage.MsgOneofCase.UDPReady:
                     Log.Debug("Udp ready!");
+                    var udpReady = msg.UDPReady;
 
-                    if (!Parse.TryParseUDPReady(metapacket, out int framerateCap))
-                    {
-                        Log.Information("Invalid UDPReady packet");
-                        break;
-                    }
-
-                    frameIntervalMS = 1000 / framerateCap;
+                    frameIntervalMS = 1000 / udpReady.FramerateCap;
 
                     videoClient = new UdpClient();
                     videoClient.Client.SendBufferSize = 1024_000;
@@ -320,7 +332,6 @@ public partial class WindowServer : IDisposable
                     videostreamTask = Task.Run(BeginStreamLoop, videostreamToken.Token);
                     break;
                 default:
-                    Log.Debug($"Received this: {metapacket[0]}");
                     break;
             }
         }
@@ -343,23 +354,37 @@ public partial class WindowServer : IDisposable
                 metaClient.Close();
 
                 return false;
-
             case ConnectionReply.Accept:
                 Log.Debug($"Accepted connection from {clientEndpoint.Address}");
 
-                var replyAccept = Send.ConnectionReply(true, resolution, DefaultVideoStreamPort);
-                await stream.WriteAsync(replyAccept);
-                return true;
+                // Accept connection
+                new ServerMessage
+                {
+                    ConnectionReply = new Protocol.ConnectionReply
+                    {
+                        Accepted = true,
+                        VideoPort = DefaultVideoStreamPort,
+                    },
+                }.WriteDelimitedTo(stream);
 
+                // Send latest resolution
+                UpdateResolution(resolution);
+
+                return true;
             case ConnectionReply.Deny:
                 Log.Debug($"Denied connection from {clientEndpoint.Address}");
-                var replyDeny = Send.ConnectionReply(false, Size.Empty, 0);
-                await stream.WriteAsync(replyDeny);
+
+                // Deny connection attempt
+                new ServerMessage
+                {
+                    ConnectionReply = new Protocol.ConnectionReply
+                    {
+                        Accepted = false,
+                    },
+                }.WriteDelimitedTo(stream);
 
                 metaClient.Close();
-
                 return false;
-
             default:
                 return false;
         }

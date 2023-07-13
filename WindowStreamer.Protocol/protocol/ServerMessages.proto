@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package WindowStreamer.Protocol;
+
+message ResolutionChange {
+	int32 width = 1;
+	int32 height = 2;
+}
+
+message ConnectionReply {
+	bool accepted = 1;
+	optional int32 videoPort = 2;
+}
+
+message ServerMessage {
+	oneof msg {
+		ConnectionReply ConnectionReply = 1;
+		ResolutionChange ResolutionChange = 2;
+	}
+}

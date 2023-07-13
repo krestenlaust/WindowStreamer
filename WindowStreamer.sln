@@ -7,6 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		README.md = README.md
+		WindowStreamer.sln.startup.json = WindowStreamer.sln.startup.json
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WindowStreamer.Protocol", "WindowStreamer.Protocol\WindowStreamer.Protocol.csproj", "{BBB48259-3972-437F-AB7D-3F06C45466A6}"
@@ -19,7 +20,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WindowStreamer.Client", "Wi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonApp", "CommonApp\CommonApp.csproj", "{DB1464F6-7E59-43A2-A807-1260F5AC8533}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowStreamer.Server", "WindowStreamer.Server\WindowStreamer.Server.csproj", "{44F23EAC-D126-4623-B84A-F2A0C74ECBCE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WindowStreamer.Server", "WindowStreamer.Server\WindowStreamer.Server.csproj", "{44F23EAC-D126-4623-B84A-F2A0C74ECBCE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
