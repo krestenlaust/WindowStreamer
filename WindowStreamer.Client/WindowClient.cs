@@ -223,7 +223,7 @@ public class WindowClient : IDisposable
             {
                 FramerateCap = framerateCap,
             },
-        }.WriteTo(stream);
+        }.WriteDelimitedTo(stream);
     }
 
     /// <summary>
@@ -239,7 +239,7 @@ public class WindowClient : IDisposable
             ServerMessage msg;
             try
             {
-                msg = ServerMessage.Parser.ParseFrom(stream);
+                msg = ServerMessage.Parser.ParseDelimitedFrom(stream);
             }
             catch (IOException ex)
             {

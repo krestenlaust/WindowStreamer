@@ -179,7 +179,7 @@ public class WindowServer : IDisposable
                 Width = resolution.Width,
                 Height = resolution.Height,
             },
-        }.WriteTo(stream);
+        }.WriteDelimitedTo(stream);
     }
 
     static byte[] ConvertBitmapToRawPixel24bpp(Bitmap bmp)
@@ -323,7 +323,7 @@ public class WindowServer : IDisposable
             ClientMessage msg;
             try
             {
-                msg = ClientMessage.Parser.ParseFrom(stream);
+                msg = ClientMessage.Parser.ParseDelimitedFrom(stream);
             }
             catch (IOException)
             {
@@ -391,7 +391,7 @@ public class WindowServer : IDisposable
                         Accepted = true,
                         VideoPort = DefaultVideoStreamPort,
                     },
-                }.WriteTo(stream);
+                }.WriteDelimitedTo(stream);
 
                 // Send latest resolution
                 UpdateResolution(resolution);
@@ -407,7 +407,7 @@ public class WindowServer : IDisposable
                     {
                         Accepted = false,
                     },
-                }.WriteTo(stream);
+                }.WriteDelimitedTo(stream);
 
                 metaClient.Close();
                 return false;
