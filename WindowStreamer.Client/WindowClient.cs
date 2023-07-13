@@ -217,9 +217,12 @@ public class WindowClient : IDisposable
 
     void SendUDPReady(NetworkStream stream)
     {
-        new UDPReady
+        new ClientMessage
         {
-            FramerateCap = framerateCap,
+            UDPReady = new UDPReady
+            {
+                FramerateCap = framerateCap,
+            },
         }.WriteTo(stream);
     }
 
@@ -240,7 +243,7 @@ public class WindowClient : IDisposable
             }
             catch (IOException ex)
             {
-                Log.Information($"Error parsing / reading from stream: {ex}");
+                Log.Debug(ex.ToString());
                 ClientDisconnected();
                 return;
             }

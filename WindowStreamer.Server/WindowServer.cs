@@ -172,10 +172,13 @@ public class WindowServer : IDisposable
         }
 
         var stream = metaClient.GetStream();
-        new ResolutionChange
+        new ServerMessage
         {
-            Width = resolution.Width,
-            Height = resolution.Height,
+            ResolutionChange = new ResolutionChange
+            {
+                Width = resolution.Width,
+                Height = resolution.Height,
+            },
         }.WriteTo(stream);
     }
 
@@ -381,10 +384,13 @@ public class WindowServer : IDisposable
                 Log.Debug($"Accepted connection from {clientEndpoint.Address}");
 
                 // Accept connection
-                new Protocol.ConnectionReply
+                new ServerMessage
                 {
-                    Accepted = true,
-                    VideoPort = DefaultVideoStreamPort,
+                    ConnectionReply = new Protocol.ConnectionReply
+                    {
+                        Accepted = true,
+                        VideoPort = DefaultVideoStreamPort,
+                    },
                 }.WriteTo(stream);
 
                 // Send latest resolution
@@ -395,9 +401,12 @@ public class WindowServer : IDisposable
                 Log.Debug($"Denied connection from {clientEndpoint.Address}");
 
                 // Deny connection attempt
-                new Protocol.ConnectionReply
+                new ServerMessage
                 {
-                    Accepted = false,
+                    ConnectionReply = new Protocol.ConnectionReply
+                    {
+                        Accepted = false,
+                    },
                 }.WriteTo(stream);
 
                 metaClient.Close();
