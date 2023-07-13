@@ -1,1 +1,1 @@
-protoc --csharp_out=. protocol\*
+protoc --csharp_out=gen *.proto
