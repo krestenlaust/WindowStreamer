@@ -1,11 +1,17 @@
-﻿using System.Net;
+﻿using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Net;
+using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using Google.Protobuf;
 using Serilog;
+using WindowStreamer.Protocol;
 using WindowStreamer.Server.Exceptions;
 
 namespace WindowStreamer.Server;
 
-public partial class WindowServer : IDisposable
+public class WindowServer : IDisposable
 {
     const int PacketCount = 128;
     static readonly int DefaultVideoStreamPort = 10064;
