@@ -86,6 +86,8 @@ public partial class WindowCapture : Form
 
     async Task HandleCommandlineArgumentsAsync(string[] args)
     {
+        ICollection<Task> tasks = new List<Task>();
+
         for (int i = 0; i < args.Length; i++)
         {
             if (!args[i].StartsWith("-"))
@@ -118,12 +120,14 @@ public partial class WindowCapture : Form
                         targetPort = DefaultMetastreamPort;
                     }
 
-                    await StartServerAsync(address, targetPort);
+                    tasks.Add(Task.Run(() => StartServerAsync(address, targetPort)));
                     break;
                 default:
                     break;
             }
         }
+
+        await Task.WhenAll(tasks);
     }
 
     void WindowCapture_Resize(object sender, EventArgs e) => UpdateResolutionVariables();
