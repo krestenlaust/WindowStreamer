@@ -291,8 +291,6 @@ public class WindowClient : IDisposable
 
                     ResolutionChanged?.Invoke(new Size(msg.ResolutionChange.Width, msg.ResolutionChange.Height));
                     break;
-                default:
-                    break;
             }
         }
 

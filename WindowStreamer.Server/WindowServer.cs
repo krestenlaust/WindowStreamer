@@ -19,13 +19,13 @@ public class WindowServer : IDisposable
     readonly IScreenshotQuery screenshotQuery;
     readonly IPEndPoint boundEndpoint;
     readonly IConnectionHandler connectionHandler;
+    readonly Size startingResolution;
     int frameIntervalMS = 34;
 
     IPEndPoint clientEndpoint;
     TcpListener clientListener;
     TcpClient metaClient;
     UdpClient videoClient;
-    Size resolution;
     bool connectionClosedInvoked;
     bool objectDisposed;
 
@@ -48,7 +48,7 @@ public class WindowServer : IDisposable
         boundEndpoint = new IPEndPoint(boundIP, port);
         this.screenshotQuery = screenshotQuery;
         this.connectionHandler = connectionHandler;
-        resolution = startingResolution;
+        this.startingResolution = startingResolution;
     }
 
     /// <summary>
@@ -159,20 +159,6 @@ public class WindowServer : IDisposable
 
     static byte[] ConvertBitmapToRawPixel24bpp(Bitmap bmp)
     {
-        /*
-        byte[] imageDataBytes = new byte[bmp.Height * bmp.Width * 3];
-
-        for (int y = 0; y < bmp.Height; y++)
-        {
-            for (int x = 0; x < bmp.Width; x++)
-            {
-                Color color = bmp.GetPixel(x, y);
-                imageDataBytes[(x + (y * bmp.Width)) * 3] = color.R;
-                imageDataBytes[((x + (y * bmp.Width)) * 3) + 1] = color.G;
-                imageDataBytes[((x + (y * bmp.Width)) * 3) + 2] = color.B;
-            }
-        }*/
-
         BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height),
             ImageLockMode.ReadOnly,
             PixelFormat.Format24bppRgb);
@@ -183,25 +169,6 @@ public class WindowServer : IDisposable
 
         Marshal.Copy(imageDataPtr, imageDump, 0, byteCount);
         bmp.UnlockBits(bmpData);
-
-        /*
-        byte[] imageDataBytes2 = new byte[bmp.Height * bmp.Width * 3];
-
-        int dstIndex = 0;
-        for (int i = 0; i < imageDump.Length; i++)
-        {
-            if ((i + 1) % bmpData.Stride == 0 && i != 0)
-            {
-                // TODO: ultra mystisk fejl
-                var zero = imageDump[i];
-                //imageDataBytes2[i - 1]
-            }
-            else
-            {
-                imageDataBytes2[dstIndex] = imageDump[i];
-                dstIndex++;
-            }
-        }*/
 
         return imageDump;
     }
@@ -368,7 +335,7 @@ public class WindowServer : IDisposable
                 }.WriteDelimitedTo(stream);
 
                 // Send latest resolution
-                UpdateResolution(resolution);
+                UpdateResolution(startingResolution);
 
                 return true;
             case ConnectionReply.Deny:
