@@ -4,19 +4,19 @@ WindowStreamer is a (self-proclaimed) user-friendly, open-source application wri
 
 ## Features
 
-  - Stream your screen from one computer to another
+ - Stream your screen from one computer to another
 
 ### Would like to implement
-  - Support for keyboard or mouse input
-  - Compression (right now it's only supposed to be used on a local network with high bandwidth)
-  - Stream audio when streaming an application
+ - Support for keyboard or mouse input
+ - Compression (right now it's only supposed to be used on a local network with high bandwidth)
+ - Stream audio when streaming an application
 
 ## Installation
 
 To install WindowStreamer, follow these simple steps:
 
-  - Download the latest release of WindowStreamer from the project's GitHub repository.
-  - Extract the contents of the downloaded ZIP file to a folder of your choice.
+ - Download the latest release of WindowStreamer from the project's GitHub repository.
+ - Extract the contents of the downloaded ZIP file to a folder of your choice.
 
 ## Usage
 
@@ -34,11 +34,11 @@ Using WindowStreamer should be straightforward as the UI has been designed to be
  3. Once the connection is open and the server has accepted, it should just work.
 
 ### Other
-  - Currently, blocking on the server is ephemeral, because it's only stored in memory. Restarting the server will reset the list of blocked IP-addresses
-  - The viewer resizes it's window to fit the stream window by default, this can be disabled with the appropriately named button.
-  - The port 10063 is used for a TCP connection that defines the size of the window among other things.
-  - The port 10064 is used for a UDP 'connection' that is used for the actual screen footage.
-  - Make sure these ports allowed to be used.
+ - Currently, blocking on the server is ephemeral, because it's only stored in memory. Restarting the server will reset the list of blocked IP-addresses
+ - The viewer resizes it's window to fit the stream window by default, this can be disabled with the appropriately named button.
+ - The port 10063 is used for a TCP connection that defines the size of the window among other things.
+ - The port 10064 is used for a UDP 'connection' that is used for the actual screen footage.
+ - Make sure these ports allowed to be used.
 
 ### Start parameters
 The applications support the following parameters on startup:
