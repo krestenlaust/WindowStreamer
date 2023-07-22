@@ -20,20 +20,16 @@ public class WindowServer : IDisposable
     readonly IPEndPoint boundEndpoint;
     readonly IConnectionHandler connectionHandler;
     readonly Size startingResolution;
+    readonly UdpClient udpClient;
+    Task? videostreamTask;
+    CancellationTokenSource videostreamToken;
     int frameIntervalMS = 34;
 
-    IPEndPoint clientEndpoint;
-    TcpListener clientListener;
-    TcpClient metaClient;
-    UdpClient videoClient;
-    bool connectionClosedInvoked;
+    TcpListener? clientListener;
     bool objectDisposed;
 
-    Task metastreamTask;
-    Task videostreamTask;
-    CancellationTokenSource videostreamToken;
-    CancellationTokenSource metastreamToken;
-    CancellationTokenSource listeningToken;
+    ConnectedClient? connectedClient;
+    CancellationTokenSource? listeningToken;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="WindowServer"/> class.
@@ -49,13 +45,17 @@ public class WindowServer : IDisposable
         this.screenshotQuery = screenshotQuery;
         this.connectionHandler = connectionHandler;
         this.startingResolution = startingResolution;
+
+        udpClient = new UdpClient();
+        udpClient.Client.SendBufferSize = 1024_000;
+        udpClient.DontFragment = false; // TODO: Properly remove this property assignment.
     }
 
     /// <summary>
     /// Called whenever an active connection has been closed.
     /// Is only called for connections that completed a handshake.
     /// </summary>
-    public event Action ConnectionClosed;
+    public event Action? ConnectionClosed;
 
     /// <summary>
     /// Gets a value indicating whether a connection has been initiated.
@@ -63,6 +63,7 @@ public class WindowServer : IDisposable
     [Obsolete("Not implemneted yet")]
     public bool Connected { get; private set; }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
         if (objectDisposed)
@@ -72,20 +73,19 @@ public class WindowServer : IDisposable
 
         objectDisposed = true;
 
+        connectedClient?.Dispose();
+        udpClient?.Dispose();
+
         // Halt server
-        listeningToken?.Cancel();
-        metastreamToken?.Cancel();
         videostreamToken?.Cancel();
+        listeningToken?.Cancel();
 
         // Dispose of networked instances
         clientListener?.Stop();
-        metaClient?.Dispose();
-        videoClient?.Dispose();
 
         // Dispose of token sources
-        listeningToken?.Dispose();
-        metastreamToken?.Dispose();
         videostreamToken?.Dispose();
+        listeningToken?.Dispose();
     }
 
     /// <summary>
@@ -101,6 +101,9 @@ public class WindowServer : IDisposable
             throw new InstanceAlreadyInUseException($"{nameof(clientListener)} is not null. Can'zero reuse same instance.");
         }
 
+        videostreamToken = new CancellationTokenSource();
+        videostreamTask = Task.Run(BeginStreamLoop, videostreamToken.Token);
+
         listeningToken = new CancellationTokenSource();
         clientListener = new TcpListener(boundEndpoint);
         clientListener.Start();
@@ -109,19 +112,22 @@ public class WindowServer : IDisposable
         try
         {
             ConnectionReply reply;
+            TcpClient? client;
+
             do
             {
-                metaClient = await clientListener.AcceptTcpClientAsync(listeningToken.Token);
-                clientEndpoint = metaClient.Client.RemoteEndPoint as IPEndPoint;
-                Log.Information($"Connection recieved: {clientEndpoint}, awaiting action");
-                reply = connectionHandler.HandleIncomingConnection(clientEndpoint.Address);
+                client = await clientListener.AcceptTcpClientAsync(listeningToken.Token);
+                IPEndPoint endpoint = (IPEndPoint)client.Client.RemoteEndPoint!;
+
+                Log.Information($"Connection recieved: {endpoint}, awaiting action");
+                reply = connectionHandler.HandleIncomingConnection(endpoint.Address);
             }
-            while (!await HandshakeAsync(reply));
+            while (!HandshakeAsync(reply, client));
 
             Log.Information("Stream established");
 
-            metastreamToken = new CancellationTokenSource();
-            metastreamTask = Task.Run(MetastreamLoop);
+            connectedClient = new ConnectedClient(client);
+            connectedClient.ConnectionClosed += ConnectionClosed;
         }
         catch (SocketException ex)
         {
@@ -139,22 +145,7 @@ public class WindowServer : IDisposable
     /// <param name="resolution">The new resolution.</param>
     public void UpdateResolution(Size resolution)
     {
-        // Notifies client of resolution change.
-        if (metaClient is null || !metaClient.Connected)
-        {
-            Log.Debug("Not connected...");
-            return;
-        }
-
-        var stream = metaClient.GetStream();
-        new ServerMessage
-        {
-            ResolutionChange = new ResolutionChange
-            {
-                Width = resolution.Width,
-                Height = resolution.Height,
-            },
-        }.WriteDelimitedTo(stream);
+        connectedClient?.UpdateResolution(resolution);
     }
 
     static byte[] ConvertBitmapToRawPixel24bpp(Bitmap bmp)
@@ -173,7 +164,7 @@ public class WindowServer : IDisposable
         return imageDump;
     }
 
-    static void SendPicture(byte[] rawImageData24bpp, int width, int height, UdpClient client)
+    void SendPicture(byte[] rawImageData24bpp, int width, int height, IPEndPoint targetEndpoint)
     {
         int chunkSizeBytes = ((rawImageData24bpp.Length - 1) / PacketCount) + 1;
 
@@ -198,28 +189,32 @@ public class WindowServer : IDisposable
 
             Log.Debug($"Chunk {i} size: {chunk.Length - parameterOffset} / {chunkSizeBytes}");
 
-            client.Send(chunk, chunk.Length);
+            udpClient.Send(chunk, chunk.Length, targetEndpoint);
         }
-    }
-
-    void ClientDisconnected()
-    {
-        if (connectionClosedInvoked)
-        {
-            return;
-        }
-
-        connectionClosedInvoked = true;
-        ConnectionClosed?.Invoke();
     }
 
     async void BeginStreamLoop()
     {
         CancellationToken token = videostreamToken.Token;
-
         var sw = new Stopwatch();
+
         while (!token.IsCancellationRequested)
         {
+            // Is client connected and ready to receive?
+            if (connectedClient is null || !connectedClient.UdpReady)
+            {
+                try
+                {
+                    await Task.Delay(0);
+                }
+                catch (TaskCanceledException)
+                {
+                    return;
+                }
+
+                continue;
+            }
+
             sw.Restart();
 
             var obtainImageSw = new Stopwatch();
@@ -234,7 +229,7 @@ public class WindowServer : IDisposable
 
             try
             {
-                SendPicture(rawImageData, bmp.Width, bmp.Height, videoClient);
+                SendPicture(rawImageData, bmp.Width, bmp.Height, connectedClient.EndPoint);
             }
             catch (ObjectDisposedException ex)
             {
@@ -255,74 +250,24 @@ public class WindowServer : IDisposable
         }
     }
 
-    async void MetastreamLoop()
-    {
-        var stream = metaClient.GetStream();
-
-        while (metaClient.Connected)
-        {
-            ClientMessage msg;
-            try
-            {
-                msg = ClientMessage.Parser.ParseDelimitedFrom(stream);
-            }
-            catch (IOException)
-            {
-                // Client disconnected
-                ClientDisconnected();
-                return;
-            }
-            catch (OperationCanceledException)
-            {
-                // Server stopped
-                ClientDisconnected();
-                return;
-            }
-
-            switch (msg.MsgCase)
-            {
-                case ClientMessage.MsgOneofCase.None:
-                    Log.Debug("Unknown message received");
-                    break;
-                case ClientMessage.MsgOneofCase.UDPReady:
-                    Log.Debug("Udp ready!");
-                    var udpReady = msg.UDPReady;
-
-                    frameIntervalMS = 1000 / udpReady.FramerateCap;
-
-                    videoClient = new UdpClient();
-                    videoClient.Client.SendBufferSize = 1024_000;
-                    videoClient.DontFragment = false; // TODO: Properly remove this property assignment.
-                    videoClient.Connect(clientEndpoint.Address, DefaultVideoStreamPort);
-
-                    videostreamToken = new CancellationTokenSource();
-                    videostreamTask = Task.Run(BeginStreamLoop, videostreamToken.Token);
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        Log.Information("Connection lost... or disconnected");
-    }
-
     /// <summary>
     /// Complete handshake based given replyAction-action.
     /// </summary>
-    /// <returns></returns>
-    async ValueTask<bool> HandshakeAsync(ConnectionReply replyAction)
+    /// <returns>Whether the handshake resulted in a connection.</returns>
+    bool HandshakeAsync(ConnectionReply replyAction, TcpClient networkClient)
     {
-        var stream = metaClient.GetStream();
+        var stream = networkClient.GetStream();
+        IPEndPoint endPoint = (IPEndPoint)networkClient.Client.RemoteEndPoint!;
 
         switch (replyAction)
         {
             case ConnectionReply.Close:
-                Log.Debug($"Closed connection from {clientEndpoint.Address}");
-                metaClient.Close();
+                Log.Debug($"Closed connection from {endPoint.Address}");
+                networkClient.Close();
 
                 return false;
             case ConnectionReply.Accept:
-                Log.Debug($"Accepted connection from {clientEndpoint.Address}");
+                Log.Debug($"Accepted connection from {endPoint.Address}");
 
                 // Accept connection
                 new ServerMessage
@@ -335,11 +280,18 @@ public class WindowServer : IDisposable
                 }.WriteDelimitedTo(stream);
 
                 // Send latest resolution
-                UpdateResolution(startingResolution);
+                new ServerMessage
+                {
+                    ResolutionChange = new ResolutionChange
+                    {
+                        Width = startingResolution.Width,
+                        Height = startingResolution.Height,
+                    },
+                }.WriteDelimitedTo(stream);
 
                 return true;
             case ConnectionReply.Deny:
-                Log.Debug($"Denied connection from {clientEndpoint.Address}");
+                Log.Debug($"Denied connection from {endPoint.Address}");
 
                 // Deny connection attempt
                 new ServerMessage
@@ -350,7 +302,7 @@ public class WindowServer : IDisposable
                     },
                 }.WriteDelimitedTo(stream);
 
-                metaClient.Close();
+                networkClient.Close();
                 return false;
             default:
                 return false;

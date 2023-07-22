@@ -5,17 +5,10 @@ using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using Google.Protobuf;
 using Serilog;
+using WindowStreamer.Client.Exceptions;
 using WindowStreamer.Protocol;
 
 namespace WindowStreamer.Client;
-
-public class InstanceAlreadyInUseException : Exception
-{
-    public InstanceAlreadyInUseException(string msg)
-        : base(msg)
-    {
-    }
-}
 
 public class WindowClient : IDisposable
 {
@@ -50,22 +43,22 @@ public class WindowClient : IDisposable
     /// <summary>
     /// Event called when a complete frame has been received.
     /// </summary>
-    public event Action<Bitmap> NewFrame;
+    public event Action<Bitmap>? NewFrame;
 
     /// <summary>
     /// Event called when the resolution is changed.
     /// </summary>
-    public event Action<Size> ResolutionChanged;
+    public event Action<Size>? ResolutionChanged;
 
     /// <summary>
     /// Event called when the client has recieved a response from server, either by message (deny/accept), or action (socket forcefully closed).
     /// </summary>
-    public event Action<bool> ConnectionAttemptFinished;
+    public event Action<bool>? ConnectionAttemptFinished;
 
     /// <summary>
     /// Event called when the client has been disconnected from server, either by server closing, or by being kicked from server.
     /// </summary>
-    public event Action ConnectionClosed;
+    public event Action? ConnectionClosed;
 
     /// <summary>
     /// Tries to connect to server, returns whether the connection was successfully established.
@@ -122,17 +115,6 @@ public class WindowClient : IDisposable
 
         Marshal.Copy(imageData, 0, imageDataPtr, imageData.Length);
         bmp.UnlockBits(bmpData);
-
-        /*
-        for (int y = 0; y < bmp.Height; y++)
-        {
-            for (int x = 0; x < bmp.Width; x++)
-            {
-                int i = (y * bmp.Width * 3) + x * 3;
-
-                bmp.SetPixel(x, y, Color.FromArgb(imageData[i], imageData[i + 1], imageData[i + 2]));
-            }
-        }*/
 
         NewFrame?.Invoke(bmp);
     }
@@ -215,17 +197,6 @@ public class WindowClient : IDisposable
         }
     }
 
-    void SendUDPReady(NetworkStream stream)
-    {
-        new ClientMessage
-        {
-            UDPReady = new UDPReady
-            {
-                FramerateCap = framerateCap,
-            },
-        }.WriteDelimitedTo(stream);
-    }
-
     /// <summary>
     /// Listens for events from the server.
     /// Returns void because it's a loop.
@@ -280,7 +251,13 @@ public class WindowClient : IDisposable
                     taskVideostream = Task.Run(ListenVideoDatagramAsync, videostreamToken.Token);
 
                     // Finish handshake
-                    SendUDPReady(stream);
+                    new ClientMessage
+                    {
+                        UDPReady = new UDPReady
+                        {
+                            FramerateCap = framerateCap,
+                        },
+                    }.WriteDelimitedTo(stream);
 
                     Log.Information("Handshake finished");
                     ConnectionAttemptFinished?.Invoke(true);
