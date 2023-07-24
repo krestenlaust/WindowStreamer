@@ -14,7 +14,7 @@ namespace WindowStreamer.Server;
 public class WindowServer : IDisposable
 {
     const int PacketCount = 128;
-    static readonly int DefaultVideoStreamPort = 10064;
+    public static readonly int DefaultVideoStreamPort = 10064;
 
     readonly IScreenshotQuery screenshotQuery;
     readonly IPEndPoint boundEndpoint;
@@ -229,7 +229,7 @@ public class WindowServer : IDisposable
 
             try
             {
-                SendPicture(rawImageData, bmp.Width, bmp.Height, connectedClient.EndPoint);
+                SendPicture(rawImageData, bmp.Width, bmp.Height, connectedClient.UDPEndPoint);
             }
             catch (ObjectDisposedException ex)
             {
@@ -275,7 +275,7 @@ public class WindowServer : IDisposable
                     ConnectionReply = new Protocol.ConnectionReply
                     {
                         Accepted = true,
-                        VideoPort = DefaultVideoStreamPort,
+                        VideoPort = DefaultVideoStreamPort, // TODO: Make the client decide the video port.
                     },
                 }.WriteDelimitedTo(stream);
 

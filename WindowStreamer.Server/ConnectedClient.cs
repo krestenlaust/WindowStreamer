@@ -31,6 +31,8 @@ internal class ConnectedClient : IDisposable
 
     public IPEndPoint EndPoint { get; }
 
+    public IPEndPoint UDPEndPoint => new IPEndPoint(EndPoint.Address, WindowServer.DefaultVideoStreamPort);
+
     public TcpClient NetworkClient { get; }
 
     public bool UdpReady { get; private set; }
