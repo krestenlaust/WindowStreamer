@@ -10,6 +10,10 @@ using WindowStreamer.Protocol;
 
 namespace WindowStreamer.Client;
 
+/// <summary>
+/// Contains all network logic related to communicating to the server.
+/// TODO: Divide into multiple classes, to make this have a single concern instead of all network logic.
+/// </summary>
 public class WindowClient : IDisposable
 {
     static readonly int DefaultMetastreamPort = 10063;
@@ -17,15 +21,11 @@ public class WindowClient : IDisposable
 
     readonly IPEndPoint serverEndpoint;
     readonly int framerateCap;
+    readonly CancellationTokenSource metastreamToken;
+    readonly CancellationTokenSource videostreamToken;
 
-    UdpClient videoClient;
-    TcpClient metaClient;
-    int? videostreamPort;
-
-    CancellationTokenSource metastreamToken;
-    CancellationTokenSource videostreamToken;
-    Task taskMetastream;
-    Task taskVideostream;
+    IDisposable? videoClientDisposable;
+    IDisposable? tcpClientDisposable;
     bool connectionClosedCalled;
 
     /// <summary>
@@ -38,6 +38,9 @@ public class WindowClient : IDisposable
     {
         serverEndpoint = new IPEndPoint(serverIP, serverPort);
         this.framerateCap = framerateCap;
+
+        metastreamToken = new CancellationTokenSource();
+        videostreamToken = new CancellationTokenSource();
     }
 
     /// <summary>
@@ -67,20 +70,21 @@ public class WindowClient : IDisposable
     /// <returns>Whether the connection was sucessful.</returns>
     public async Task<bool> ConnectToServerAsync()
     {
-        if (metaClient is not null || videoClient is not null)
+        if (tcpClientDisposable is not null || videoClientDisposable is not null)
         {
             // Fatal because this should ever happen.
             Log.Fatal("Client already connected, aborting new connection");
             throw new InstanceAlreadyInUseException("This client has been connected previously. Please make a new instance instead.");
         }
 
-        metaClient = new TcpClient();
+        TcpClient newClient = new TcpClient();
+        tcpClientDisposable = newClient;
 
         Log.Information($"Connecting to {serverEndpoint.Address}:{serverEndpoint.Port}...");
 
         try
         {
-            await metaClient.ConnectAsync(serverEndpoint.Address, serverEndpoint.Port);
+            await newClient.ConnectAsync(serverEndpoint.Address, serverEndpoint.Port);
         }
         catch (SocketException)
         {
@@ -90,8 +94,7 @@ public class WindowClient : IDisposable
 
         Log.Information($"Awaiting response from {serverEndpoint}");
 
-        metastreamToken = new CancellationTokenSource();
-        taskMetastream = Task.Run(MetastreamLoop, metastreamToken.Token);
+        Task.Run(() => MetastreamLoop(newClient), metastreamToken.Token);
         return true;
     }
 
@@ -100,8 +103,8 @@ public class WindowClient : IDisposable
         metastreamToken?.Cancel();
         videostreamToken?.Cancel();
 
-        videoClient?.Dispose();
-        metaClient?.Dispose();
+        videoClientDisposable?.Dispose();
+        tcpClientDisposable?.Dispose();
     }
 
     void InvokeNewFrame(byte[] imageData, ushort width, ushort height)
@@ -134,12 +137,16 @@ public class WindowClient : IDisposable
     /// Listens for videodatagrams, is stopped when <c>videostreamToken</c> is cancelled, or <c>metaClient</c> is disconnected.
     /// Returns void because it's a loop.
     /// </summary>
-    async void ListenVideoDatagramAsync()
+    async void ListenVideoDatagramAsync(TcpClient metaClient, int videoPort)
     {
-        byte[] image = null;
+        byte[]? image = null;
         ushort imageWidth = 0;
         ushort imageHeight = 0;
         var chunks = new HashSet<ushort>();
+
+        UdpClient videoClient = new UdpClient(videoPort);
+        videoClient.Client.ReceiveBufferSize = 1_024_000;
+        videoClientDisposable = videoClient;
 
         while (metaClient.Connected)
         {
@@ -201,7 +208,7 @@ public class WindowClient : IDisposable
     /// Listens for events from the server.
     /// Returns void because it's a loop.
     /// </summary>
-    async void MetastreamLoop()
+    async void MetastreamLoop(TcpClient metaClient)
     {
         var stream = metaClient.GetStream();
 
@@ -233,8 +240,6 @@ public class WindowClient : IDisposable
                     Log.Debug("Recieved connection reply");
                     var connReply = msg.ConnectionReply;
 
-                    videostreamPort = connReply.VideoPort;
-
                     if (!connReply.Accepted)
                     {
                         // TODO: implement some connection ended logic.
@@ -245,10 +250,7 @@ public class WindowClient : IDisposable
 
                     // Connection accepted, initialize udp-client and image-loop
                     Log.Information("Connection request accepted, awaiting handshake finish...");
-                    videoClient = new UdpClient(connReply.VideoPort);
-                    videoClient.Client.ReceiveBufferSize = 1_024_000;
-                    videostreamToken = new CancellationTokenSource();
-                    taskVideostream = Task.Run(ListenVideoDatagramAsync, videostreamToken.Token);
+                    Task.Run(() => ListenVideoDatagramAsync(metaClient, connReply.VideoPort), videostreamToken.Token);
 
                     // Finish handshake
                     new ClientMessage

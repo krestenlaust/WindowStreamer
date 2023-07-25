@@ -11,10 +11,13 @@ using WindowStreamer.Server.Exceptions;
 
 namespace WindowStreamer.Server;
 
+/// <summary>
+/// Represents a server, that listens for clients, and communicates with them.
+/// </summary>
 public class WindowServer : IDisposable
 {
-    const int PacketCount = 128;
     public static readonly int DefaultVideoStreamPort = 10064;
+    const int PacketCount = 128;
 
     readonly IScreenshotQuery screenshotQuery;
     readonly IPEndPoint boundEndpoint;
