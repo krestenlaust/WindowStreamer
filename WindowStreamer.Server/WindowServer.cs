@@ -278,7 +278,7 @@ public class WindowServer : IDisposable
                     ConnectionReply = new Protocol.ConnectionReply
                     {
                         Accepted = true,
-                        VideoPort = DefaultVideoStreamPort, // TODO: Make the client decide the video port.
+                        VideoPort = DefaultPorts.DefaultVideostreamPort, // TODO: Make the client decide the video port.
                     },
                 }.WriteDelimitedTo(stream);
 

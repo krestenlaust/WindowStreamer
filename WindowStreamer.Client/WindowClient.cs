@@ -16,7 +16,6 @@ namespace WindowStreamer.Client;
 /// </summary>
 public class WindowClient : IDisposable
 {
-    static readonly int DefaultMetastreamPort = 10063;
     static readonly int PacketCount = 128;
 
     readonly IPEndPoint serverEndpoint;
