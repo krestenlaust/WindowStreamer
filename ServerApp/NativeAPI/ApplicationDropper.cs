@@ -44,7 +44,7 @@ internal static class ApplicationDropper
 
     static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
     {
-        if (nCode >= 0 && MouseMessages.WM_LBUTTONDOWN == (MouseMessages)wParam)
+        if (nCode >= 0 && (MouseMessages)wParam == MouseMessages.WM_LBUTTONDOWN)
         {
             // The application runs to here when you click on the window whose handle you  want to get
             POINT cusorPoint;

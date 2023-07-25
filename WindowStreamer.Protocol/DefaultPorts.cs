@@ -8,10 +8,10 @@ public static class DefaultPorts
     /// <summary>
     /// Default port to be used for the TCP socket in communicating meta-information.
     /// </summary>
-    public static readonly int DefaultMetastreamPort = 10063;
+    public static readonly int MetastreamPort = 10063;
 
     /// <summary>
     /// Default port to be used for the UDP client for sending and receiving datagrams of videodata.
     /// </summary>
-    public static readonly int DefaultVideostreamPort = 10064;
+    public static readonly int VideostreamPort = 10064;
 }

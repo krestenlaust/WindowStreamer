@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.Versioning;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CommonApp;
@@ -12,6 +13,7 @@ using WindowStreamer.Server;
 
 namespace ServerApp;
 
+[SupportedOSPlatform("windows")]
 public partial class WindowCapture : Form
 {
     static readonly int DefaultMetastreamPort = 10063;

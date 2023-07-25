@@ -1,4 +1,6 @@
-﻿namespace CommonApp;
+﻿using System.Reflection;
+
+namespace CommonApp;
 
 partial class AboutBoxMain
 {
@@ -18,6 +20,31 @@ partial class AboutBoxMain
         }
         base.Dispose(disposing);
     }
+
+    #region Assembly Attribute Accessors
+
+    public string AssemblyVersion
+    {
+        get
+        {
+            return Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        }
+    }
+
+    public string AssemblyCopyright
+    {
+        get
+        {
+            object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
+            if (attributes.Length == 0)
+            {
+                return "";
+            }
+            return ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
+        }
+    }
+
+    #endregion
 
     #region Windows Form Designer generated code
 

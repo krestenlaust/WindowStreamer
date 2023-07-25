@@ -8,8 +8,9 @@ namespace ServerApp;
 
 internal class ConnectionHandler : IConnectionHandler
 {
-    public HashSet<IPAddress> BlockedIPs { get; } = new();
+    public HashSet<IPAddress> BlockedIPs { get; } = new ();
 
+    /// <inheritdoc/>
     public ConnectionReply HandleIncomingConnection(IPAddress address)
     {
         if (BlockedIPs.Contains(address))

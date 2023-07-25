@@ -7,10 +7,12 @@ using WindowStreamer.Protocol;
 
 namespace WindowStreamer.Server;
 
+/// <summary>
+/// Represents a connected client. Handles all communication that is sent to this individual client.
+/// </summary>
 internal class ConnectedClient : IDisposable
 {
     CancellationTokenSource metastreamToken;
-    Task? metastreamTask;
     bool connectionClosedInvoked;
     bool objectDisposed;
 
@@ -20,7 +22,7 @@ internal class ConnectedClient : IDisposable
         EndPoint = (IPEndPoint)client.Client.LocalEndPoint!;
 
         metastreamToken = new CancellationTokenSource();
-        metastreamTask = Task.Run(() => MetastreamLoop(client.GetStream()), metastreamToken.Token);
+        Task.Run(() => MetastreamLoop(client.GetStream()), metastreamToken.Token);
     }
 
     /// <summary>
@@ -31,14 +33,18 @@ internal class ConnectedClient : IDisposable
 
     public IPEndPoint EndPoint { get; }
 
-    public IPEndPoint UDPEndPoint => new IPEndPoint(EndPoint.Address, WindowServer.DefaultVideoStreamPort);
+    public IPEndPoint UDPEndPoint => new IPEndPoint(EndPoint.Address, DefaultPorts.VideostreamPort);
 
     public TcpClient NetworkClient { get; }
 
     public bool UdpReady { get; private set; }
 
-    public int FramerateCapHertz { get; private set; }
+    /// <summary>
+    /// Gets framerate to transmit captured images at, expressed in hertz.
+    /// </summary>
+    public int FramerateCapHz { get; private set; }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
         if (objectDisposed)
@@ -113,7 +119,7 @@ internal class ConnectedClient : IDisposable
                     Log.Debug("Udp ready!");
                     var udpReady = msg.UDPReady;
 
-                    FramerateCapHertz = udpReady.FramerateCap;
+                    FramerateCapHz = udpReady.FramerateCap;
                     UdpReady = true;
                     break;
                 default:

@@ -3,8 +3,15 @@ using System.Runtime.InteropServices;
 
 namespace CommonApp;
 
+/// <summary>
+/// Collection of helper-functions.
+/// </summary>
 public static class Helper
 {
+    /// <summary>
+    /// Opens a URL in default browser.
+    /// </summary>
+    /// <param name="url">The URL to open.</param>
     public static void OpenUrl(string url)
     {
         // https://stackoverflow.com/a/43232486/5363171

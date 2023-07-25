@@ -3,6 +3,7 @@ using System.Drawing.Imaging;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using Google.Protobuf;
 using Serilog;
 using WindowStreamer.Client.Exceptions;
@@ -97,15 +98,23 @@ public class WindowClient : IDisposable
         return true;
     }
 
+    /// <inheritdoc/>
     public void Dispose()
     {
+        // Invoke cancellation of tokens.
         metastreamToken?.Cancel();
         videostreamToken?.Cancel();
 
+        // Dispose of network objects.
         videoClientDisposable?.Dispose();
         tcpClientDisposable?.Dispose();
+
+        // Dispose of token sources.
+        metastreamToken?.Dispose();
+        videostreamToken?.Dispose();
     }
 
+    [SupportedOSPlatform("windows")]
     void InvokeNewFrame(byte[] imageData, ushort width, ushort height)
     {
         Log.Debug($"New frame size: {imageData.Length}");
@@ -136,6 +145,7 @@ public class WindowClient : IDisposable
     /// Listens for videodatagrams, is stopped when <c>videostreamToken</c> is cancelled, or <c>metaClient</c> is disconnected.
     /// Returns void because it's a loop.
     /// </summary>
+    [SupportedOSPlatform("windows")]
     async void ListenVideoDatagramAsync(TcpClient metaClient, int videoPort)
     {
         byte[]? image = null;

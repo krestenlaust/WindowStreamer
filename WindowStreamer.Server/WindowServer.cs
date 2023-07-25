@@ -4,6 +4,7 @@ using System.Drawing.Imaging;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using Google.Protobuf;
 using Serilog;
 using WindowStreamer.Protocol;
@@ -16,23 +17,21 @@ namespace WindowStreamer.Server;
 /// </summary>
 public class WindowServer : IDisposable
 {
-    public static readonly int DefaultVideoStreamPort = 10064;
     const int PacketCount = 128;
 
     readonly IScreenshotQuery screenshotQuery;
-    readonly IPEndPoint boundEndpoint;
     readonly IConnectionHandler connectionHandler;
+    readonly IPEndPoint boundEndpoint;
     readonly Size startingResolution;
     readonly UdpClient udpClient;
-    Task? videostreamTask;
     CancellationTokenSource videostreamToken;
+    CancellationTokenSource listeningToken;
     int frameIntervalMS = 34;
 
     TcpListener? clientListener;
     bool objectDisposed;
 
     ConnectedClient? connectedClient;
-    CancellationTokenSource? listeningToken;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="WindowServer"/> class.
@@ -52,6 +51,9 @@ public class WindowServer : IDisposable
         udpClient = new UdpClient();
         udpClient.Client.SendBufferSize = 1024_000;
         udpClient.DontFragment = false; // TODO: Properly remove this property assignment.
+
+        videostreamToken = new CancellationTokenSource();
+        listeningToken = new CancellationTokenSource();
     }
 
     /// <summary>
@@ -63,7 +65,7 @@ public class WindowServer : IDisposable
     /// <summary>
     /// Gets a value indicating whether a connection has been initiated.
     /// </summary>
-    [Obsolete("Not implemneted yet")]
+    [Obsolete("Not implemented yet")]
     public bool Connected { get; private set; }
 
     /// <inheritdoc/>
@@ -92,9 +94,9 @@ public class WindowServer : IDisposable
     }
 
     /// <summary>
-    ///
+    /// Starts listening for clients asyncronously.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
     /// <exception cref="InstanceAlreadyInUseException">This method-instance has been called previously.</exception>
     /// <exception cref="SocketException">Socket already registered.</exception>
     public async Task StartServerAsync()
@@ -105,7 +107,7 @@ public class WindowServer : IDisposable
         }
 
         videostreamToken = new CancellationTokenSource();
-        videostreamTask = Task.Run(BeginStreamLoop, videostreamToken.Token);
+        Task.Run(BeginStreamLoop, videostreamToken.Token);
 
         listeningToken = new CancellationTokenSource();
         clientListener = new TcpListener(boundEndpoint);
@@ -151,9 +153,11 @@ public class WindowServer : IDisposable
         connectedClient?.UpdateResolution(resolution);
     }
 
+    [SupportedOSPlatform("windows")]
     static byte[] ConvertBitmapToRawPixel24bpp(Bitmap bmp)
     {
-        BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height),
+        BitmapData bmpData = bmp.LockBits(
+            new Rectangle(0, 0, bmp.Width, bmp.Height),
             ImageLockMode.ReadOnly,
             PixelFormat.Format24bppRgb);
 
@@ -196,6 +200,7 @@ public class WindowServer : IDisposable
         }
     }
 
+    [SupportedOSPlatform("windows")]
     async void BeginStreamLoop()
     {
         CancellationToken token = videostreamToken.Token;
@@ -278,7 +283,7 @@ public class WindowServer : IDisposable
                     ConnectionReply = new Protocol.ConnectionReply
                     {
                         Accepted = true,
-                        VideoPort = DefaultPorts.DefaultVideostreamPort, // TODO: Make the client decide the video port.
+                        VideoPort = DefaultPorts.VideostreamPort, // TODO: Make the client decide the video port.
                     },
                 }.WriteDelimitedTo(stream);
 

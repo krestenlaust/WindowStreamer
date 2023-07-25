@@ -2,8 +2,14 @@
 
 namespace CommonApp;
 
+/// <summary>
+/// About box-form, with information about the project.
+/// </summary>
 public partial class AboutBoxMain : Form
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AboutBoxMain"/> class.
+    /// </summary>
     public AboutBoxMain()
     {
         InitializeComponent();
@@ -14,29 +20,4 @@ public partial class AboutBoxMain : Form
         this.labelCompanyName.Text = labelCompanyName.Text.Replace("%author%", ProjectProperties.Author);
         this.textBoxDescription.Text = textBoxDescription.Text.Replace("%url%", ProjectProperties.GithubUrl).Replace("%name%", ProjectProperties.Title);
     }
-
-    #region Assembly Attribute Accessors
-
-    public string AssemblyVersion
-    {
-        get
-        {
-            return Assembly.GetExecutingAssembly().GetName().Version.ToString();
-        }
-    }
-
-    public string AssemblyCopyright
-    {
-        get
-        {
-            object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
-            if (attributes.Length == 0)
-            {
-                return "";
-            }
-            return ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
-        }
-    }
-
-    #endregion
 }

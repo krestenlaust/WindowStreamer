@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Net;
+using System.Runtime.Versioning;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CommonApp;
@@ -10,6 +11,10 @@ using WindowStreamer.Client;
 
 namespace ClientApp;
 
+/// <summary>
+/// Main Forms-class associated with displaying the video stream.
+/// </summary>
+[SupportedOSPlatform("windows")]
 public partial class WindowDisplay : Form
 {
     static readonly int DefaultMetastreamPort = 10063;
@@ -20,6 +25,9 @@ public partial class WindowDisplay : Form
 
     WindowClient windowClient;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WindowDisplay"/> class.
+    /// </summary>
     public WindowDisplay()
     {
         InitializeComponent();

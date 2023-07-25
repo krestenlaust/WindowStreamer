@@ -6,6 +6,14 @@ namespace ClientApp;
 
 public partial class ConnectWindow : Form
 {
+    IPAddress ip;
+    int port;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ConnectWindow"/> class.
+    /// </summary>
+    /// <param name="defaultIP">Placeholder IP address to display in GUI.</param>
+    /// <param name="defaultPort">Placeholder port to display in GUI.</param>
     public ConnectWindow(IPAddress defaultIP, int defaultPort)
     {
         InitializeComponent();
@@ -14,12 +22,15 @@ public partial class ConnectWindow : Form
         TargetPort = defaultPort;
     }
 
+    /// <summary>
+    /// Gets the target IP address.
+    /// </summary>
     public IPAddress TargetIPAddress { get; private set; }
 
+    /// <summary>
+    /// Gets the target port.
+    /// </summary>
     public int TargetPort { get; private set; }
-
-    IPAddress ip;
-    int port;
 
     void ConnectWindow_Load(object sender, EventArgs e)
     {
