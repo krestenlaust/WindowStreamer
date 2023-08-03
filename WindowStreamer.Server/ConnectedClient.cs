@@ -14,8 +14,11 @@ internal class ConnectedClient : IDisposable
 {
     CancellationTokenSource metastreamToken;
     bool connectionClosedInvoked;
-    bool objectDisposed;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ConnectedClient"/> class.
+    /// </summary>
+    /// <param name="client">The tcp connection to associate with this client.</param>
     public ConnectedClient(TcpClient client)
     {
         this.NetworkClient = client;
@@ -31,12 +34,24 @@ internal class ConnectedClient : IDisposable
     /// </summary>
     public event Action? ConnectionClosed;
 
+    /// <summary>
+    /// Gets the endpoint of the this client.
+    /// </summary>
     public IPEndPoint EndPoint { get; }
 
+    /// <summary>
+    /// Gets the endpoint target of UDP datagrams.
+    /// </summary>
     public IPEndPoint UDPEndPoint => new IPEndPoint(EndPoint.Address, DefaultPorts.VideostreamPort);
 
+    /// <summary>
+    /// Gets the underlying tcp connection associated with this client.
+    /// </summary>
     public TcpClient NetworkClient { get; }
 
+    /// <summary>
+    /// Gets a value indicating whether the client is ready to receive video frames.
+    /// </summary>
     public bool UdpReady { get; private set; }
 
     /// <summary>
@@ -47,13 +62,6 @@ internal class ConnectedClient : IDisposable
     /// <inheritdoc/>
     public void Dispose()
     {
-        if (objectDisposed)
-        {
-            return;
-        }
-
-        objectDisposed = true;
-
         // Halt server
         metastreamToken?.Cancel();
 
