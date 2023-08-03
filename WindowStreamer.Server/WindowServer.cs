@@ -26,7 +26,6 @@ public class WindowServer : IDisposable
     readonly UdpClient udpClient;
     CancellationTokenSource videostreamToken;
     CancellationTokenSource listeningToken;
-    int frameIntervalMS = 34;
 
     TcpListener? clientListener;
     bool objectDisposed;
@@ -209,18 +208,16 @@ public class WindowServer : IDisposable
         while (!token.IsCancellationRequested)
         {
             // Is client connected and ready to receive?
-            if (connectedClient is null || !connectedClient.UdpReady)
+            while (connectedClient is null || !connectedClient.UdpReady)
             {
                 try
                 {
-                    await Task.Delay(0);
+                    await Task.Delay(0, token);
                 }
                 catch (TaskCanceledException)
                 {
                     return;
                 }
-
-                continue;
             }
 
             sw.Restart();
@@ -241,7 +238,13 @@ public class WindowServer : IDisposable
             }
             catch (ObjectDisposedException ex)
             {
-                Log.Debug($"Stream looped invoked exception: {ex}");
+                // Stream ended.
+                Log.Debug($"Stream loop ended by UDP object disposed. {ex}");
+                return;
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal($"Stream loop invoked exception: {ex}");
                 return;
             }
 
@@ -249,7 +252,7 @@ public class WindowServer : IDisposable
 
             try
             {
-                await Task.Delay(Math.Max(frameIntervalMS - (int)sw.ElapsedMilliseconds, 0), token);
+                await Task.Delay(Math.Max((1000 / connectedClient.FramerateCapHz) - (int)sw.ElapsedMilliseconds, 0), token);
             }
             catch (TaskCanceledException)
             {

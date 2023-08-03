@@ -20,7 +20,7 @@ public class WindowClient : IDisposable
     static readonly int PacketCount = 128;
 
     readonly IPEndPoint serverEndpoint;
-    readonly int framerateCap;
+    readonly int framerateCapHz;
     readonly CancellationTokenSource metastreamToken;
     readonly CancellationTokenSource videostreamToken;
 
@@ -37,7 +37,7 @@ public class WindowClient : IDisposable
     public WindowClient(IPAddress serverIP, int serverPort, int framerateCap)
     {
         serverEndpoint = new IPEndPoint(serverIP, serverPort);
-        this.framerateCap = framerateCap;
+        this.framerateCapHz = framerateCap;
 
         metastreamToken = new CancellationTokenSource();
         videostreamToken = new CancellationTokenSource();
@@ -266,7 +266,7 @@ public class WindowClient : IDisposable
                     {
                         UDPReady = new UDPReady
                         {
-                            FramerateCap = framerateCap,
+                            FramerateCap = framerateCapHz,
                         },
                     }.WriteDelimitedTo(stream);
 
