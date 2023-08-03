@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-
-namespace CommonApp;
+﻿namespace CommonApp;
 
 /// <summary>
 /// About box-form, with information about the project.

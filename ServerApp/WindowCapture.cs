@@ -19,17 +19,12 @@ public partial class WindowCapture : Form
     static readonly int DefaultMetastreamPort = 10063;
     static readonly Color TransparencyKeyColor = Color.Orange;
 
+    readonly IConnectionHandler connectionHandler;
+    readonly IScreenshotQuery screenshotGrabber;
     bool fullscreen;
     Size videoResolution;
-
-    /// <summary>
-    /// Not sure what this field keeps track of.
-    /// </summary>
-    Size lastResolution;
-
+    Size lastResolution; // TODO: Not sure what this field keeps track of.
     WindowServer server;
-    ConnectionHandler connectionHandler;
-    ScreenshotGrabber screenshotGrabber;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="WindowCapture"/> class.

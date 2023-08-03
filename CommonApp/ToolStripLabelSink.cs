@@ -1,5 +1,5 @@
-﻿using Serilog.Configuration;
-using Serilog;
+﻿using Serilog;
+using Serilog.Configuration;
 using Serilog.Core;
 using Serilog.Events;
 

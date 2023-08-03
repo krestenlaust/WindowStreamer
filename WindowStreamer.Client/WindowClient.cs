@@ -195,7 +195,6 @@ public class WindowClient : IDisposable
             int imageDataOffset = sizeof(ushort) + sizeof(int) + sizeof(ushort) + sizeof(ushort);
 
             Log.Debug($"Chunk {chunkIndex} size: {received.Buffer.Length - imageDataOffset} / {chunkSizeBytes}, offset value: {image[chunkOffsetBytes]}");
-
             Buffer.BlockCopy(
                 received.Buffer,
                 imageDataOffset,

@@ -129,7 +129,6 @@ public class WindowServer : IDisposable
             while (!HandshakeAsync(reply, client));
 
             Log.Information("Stream established");
-
             connectedClient = new ConnectedClient(client);
             connectedClient.ConnectionClosed += ConnectionClosed;
         }

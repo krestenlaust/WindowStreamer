@@ -12,7 +12,7 @@ namespace WindowStreamer.Server;
 /// </summary>
 internal class ConnectedClient : IDisposable
 {
-    CancellationTokenSource metastreamToken;
+    readonly CancellationTokenSource metastreamToken;
     bool connectionClosedInvoked;
 
     /// <summary>

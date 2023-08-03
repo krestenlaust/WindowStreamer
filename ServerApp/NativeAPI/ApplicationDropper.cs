@@ -10,8 +10,8 @@ internal static class ApplicationDropper
 {
     const int WH_MOUSE_LL = 14;
 
-    static LowLevelMouseProc _proc = HookCallback;
-    static IntPtr _hookID;
+    static readonly LowLevelMouseProc _proc = HookCallback;
+    static readonly IntPtr _hookID;
     static IntPtr hHook;
 
     delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
