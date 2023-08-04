@@ -12,10 +12,10 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\WindowStreamer.Image\WindowStreamer.Image.csproj" />
     <ProjectReference Include="..\WindowStreamer.Protocol\WindowStreamer.Protocol.csproj" />
   </ItemGroup>
 

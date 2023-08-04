@@ -22,6 +22,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonApp", "CommonApp\Comm
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WindowStreamer.Server", "WindowStreamer.Server\WindowStreamer.Server.csproj", "{44F23EAC-D126-4623-B84A-F2A0C74ECBCE}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WindowStreamer.Image", "WindowStreamer.Image\WindowStreamer.Image.csproj", "{00A214A5-49DB-44CF-A576-F06B23DBA3E0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowStreamer.Image.Windows", "WindowStreamer.Image.Windows\WindowStreamer.Image.Windows.csproj", "{5A4777F6-2A80-41A0-B873-3E455679DAEA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,6 +56,14 @@ Global
 		{44F23EAC-D126-4623-B84A-F2A0C74ECBCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{44F23EAC-D126-4623-B84A-F2A0C74ECBCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{44F23EAC-D126-4623-B84A-F2A0C74ECBCE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00A214A5-49DB-44CF-A576-F06B23DBA3E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00A214A5-49DB-44CF-A576-F06B23DBA3E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00A214A5-49DB-44CF-A576-F06B23DBA3E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00A214A5-49DB-44CF-A576-F06B23DBA3E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A4777F6-2A80-41A0-B873-3E455679DAEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A4777F6-2A80-41A0-B873-3E455679DAEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A4777F6-2A80-41A0-B873-3E455679DAEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A4777F6-2A80-41A0-B873-3E455679DAEA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

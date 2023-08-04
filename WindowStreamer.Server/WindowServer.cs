@@ -1,12 +1,9 @@
 ﻿using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.Net;
 using System.Net.Sockets;
-using System.Runtime.InteropServices;
-using System.Runtime.Versioning;
 using Google.Protobuf;
 using Serilog;
+using WindowStreamer.Image;
 using WindowStreamer.Protocol;
 using WindowStreamer.Server.Exceptions;
 
@@ -153,24 +150,6 @@ public class WindowServer : IDisposable
         connectedClient?.UpdateResolution(resolution);
     }
 
-    [SupportedOSPlatform("windows")]
-    static byte[] ConvertBitmapToRawPixel24bpp(Bitmap bmp)
-    {
-        BitmapData bmpData = bmp.LockBits(
-            new Rectangle(0, 0, bmp.Width, bmp.Height),
-            ImageLockMode.ReadOnly,
-            PixelFormat.Format24bppRgb);
-
-        IntPtr imageDataPtr = bmpData.Scan0;
-        int byteCount = Math.Abs(bmpData.Stride) * bmp.Height;
-        byte[] imageDump = new byte[byteCount];
-
-        Marshal.Copy(imageDataPtr, imageDump, 0, byteCount);
-        bmp.UnlockBits(bmpData);
-
-        return imageDump;
-    }
-
     void SendPicture(byte[] rawImageData24bpp, int width, int height, IPEndPoint targetEndpoint)
     {
         int chunkSizeBytes = ((rawImageData24bpp.Length - 1) / PacketCount) + 1;
@@ -200,7 +179,6 @@ public class WindowServer : IDisposable
         }
     }
 
-    [SupportedOSPlatform("windows")]
     async void BeginStreamLoop()
     {
         CancellationToken token = videostreamToken.Token;
@@ -225,17 +203,17 @@ public class WindowServer : IDisposable
 
             var obtainImageSw = new Stopwatch();
             obtainImageSw.Start();
-            Bitmap bmp = screenshotQuery.GetImage(new Rectangle(captureAreaGetter.Location, captureAreaGetter.Size));
+            IImage screenshotImage = screenshotQuery.GetImage(captureAreaGetter.Location, captureAreaGetter.Size);
             obtainImageSw.Stop();
 
             var convertPictureSw = new Stopwatch();
             convertPictureSw.Start();
-            byte[] rawImageData = ConvertBitmapToRawPixel24bpp(bmp);
+            byte[] rawImageData = screenshotImage.ToBytes();
             convertPictureSw.Stop();
 
             try
             {
-                SendPicture(rawImageData, bmp.Width, bmp.Height, connectedClient.UDPEndPoint);
+                SendPicture(rawImageData, screenshotImage.Size.Width, screenshotImage.Size.Height, connectedClient.UDPEndPoint);
             }
             catch (ObjectDisposedException ex)
             {

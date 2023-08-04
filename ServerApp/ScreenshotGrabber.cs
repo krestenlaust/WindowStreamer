@@ -1,6 +1,8 @@
 ﻿using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.Versioning;
+using WindowStreamer.Image;
+using WindowStreamer.Image.Windows;
 using WindowStreamer.Server;
 
 namespace ServerApp;
@@ -14,7 +16,7 @@ internal class ScreenshotGrabber : IScreenshotQuery
     static readonly Brush UACPromptFillColor = Brushes.Turquoise;
 
     /// <inheritdoc/>
-    public Bitmap GetImage(Rectangle captureRect)
+    public IImage GetImage(WindowStreamer.Image.Point location, WindowStreamer.Image.Size captureRect)
     {
         var bmp = new Bitmap(captureRect.Width, captureRect.Height, PixelFormat.Format24bppRgb);
 
@@ -22,13 +24,13 @@ internal class ScreenshotGrabber : IScreenshotQuery
         try
         {
             // Exception happens during UAC prompts.
-            g.CopyFromScreen(captureRect.Left, captureRect.Top, 0, 0, bmp.Size, CopyPixelOperation.SourceCopy);
+            g.CopyFromScreen(location.X, location.Y, 0, 0, bmp.Size, CopyPixelOperation.SourceCopy);
         }
         catch (System.ComponentModel.Win32Exception)
         {
-            g.FillRectangle(UACPromptFillColor, captureRect);
+            g.FillRectangle(UACPromptFillColor, location.X, location.Y, captureRect.Width, captureRect.Height);
         }
 
-        return bmp;
+        return new NativeImage(bmp);
     }
 }

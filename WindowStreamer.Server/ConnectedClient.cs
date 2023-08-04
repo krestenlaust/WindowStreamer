@@ -1,8 +1,8 @@
-﻿using System.Drawing;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
 using Google.Protobuf;
 using Serilog;
+using WindowStreamer.Image;
 using WindowStreamer.Protocol;
 
 namespace WindowStreamer.Server;

@@ -63,7 +63,7 @@ public partial class WindowCapture : Form
             else if (m.WParam == new IntPtr(0xF120))
             {
                 fullscreen = false;
-                Size = lastResolution;
+                Size = new Size(lastResolution.Width, lastResolution.Height);
                 UpdateResolutionVariables();
             }
         }
@@ -193,7 +193,7 @@ public partial class WindowCapture : Form
         server = new WindowServer(
             bindAddress,
             port,
-            videoResolution,
+            new WindowStreamer.Image.Size(videoResolution.Width, videoResolution.Height),
             serviceProvider.GetRequiredService<IScreenshotQuery>(),
             serviceProvider.GetRequiredService<IConnectionHandler>(),
             serviceProvider.GetRequiredService<IGetCaptureArea>());
@@ -221,17 +221,15 @@ public partial class WindowCapture : Form
     {
         if (fullscreen)
         {
-            videoResolution.Height = Screen.FromControl(this).Bounds.Height;
-            videoResolution.Width = Screen.FromControl(this).Bounds.Width;
+            videoResolution = Screen.FromControl(this).Bounds.Size;
         }
         else
         {
-            videoResolution.Height = captureArea.Height;
-            videoResolution.Width = captureArea.Width;
+            videoResolution = new Size(captureArea.Width, captureArea.Height);
         }
 
         toolStripStatusLabelResolution.Text = $"{videoResolution.Width}x{videoResolution.Height}";
-        server?.UpdateResolution(videoResolution);
+        server?.UpdateResolution(new WindowStreamer.Image.Size(videoResolution.Width, videoResolution.Height));
     }
 
     private void WindowCapture_FormClosed(object sender, FormClosedEventArgs e)
@@ -242,7 +240,7 @@ public partial class WindowCapture : Form
 
     private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        new CommonApp.AboutBoxMain().ShowDialog();
+        new AboutBoxMain().ShowDialog();
     }
 
     private void helpToolStripMenuItem_Click(object sender, EventArgs e)

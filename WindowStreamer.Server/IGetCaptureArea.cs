@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+﻿using WindowStreamer.Image;
 
 namespace WindowStreamer.Server;
 
