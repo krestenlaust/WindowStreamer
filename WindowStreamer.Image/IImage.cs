@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace WindowStreamer.Image
+﻿namespace WindowStreamer.Image
 {
     // TODO
     // - Size type

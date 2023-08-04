@@ -169,7 +169,7 @@ public class WindowServer : IDisposable
             Buffer.BlockCopy(rawImageData24bpp, chunkOffsetBytes, chunk, parameterOffset, chunkSizeBytes);
 
             BitConverter.GetBytes((ushort)i).CopyTo(chunk, 0);
-            BitConverter.GetBytes((int)rawImageData24bpp.Length).CopyTo(chunk, sizeof(ushort));
+            BitConverter.GetBytes(rawImageData24bpp.Length).CopyTo(chunk, sizeof(ushort));
             BitConverter.GetBytes((ushort)width).CopyTo(chunk, sizeof(ushort) + sizeof(int));
             BitConverter.GetBytes((ushort)height).CopyTo(chunk, sizeof(ushort) + sizeof(int) + sizeof(ushort));
 
