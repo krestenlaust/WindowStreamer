@@ -71,6 +71,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CommonApp\CommonApp.csproj" />
+    <ProjectReference Include="..\WindowStreamer.Image.Windows\WindowStreamer.Image.Windows.csproj" />
     <ProjectReference Include="..\WindowStreamer.Protocol\WindowStreamer.Protocol.csproj" />
     <ProjectReference Include="..\WindowStreamer.Server\WindowStreamer.Server.csproj" />
   </ItemGroup>

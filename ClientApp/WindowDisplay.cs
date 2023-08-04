@@ -1,13 +1,15 @@
 ﻿using System;
-using System.Drawing;
 using System.Net;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CommonApp;
 using LabelSink;
+using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using WindowStreamer.Client;
+using WindowStreamer.Image;
+using WindowStreamer.Image.Windows;
 
 namespace ClientApp;
 
@@ -20,8 +22,9 @@ public partial class WindowDisplay : Form
     static readonly int DefaultMetastreamPort = 10063;
     static readonly int FramerateCap = 30;
 
-    Size formToPanelSize;
-    Size videoResolution;
+    readonly IServiceProvider serviceProvider;
+    System.Drawing.Size formToPanelSize;
+    System.Drawing.Size videoResolution;
 
     WindowClient windowClient;
 
@@ -40,11 +43,15 @@ public partial class WindowDisplay : Form
                 .WriteTo.ToolStripLabel(toolStripStatusLabelLatest))
             .WriteTo.File("log-client.txt", rollingInterval: RollingInterval.Day)
             .CreateLogger();
+
+        serviceProvider = new ServiceCollection()
+            .AddTransient<IImageFactory, NativeImageFactory>()
+            .BuildServiceProvider();
     }
 
     async void WindowDisplay_LoadAsync(object sender, EventArgs e)
     {
-        formToPanelSize = Size.Subtract(Size, displayArea.Size);
+        formToPanelSize = System.Drawing.Size.Subtract(Size, displayArea.Size);
 
         // Update UI
         ResizeToFit();
@@ -115,7 +122,12 @@ public partial class WindowDisplay : Form
             windowClient.Dispose();
         }
 
-        windowClient = new WindowClient(address, targetPort, FramerateCap);
+        windowClient = new WindowClient(
+            address,
+            targetPort,
+            FramerateCap,
+            serviceProvider.GetRequiredService<IImageFactory>());
+
         windowClient.ResolutionChanged += WindowClient_ResolutionChanged;
         windowClient.NewFrame += WindowClient_VideoframeRecieved;
         windowClient.ConnectionClosed += WindowClient_ConnectionClosed;
@@ -128,7 +140,7 @@ public partial class WindowDisplay : Form
         Log.Information("Server disconnected");
     }
 
-    void WindowClient_VideoframeRecieved(Bitmap bitmap)
+    void WindowClient_VideoframeRecieved(IImage bitmap)
     {
         if (!displayArea.IsHandleCreated)
         {
@@ -137,13 +149,13 @@ public partial class WindowDisplay : Form
 
         displayArea.Invoke((MethodInvoker)delegate
         {
-            displayArea.Image = bitmap;
+            displayArea.Image = (NativeImage)bitmap;
         });
     }
 
-    void WindowClient_ResolutionChanged(Size obj)
+    void WindowClient_ResolutionChanged(WindowStreamer.Image.Size obj)
     {
-        videoResolution = obj;
+        videoResolution = new System.Drawing.Size(obj.Width, obj.Height);
 
         if (toolStripButtonResizeToFit.Checked)
         {
@@ -190,7 +202,7 @@ public partial class WindowDisplay : Form
 
     void ResizeToFit() => ResizeDisplayArea(videoResolution);
 
-    void ResizeDisplayArea(Size size) => Size = Size.Add(formToPanelSize, size);
+    void ResizeDisplayArea(System.Drawing.Size size) => Size = System.Drawing.Size.Add(formToPanelSize, size);
 
     private void WindowDisplay_FormClosed(object sender, FormClosedEventArgs e)
     {

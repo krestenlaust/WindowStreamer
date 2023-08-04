@@ -1,12 +1,9 @@
-﻿using System.Drawing;
-using System.Drawing.Imaging;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
-using System.Runtime.InteropServices;
-using System.Runtime.Versioning;
 using Google.Protobuf;
 using Serilog;
 using WindowStreamer.Client.Exceptions;
+using WindowStreamer.Image;
 using WindowStreamer.Protocol;
 
 namespace WindowStreamer.Client;
@@ -23,6 +20,7 @@ public class WindowClient : IDisposable
     readonly int framerateCapHz;
     readonly CancellationTokenSource metastreamToken;
     readonly CancellationTokenSource videostreamToken;
+    readonly IImageFactory imageFactory;
 
     IDisposable? videoClientDisposable;
     IDisposable? tcpClientDisposable;
@@ -33,11 +31,13 @@ public class WindowClient : IDisposable
     /// </summary>
     /// <param name="serverIP">The IP address of the server to connect to.</param>
     /// <param name="serverPort">The port of the TCP server for control messages (metastream).</param>
-    /// <param name="framerateCap">The amount of image frames per second to ask the server to send.</param>
-    public WindowClient(IPAddress serverIP, int serverPort, int framerateCap)
+    /// <param name="framerateCapHz">The amount of image frames per second to ask the server to send.</param>
+    /// <param name="imageFactory">Produces images from byte.</param>
+    public WindowClient(IPAddress serverIP, int serverPort, int framerateCapHz, IImageFactory imageFactory)
     {
         serverEndpoint = new IPEndPoint(serverIP, serverPort);
-        this.framerateCapHz = framerateCap;
+        this.framerateCapHz = framerateCapHz;
+        this.imageFactory = imageFactory;
 
         metastreamToken = new CancellationTokenSource();
         videostreamToken = new CancellationTokenSource();
@@ -46,7 +46,7 @@ public class WindowClient : IDisposable
     /// <summary>
     /// Event called when a complete frame has been received.
     /// </summary>
-    public event Action<Bitmap>? NewFrame;
+    public event Action<IImage>? NewFrame;
 
     /// <summary>
     /// Event called when the resolution is changed.
@@ -114,20 +114,12 @@ public class WindowClient : IDisposable
         videostreamToken?.Dispose();
     }
 
-    [SupportedOSPlatform("windows")]
     void InvokeNewFrame(byte[] imageData, ushort width, ushort height)
     {
         Log.Debug($"New frame size: {imageData.Length}");
-        var bmp = new Bitmap(width, height);
+        IImage image = imageFactory.CreateImage(imageData, new Size(width, height));
 
-        BitmapData bmpData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.WriteOnly, PixelFormat.Format24bppRgb);
-
-        IntPtr imageDataPtr = bmpData.Scan0;
-
-        Marshal.Copy(imageData, 0, imageDataPtr, imageData.Length);
-        bmp.UnlockBits(bmpData);
-
-        NewFrame?.Invoke(bmp);
+        NewFrame?.Invoke(image);
     }
 
     void ClientDisconnected()
@@ -145,7 +137,6 @@ public class WindowClient : IDisposable
     /// Listens for videodatagrams, is stopped when <c>videostreamToken</c> is cancelled, or <c>metaClient</c> is disconnected.
     /// Returns void because it's a loop.
     /// </summary>
-    [SupportedOSPlatform("windows")]
     async void ListenVideoDatagramAsync(TcpClient metaClient, int videoPort)
     {
         byte[]? image = null;

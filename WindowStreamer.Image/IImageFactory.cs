@@ -1,5 +1,8 @@
 ﻿namespace WindowStreamer.Image
 {
+    /// <summary>
+    /// Produces images by image data.
+    /// </summary>
     public interface IImageFactory
     {
         /// <summary>
