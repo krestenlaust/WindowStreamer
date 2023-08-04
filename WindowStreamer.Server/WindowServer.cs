@@ -21,6 +21,7 @@ public class WindowServer : IDisposable
 
     readonly IScreenshotQuery screenshotQuery;
     readonly IConnectionHandler connectionHandler;
+    readonly IGetCaptureArea captureAreaGetter;
     readonly IPEndPoint boundEndpoint;
     readonly Size startingResolution;
     readonly UdpClient udpClient;
@@ -40,11 +41,12 @@ public class WindowServer : IDisposable
     /// <param name="startingResolution">The resolution of the window.</param>
     /// <param name="screenshotQuery">Handler for retrieving screenshots.</param>
     /// <param name="connectionHandler">Handler for replying to connection attempts.</param>
-    public WindowServer(IPAddress boundIP, int port, Size startingResolution, IScreenshotQuery screenshotQuery, IConnectionHandler connectionHandler)
+    public WindowServer(IPAddress boundIP, int port, Size startingResolution, IScreenshotQuery screenshotQuery, IConnectionHandler connectionHandler, IGetCaptureArea captureAreaGetter)
     {
         boundEndpoint = new IPEndPoint(boundIP, port);
         this.screenshotQuery = screenshotQuery;
         this.connectionHandler = connectionHandler;
+        this.captureAreaGetter = captureAreaGetter;
         this.startingResolution = startingResolution;
 
         udpClient = new UdpClient();
@@ -223,7 +225,7 @@ public class WindowServer : IDisposable
 
             var obtainImageSw = new Stopwatch();
             obtainImageSw.Start();
-            Bitmap bmp = screenshotQuery.GetImage();
+            Bitmap bmp = screenshotQuery.GetImage(new Rectangle(captureAreaGetter.Location, captureAreaGetter.Size));
             obtainImageSw.Stop();
 
             var convertPictureSw = new Stopwatch();

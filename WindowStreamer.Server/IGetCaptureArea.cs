@@ -1,11 +1,11 @@
 ﻿using System.Drawing;
 
-namespace ServerApp;
+namespace WindowStreamer.Server;
 
 /// <summary>
 /// Returns the location of where to get a screenshot, and the dimensions of the screenshot.
 /// </summary>
-internal interface IGetCaptureArea
+public interface IGetCaptureArea
 {
     /// <summary>
     /// Gets the locations of where the screenshot is to be taken.

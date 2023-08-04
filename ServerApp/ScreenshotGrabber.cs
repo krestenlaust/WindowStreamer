@@ -12,21 +12,9 @@ namespace ServerApp;
 internal class ScreenshotGrabber : IScreenshotQuery
 {
     static readonly Brush UACPromptFillColor = Brushes.Turquoise;
-    readonly IGetCaptureArea captureArea;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ScreenshotGrabber"/> class.
-    /// </summary>
-    /// <param name="captureArea">An object that returns the area to grab the screen in.</param>
-    public ScreenshotGrabber(IGetCaptureArea captureArea)
-    {
-        this.captureArea = captureArea;
-    }
 
     /// <inheritdoc/>
-    public Bitmap GetImage() => GetScreenPicture(new Rectangle(captureArea.Location, captureArea.Size));
-
-    static Bitmap GetScreenPicture(Rectangle captureRect)
+    public Bitmap GetImage(Rectangle captureRect)
     {
         var bmp = new Bitmap(captureRect.Width, captureRect.Height, PixelFormat.Format24bppRgb);
 

@@ -11,5 +11,6 @@ public interface IScreenshotQuery
     /// Grabs the next image to transmit.
     /// </summary>
     /// <returns>The screenshot to transmit.</returns>
-    public Bitmap GetImage();
+    /// <param name="captureRect">The area of the screen to capture.</param>
+    public Bitmap GetImage(Rectangle captureRect);
 }

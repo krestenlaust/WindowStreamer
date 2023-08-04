@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using CommonApp;
 using LabelSink;
+using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using WindowStreamer.Server;
 
@@ -19,8 +20,7 @@ public partial class WindowCapture : Form
     static readonly int DefaultMetastreamPort = 10063;
     static readonly Color TransparencyKeyColor = Color.Orange;
 
-    readonly IConnectionHandler connectionHandler;
-    readonly IScreenshotQuery screenshotGrabber;
+    readonly IServiceProvider serviceProvider;
     bool fullscreen;
     Size videoResolution;
     Size lastResolution; // TODO: Not sure what this field keeps track of.
@@ -42,8 +42,11 @@ public partial class WindowCapture : Form
             .WriteTo.File("log-server.txt", rollingInterval: RollingInterval.Day)
             .CreateLogger();
 
-        connectionHandler = new ConnectionHandler();
-        screenshotGrabber = new ScreenshotGrabber(new GetCaptureAreaFromControls(this, captureArea, toolStripHeader));
+        serviceProvider = new ServiceCollection()
+            .AddTransient<IGetCaptureArea>(x => new GetCaptureAreaFromControls(this, captureArea, toolStripHeader))
+            .AddTransient<IConnectionHandler, ConnectionHandler>()
+            .AddTransient<IScreenshotQuery, ScreenshotGrabber>()
+            .BuildServiceProvider();
     }
 
     protected override void WndProc(ref Message m)
@@ -173,6 +176,7 @@ public partial class WindowCapture : Form
 
     async Task StartServerAsync(IPAddress bindAddress, int port = 0)
     {
+        // TODO: Consider using nullable valuetypes instead of 0.
         if (port == 0)
         {
             port = DefaultMetastreamPort;
@@ -186,7 +190,14 @@ public partial class WindowCapture : Form
 
         ToggleActionStartStopButtons(true);
 
-        server = new WindowServer(bindAddress, port, videoResolution, screenshotGrabber, connectionHandler);
+        server = new WindowServer(
+            bindAddress,
+            port,
+            videoResolution,
+            serviceProvider.GetRequiredService<IScreenshotQuery>(),
+            serviceProvider.GetRequiredService<IConnectionHandler>(),
+            serviceProvider.GetRequiredService<IGetCaptureArea>());
+
         server.ConnectionClosed += WindowServer_ConnectionClosed;
 
         try
