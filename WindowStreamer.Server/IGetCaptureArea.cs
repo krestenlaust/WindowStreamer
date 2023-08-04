@@ -10,10 +10,10 @@ public interface IGetCaptureArea
     /// <summary>
     /// Gets the locations of where the screenshot is to be taken.
     /// </summary>
-    public Point Location { get; }
+    public Location Location { get; }
 
     /// <summary>
     /// Gets the size of the capture area.
     /// </summary>
-    public Size Size { get; }
+    public ImageSize Size { get; }
 }

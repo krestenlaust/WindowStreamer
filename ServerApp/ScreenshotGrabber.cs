@@ -16,7 +16,7 @@ internal class ScreenshotGrabber : IScreenshotQuery
     static readonly Brush UACPromptFillColor = Brushes.Turquoise;
 
     /// <inheritdoc/>
-    public IImage GetImage(WindowStreamer.Image.Point location, WindowStreamer.Image.Size captureRect)
+    public IImage GetImage(Location location, ImageSize captureRect)
     {
         var bmp = new Bitmap(captureRect.Width, captureRect.Height, PixelFormat.Format24bppRgb);
 

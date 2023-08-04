@@ -30,7 +30,7 @@ namespace WindowStreamer.Image.Windows
             Bitmap.UnlockBits(bmpData);
         }
 
-        public Size Size => new Size(Bitmap.Width, Bitmap.Height);
+        public ImageSize Size => new ImageSize(Bitmap.Width, Bitmap.Height);
 
         public Bitmap Bitmap { get; private set; }
 

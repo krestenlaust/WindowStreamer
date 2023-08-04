@@ -1,5 +1,6 @@
 ﻿using System.Windows.Forms;
 using WindowStreamer.Image;
+using WindowStreamer.Image.Windows;
 using WindowStreamer.Server;
 
 namespace ServerApp;
@@ -23,7 +24,7 @@ public class GetCaptureAreaFromControls : IGetCaptureArea
         this.toolstripHeader = toolstripHeader;
     }
 
-    public Point Location => new Point(captureAreaPanel.Location.X + mainForm.Location.X, captureAreaPanel.Location.Y + mainForm.Location.Y + toolstripHeader.Height);
+    public Location Location => new Location(captureAreaPanel.Location.X + mainForm.Location.X, captureAreaPanel.Location.Y + mainForm.Location.Y + toolstripHeader.Height);
 
-    public Size Size => new Size(captureAreaPanel.Size.Width, captureAreaPanel.Size.Height);
+    public ImageSize Size => captureAreaPanel.Size.ToImageSize();
 }

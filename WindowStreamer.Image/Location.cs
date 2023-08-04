@@ -1,11 +1,11 @@
 ﻿namespace WindowStreamer.Image
 {
-    public readonly struct Point
+    public readonly struct Location
     {
         public readonly int X;
         public readonly int Y;
 
-        public Point(int x, int y)
+        public Location(int x, int y)
         {
             X = x;
             Y = y;

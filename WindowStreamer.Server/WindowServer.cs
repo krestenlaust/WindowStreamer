@@ -20,7 +20,7 @@ public class WindowServer : IDisposable
     readonly IConnectionHandler connectionHandler;
     readonly IGetCaptureArea captureAreaGetter;
     readonly IPEndPoint boundEndpoint;
-    readonly Size startingResolution;
+    readonly ImageSize startingResolution;
     readonly UdpClient udpClient;
     CancellationTokenSource videostreamToken;
     CancellationTokenSource listeningToken;
@@ -38,7 +38,8 @@ public class WindowServer : IDisposable
     /// <param name="startingResolution">The resolution of the window.</param>
     /// <param name="screenshotQuery">Handler for retrieving screenshots.</param>
     /// <param name="connectionHandler">Handler for replying to connection attempts.</param>
-    public WindowServer(IPAddress boundIP, int port, Size startingResolution, IScreenshotQuery screenshotQuery, IConnectionHandler connectionHandler, IGetCaptureArea captureAreaGetter)
+    /// <param name="captureAreaGetter">Produces the area and location of capture on screen.</param>
+    public WindowServer(IPAddress boundIP, int port, ImageSize startingResolution, IScreenshotQuery screenshotQuery, IConnectionHandler connectionHandler, IGetCaptureArea captureAreaGetter)
     {
         boundEndpoint = new IPEndPoint(boundIP, port);
         this.screenshotQuery = screenshotQuery;
@@ -145,7 +146,7 @@ public class WindowServer : IDisposable
     /// Notifies client of resolution change.
     /// </summary>
     /// <param name="resolution">The new resolution.</param>
-    public void UpdateResolution(Size resolution)
+    public void UpdateResolution(ImageSize resolution)
     {
         connectedClient?.UpdateResolution(resolution);
     }

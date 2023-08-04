@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Net;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
@@ -23,8 +24,8 @@ public partial class WindowDisplay : Form
     static readonly int FramerateCap = 30;
 
     readonly IServiceProvider serviceProvider;
-    System.Drawing.Size formToPanelSize;
-    System.Drawing.Size videoResolution;
+    Size formToPanelSize;
+    Size videoResolution;
 
     WindowClient windowClient;
 
@@ -51,7 +52,7 @@ public partial class WindowDisplay : Form
 
     async void WindowDisplay_LoadAsync(object sender, EventArgs e)
     {
-        formToPanelSize = System.Drawing.Size.Subtract(Size, displayArea.Size);
+        formToPanelSize = Size.Subtract(Size, displayArea.Size);
 
         // Update UI
         ResizeToFit();
@@ -153,9 +154,9 @@ public partial class WindowDisplay : Form
         });
     }
 
-    void WindowClient_ResolutionChanged(WindowStreamer.Image.Size obj)
+    void WindowClient_ResolutionChanged(ImageSize obj)
     {
-        videoResolution = new System.Drawing.Size(obj.Width, obj.Height);
+        videoResolution = obj.ToSize();
 
         if (toolStripButtonResizeToFit.Checked)
         {
@@ -202,7 +203,7 @@ public partial class WindowDisplay : Form
 
     void ResizeToFit() => ResizeDisplayArea(videoResolution);
 
-    void ResizeDisplayArea(System.Drawing.Size size) => Size = System.Drawing.Size.Add(formToPanelSize, size);
+    void ResizeDisplayArea(Size size) => Size = Size.Add(formToPanelSize, size);
 
     private void WindowDisplay_FormClosed(object sender, FormClosedEventArgs e)
     {

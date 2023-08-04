@@ -76,7 +76,7 @@ internal class ConnectedClient : IDisposable
     /// Notifies client of resolution change.
     /// </summary>
     /// <param name="resolution">The new resolution.</param>
-    public void UpdateResolution(Size resolution)
+    public void UpdateResolution(ImageSize resolution)
     {
         // Notifies client of resolution change.
         if (NetworkClient is null || !NetworkClient.Connected)

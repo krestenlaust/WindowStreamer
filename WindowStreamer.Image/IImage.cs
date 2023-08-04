@@ -1,9 +1,5 @@
 ﻿namespace WindowStreamer.Image
 {
-    // TODO
-    // - Size type
-    // - 
-
     /// <summary>
     /// Represents a digital image.
     /// </summary>
@@ -12,7 +8,7 @@
         /// <summary>
         /// Gets a value indicating the size of the image.
         /// </summary>
-        Size Size { get; }
+        ImageSize Size { get; }
 
         /// <summary>
         /// Returns 24-bit RGB pixel values in a single array.

@@ -14,5 +14,5 @@ public interface IScreenshotQuery
     /// <returns>The screenshot to transmit.</returns>
     /// <param name="location">The origin of the screenshot topleft corner.</param>
     /// <param name="captureRect">The area of the screen to capture.</param>
-    public IImage GetImage(Point location, Size captureRect);
+    public IImage GetImage(Location location, ImageSize captureRect);
 }

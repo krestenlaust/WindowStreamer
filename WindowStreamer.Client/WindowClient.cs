@@ -51,7 +51,7 @@ public class WindowClient : IDisposable
     /// <summary>
     /// Event called when the resolution is changed.
     /// </summary>
-    public event Action<Size>? ResolutionChanged;
+    public event Action<ImageSize>? ResolutionChanged;
 
     /// <summary>
     /// Event called when the client has recieved a response from server, either by message (deny/accept), or action (socket forcefully closed).
@@ -117,7 +117,7 @@ public class WindowClient : IDisposable
     void InvokeNewFrame(byte[] imageData, ushort width, ushort height)
     {
         Log.Debug($"New frame size: {imageData.Length}");
-        IImage image = imageFactory.CreateImage(imageData, new Size(width, height));
+        IImage image = imageFactory.CreateImage(imageData, new ImageSize(width, height));
 
         NewFrame?.Invoke(image);
     }
@@ -267,7 +267,7 @@ public class WindowClient : IDisposable
                 case ServerMessage.MsgOneofCase.ResolutionChange:
                     Log.Debug("Recieved resolution update");
 
-                    ResolutionChanged?.Invoke(new Size(msg.ResolutionChange.Width, msg.ResolutionChange.Height));
+                    ResolutionChanged?.Invoke(new ImageSize(msg.ResolutionChange.Width, msg.ResolutionChange.Height));
                     break;
             }
         }

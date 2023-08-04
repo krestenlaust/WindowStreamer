@@ -10,6 +10,7 @@ using CommonApp;
 using LabelSink;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
+using WindowStreamer.Image.Windows;
 using WindowStreamer.Server;
 
 namespace ServerApp;
@@ -133,10 +134,7 @@ public partial class WindowCapture : Form
 
     void WindowCapture_Resize(object sender, EventArgs e) => UpdateResolutionVariables();
 
-    void toolStripButtonOptions_Click(object sender, EventArgs e)
-    {
-        new Options().ShowDialog();
-    }
+    void toolStripButtonOptions_Click(object sender, EventArgs e) => new Options().ShowDialog();
 
     async void toolStripButtonActionStart_ClickAsync(object sender, EventArgs e)
     {
@@ -193,7 +191,7 @@ public partial class WindowCapture : Form
         server = new WindowServer(
             bindAddress,
             port,
-            new WindowStreamer.Image.Size(videoResolution.Width, videoResolution.Height),
+            videoResolution.ToImageSize(),
             serviceProvider.GetRequiredService<IScreenshotQuery>(),
             serviceProvider.GetRequiredService<IConnectionHandler>(),
             serviceProvider.GetRequiredService<IGetCaptureArea>());
@@ -225,11 +223,11 @@ public partial class WindowCapture : Form
         }
         else
         {
-            videoResolution = new Size(captureArea.Width, captureArea.Height);
+            videoResolution = captureArea.Size;
         }
 
         toolStripStatusLabelResolution.Text = $"{videoResolution.Width}x{videoResolution.Height}";
-        server?.UpdateResolution(new WindowStreamer.Image.Size(videoResolution.Width, videoResolution.Height));
+        server?.UpdateResolution(videoResolution.ToImageSize());
     }
 
     private void WindowCapture_FormClosed(object sender, FormClosedEventArgs e)
