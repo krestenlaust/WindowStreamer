@@ -172,10 +172,9 @@ public partial class WindowCapture : Form
         toolStripButtonActionStop.Visible = serverRunning;
     }
 
-    async Task StartServerAsync(IPAddress bindAddress, int port = 0)
+    async Task StartServerAsync(IPAddress bindAddress, int? port)
     {
-        // TODO: Consider using nullable valuetypes instead of 0.
-        if (port == 0)
+        if (port is null)
         {
             port = DefaultMetastreamPort;
         }
@@ -190,7 +189,7 @@ public partial class WindowCapture : Form
 
         server = new WindowServer(
             bindAddress,
-            port,
+            port.Value,
             videoResolution.ToImageSize(),
             serviceProvider.GetRequiredService<IScreenshotQuery>(),
             serviceProvider.GetRequiredService<IConnectionHandler>(),
