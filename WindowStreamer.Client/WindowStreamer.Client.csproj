@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\WindowStreamer.Image\WindowStreamer.Image.csproj" />
     <ProjectReference Include="..\WindowStreamer.Protocol\WindowStreamer.Protocol.csproj" />
   </ItemGroup>
 
