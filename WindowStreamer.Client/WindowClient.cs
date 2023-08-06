@@ -139,7 +139,7 @@ public class WindowClient : IDisposable
     /// </summary>
     async void ListenVideoDatagramAsync(TcpClient metaClient, int videoPort)
     {
-        byte[]? image = null;
+        byte[]? imageData = null;
         ushort imageWidth = 0;
         ushort imageHeight = 0;
         var chunks = new HashSet<ushort>();
@@ -166,39 +166,34 @@ public class WindowClient : IDisposable
                 return;
             }
 
-            ushort chunkIndex = BitConverter.ToUInt16(received.Buffer, 0);
-            int totalSizeBytes = BitConverter.ToInt32(received.Buffer, sizeof(ushort));
-            int chunkSizeBytes = ((totalSizeBytes - 1) / PacketCount) + 1;
-            ushort width = BitConverter.ToUInt16(received.Buffer, sizeof(ushort) + sizeof(int));
-            ushort height = BitConverter.ToUInt16(received.Buffer, sizeof(ushort) + sizeof(int) + sizeof(ushort));
+            var info = new VideoDatagramChunkInfo(received.Buffer, PacketCount);
 
-            if (image is null || width != imageWidth || height != imageHeight)
+            if (imageData is null || info.ImageWidth != imageWidth || info.ImageHeight != imageHeight)
             {
-                imageWidth = width;
-                imageHeight = height;
-                image = new byte[totalSizeBytes];
+                imageWidth = info.ImageWidth;
+                imageHeight = info.ImageHeight;
+                imageData = new byte[info.TotalSizeBytes];
                 chunks.Clear();
             }
 
-            chunks.Add(chunkIndex);
+            chunks.Add(info.ChunkIndex);
 
-            int chunkOffsetBytes = chunkSizeBytes * chunkIndex;
-            int imageDataOffset = sizeof(ushort) + sizeof(int) + sizeof(ushort) + sizeof(ushort);
+            int chunkOffsetBytes = info.ChunkSizeBytes * info.ChunkIndex;
 
-            Log.Debug($"Chunk {chunkIndex} size: {received.Buffer.Length - imageDataOffset} / {chunkSizeBytes}, offset value: {image[chunkOffsetBytes]}");
+            Log.Debug($"Chunk {info.ChunkIndex} size: {info.ChunkSizeBytes - VideoDatagramChunkInfo.ImageDataOffset} / {info.TotalSizeBytes}, offset value: {imageData[chunkOffsetBytes]}");
             Buffer.BlockCopy(
                 received.Buffer,
-                imageDataOffset,
-                image,
+                VideoDatagramChunkInfo.ImageDataOffset,
+                imageData,
                 chunkOffsetBytes,
-                received.Buffer.Length - imageDataOffset);
+                received.Buffer.Length - VideoDatagramChunkInfo.ImageDataOffset);
 
             if (chunks.Count == PacketCount)
             {
                 chunks.Clear();
 
                 // Bring new frame to display on different thread to speed up packet processing on this thread.
-                Task.Run(() => InvokeNewFrame((byte[])image.Clone(), imageWidth, imageHeight), videostreamToken.Token);
+                Task.Run(() => InvokeNewFrame((byte[])imageData.Clone(), imageWidth, imageHeight), videostreamToken.Token);
             }
         }
     }
