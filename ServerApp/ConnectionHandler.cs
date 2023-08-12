@@ -6,7 +6,7 @@ using WindowStreamer.Server;
 
 namespace ServerApp;
 
-internal class ConnectionHandler : IConnectionHandler
+public class ConnectionHandler : IConnectionHandler
 {
     public HashSet<IPAddress> BlockedIPs { get; } = new ();
 

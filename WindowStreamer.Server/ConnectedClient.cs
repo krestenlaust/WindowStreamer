@@ -10,7 +10,7 @@ namespace WindowStreamer.Server;
 /// <summary>
 /// Represents a connected client. Handles all communication that is sent to this individual client.
 /// </summary>
-internal class ConnectedClient : IDisposable
+public class ConnectedClient : IDisposable
 {
     readonly CancellationTokenSource metastreamToken;
     bool connectionClosedInvoked;

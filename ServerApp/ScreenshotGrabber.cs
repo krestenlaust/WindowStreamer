@@ -11,7 +11,7 @@ namespace ServerApp;
 /// Inquires a given <see cref="IGetCaptureArea"/>-object to get the area of the screen to screenshot, and returns the image.
 /// </summary>
 [SupportedOSPlatform("windows")]
-internal class ScreenshotGrabber : IScreenshotQuery
+public class ScreenshotGrabber : IScreenshotQuery
 {
     static readonly Brush UACPromptFillColor = Brushes.Turquoise;
 
